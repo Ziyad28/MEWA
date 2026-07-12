@@ -14,6 +14,7 @@ import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as PmoRouteImport } from './routes/pmo'
 import { Route as PmRouteImport } from './routes/pm'
 import { Route as ManagerRouteImport } from './routes/manager'
+import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as CompaniesRouteImport } from './routes/companies'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
@@ -44,6 +45,11 @@ const ManagerRoute = ManagerRouteImport.update({
   path: '/manager',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocumentsRoute = DocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CompaniesRoute = CompaniesRouteImport.update({
   id: '/companies',
   path: '/companies',
@@ -68,6 +74,7 @@ const CompaniesIdRoute = CompaniesIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/companies': typeof CompaniesRouteWithChildren
+  '/documents': typeof DocumentsRoute
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/companies': typeof CompaniesRouteWithChildren
+  '/documents': typeof DocumentsRoute
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/companies': typeof CompaniesRouteWithChildren
+  '/documents': typeof DocumentsRoute
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/companies'
+    | '/documents'
     | '/manager'
     | '/pm'
     | '/pmo'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/companies'
+    | '/documents'
     | '/manager'
     | '/pm'
     | '/pmo'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/companies'
+    | '/documents'
     | '/manager'
     | '/pm'
     | '/pmo'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CompaniesRoute: typeof CompaniesRouteWithChildren
+  DocumentsRoute: typeof DocumentsRoute
   ManagerRoute: typeof ManagerRoute
   PmRoute: typeof PmRoute
   PmoRoute: typeof PmoRoute
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/manager'
       fullPath: '/manager'
       preLoaderRoute: typeof ManagerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/documents': {
+      id: '/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof DocumentsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/companies': {
@@ -240,6 +260,7 @@ const ProjectsRouteWithChildren = ProjectsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CompaniesRoute: CompaniesRouteWithChildren,
+  DocumentsRoute: DocumentsRoute,
   ManagerRoute: ManagerRoute,
   PmRoute: PmRoute,
   PmoRoute: PmoRoute,
