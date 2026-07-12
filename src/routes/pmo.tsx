@@ -72,11 +72,12 @@ function PmoDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2">
-          <CardHeader title="أحدث المشاريع" action={<a href="#" className="text-xs text-primary hover:underline">عرض جميع المشاريع</a>} />
-          <div className="px-2 pb-3">
-            <table className="w-full text-sm">
+          <CardHeader title="أحدث المشاريع" action={<Link to="/projects" className="text-xs text-primary hover:underline">عرض جميع المشاريع</Link>} />
+          <div className="px-2 pb-3 overflow-x-auto">
+            <table className="w-full text-sm min-w-[600px]">
               <thead>
                 <tr className="text-xs text-muted-foreground">
+                  <th className="text-right px-3 py-2 font-medium">المشروع</th>
                   <th className="text-right px-3 py-2 font-medium">القطاع</th>
                   <th className="text-right px-3 py-2 font-medium">نسبة التقدم</th>
                   <th className="text-right px-3 py-2 font-medium">الحالة</th>
@@ -84,20 +85,19 @@ function PmoDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {PROJECTS.slice(0, 4).map((p) => (
-                  <tr key={p.id} className="border-t border-border">
-                    <td className="px-3 py-3">{p.name}</td>
+                {PROJECTS.slice(0, 5).map((p) => (
+                  <tr key={p.id} className="border-t border-border hover:bg-accent/40">
+                    <td className="px-3 py-3 font-medium">
+                      <Link to="/projects/$id" params={{ id: String(p.id) }} className="hover:text-primary">{p.name}</Link>
+                    </td>
+                    <td className="px-3 py-3 text-muted-foreground">{p.sector}</td>
                     <td className="px-3 py-3 w-40">
                       <div className="flex items-center gap-2">
-                        <ProgressBar value={p.progress} />
+                        <ProgressBar value={p.progress} tone={p.status === "متأخرة" ? "danger" : p.status === "مكتملة" ? "success" : "primary"} />
                         <span className="text-xs text-muted-foreground w-10">{p.progress}%</span>
                       </div>
                     </td>
-                    <td className="px-3 py-3">
-                      <Badge tone={p.status === "مكتملة" ? "success" : p.status === "متأخرة" ? "danger" : "warning"}>
-                        {p.status}
-                      </Badge>
-                    </td>
+                    <td className="px-3 py-3"><StatusBadge status={p.status} /></td>
                     <td className="px-3 py-3 text-muted-foreground">{p.updated}</td>
                   </tr>
                 ))}
@@ -107,12 +107,12 @@ function PmoDashboard() {
         </Card>
 
         <Card>
-          <CardHeader title="التقارير" action={<a href="#" className="text-xs text-primary hover:underline">عرض جميع التقارير</a>} />
+          <CardHeader title="التقارير" action={<Link to="/reports" className="text-xs text-primary hover:underline">عرض الكل</Link>} />
           <div className="px-5 pb-5 space-y-2">
             {["التقرير الشهري للمشاريع", "تقرير حالة المشاريع", "تقرير الأداء حسب القطاع"].map((r) => (
               <button key={r} className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg border border-border text-sm text-right hover:bg-accent">
                 <span>{r}</span>
-                <span className="text-muted-foreground text-xs">↓</span>
+                <Download className="h-3.5 w-3.5 text-muted-foreground" />
               </button>
             ))}
           </div>
