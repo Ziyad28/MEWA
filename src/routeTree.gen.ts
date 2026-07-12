@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SelectRouteImport } from './routes/select'
 import { Route as PmoRouteImport } from './routes/pmo'
+import { Route as ManagerRouteImport } from './routes/manager'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SelectRoute = SelectRouteImport.update({
@@ -23,6 +24,11 @@ const PmoRoute = PmoRouteImport.update({
   path: '/pmo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManagerRoute = ManagerRouteImport.update({
+  id: '/manager',
+  path: '/manager',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,30 +37,34 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/manager': typeof ManagerRoute
   '/pmo': typeof PmoRoute
   '/select': typeof SelectRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/manager': typeof ManagerRoute
   '/pmo': typeof PmoRoute
   '/select': typeof SelectRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/manager': typeof ManagerRoute
   '/pmo': typeof PmoRoute
   '/select': typeof SelectRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/pmo' | '/select'
+  fullPaths: '/' | '/manager' | '/pmo' | '/select'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/pmo' | '/select'
-  id: '__root__' | '/' | '/pmo' | '/select'
+  to: '/' | '/manager' | '/pmo' | '/select'
+  id: '__root__' | '/' | '/manager' | '/pmo' | '/select'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ManagerRoute: typeof ManagerRoute
   PmoRoute: typeof PmoRoute
   SelectRoute: typeof SelectRoute
 }
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PmoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/manager': {
+      id: '/manager'
+      path: '/manager'
+      fullPath: '/manager'
+      preLoaderRoute: typeof ManagerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,6 +104,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ManagerRoute: ManagerRoute,
   PmoRoute: PmoRoute,
   SelectRoute: SelectRoute,
 }
