@@ -15,6 +15,7 @@ import { Route as PmRouteImport } from './routes/pm'
 import { Route as ManagerRouteImport } from './routes/manager'
 import { Route as CompaniesRouteImport } from './routes/companies'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CompaniesIdRouteImport } from './routes/companies.$id'
 
 const SelectRoute = SelectRouteImport.update({
   id: '/select',
@@ -46,43 +47,73 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CompaniesIdRoute = CompaniesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CompaniesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/companies': typeof CompaniesRoute
+  '/companies': typeof CompaniesRouteWithChildren
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
   '/select': typeof SelectRoute
+  '/companies/$id': typeof CompaniesIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/companies': typeof CompaniesRoute
+  '/companies': typeof CompaniesRouteWithChildren
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
   '/select': typeof SelectRoute
+  '/companies/$id': typeof CompaniesIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/companies': typeof CompaniesRoute
+  '/companies': typeof CompaniesRouteWithChildren
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
   '/select': typeof SelectRoute
+  '/companies/$id': typeof CompaniesIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/companies' | '/manager' | '/pm' | '/pmo' | '/select'
+  fullPaths:
+    | '/'
+    | '/companies'
+    | '/manager'
+    | '/pm'
+    | '/pmo'
+    | '/select'
+    | '/companies/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/companies' | '/manager' | '/pm' | '/pmo' | '/select'
-  id: '__root__' | '/' | '/companies' | '/manager' | '/pm' | '/pmo' | '/select'
+  to:
+    | '/'
+    | '/companies'
+    | '/manager'
+    | '/pm'
+    | '/pmo'
+    | '/select'
+    | '/companies/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/companies'
+    | '/manager'
+    | '/pm'
+    | '/pmo'
+    | '/select'
+    | '/companies/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  CompaniesRoute: typeof CompaniesRoute
+  CompaniesRoute: typeof CompaniesRouteWithChildren
   ManagerRoute: typeof ManagerRoute
   PmRoute: typeof PmRoute
   PmoRoute: typeof PmoRoute
@@ -133,12 +164,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/companies/$id': {
+      id: '/companies/$id'
+      path: '/$id'
+      fullPath: '/companies/$id'
+      preLoaderRoute: typeof CompaniesIdRouteImport
+      parentRoute: typeof CompaniesRoute
+    }
   }
 }
 
+interface CompaniesRouteChildren {
+  CompaniesIdRoute: typeof CompaniesIdRoute
+}
+
+const CompaniesRouteChildren: CompaniesRouteChildren = {
+  CompaniesIdRoute: CompaniesIdRoute,
+}
+
+const CompaniesRouteWithChildren = CompaniesRoute._addFileChildren(
+  CompaniesRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  CompaniesRoute: CompaniesRoute,
+  CompaniesRoute: CompaniesRouteWithChildren,
   ManagerRoute: ManagerRoute,
   PmRoute: PmRoute,
   PmoRoute: PmoRoute,
