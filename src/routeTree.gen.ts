@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SelectRouteImport } from './routes/select'
+import { Route as PmoRouteImport } from './routes/pmo'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SelectRoute = SelectRouteImport.update({
   id: '/select',
   path: '/select',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PmoRoute = PmoRouteImport.update({
+  id: '/pmo',
+  path: '/pmo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,27 +31,31 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/pmo': typeof PmoRoute
   '/select': typeof SelectRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pmo': typeof PmoRoute
   '/select': typeof SelectRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/pmo': typeof PmoRoute
   '/select': typeof SelectRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/select'
+  fullPaths: '/' | '/pmo' | '/select'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/select'
-  id: '__root__' | '/' | '/select'
+  to: '/' | '/pmo' | '/select'
+  id: '__root__' | '/' | '/pmo' | '/select'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PmoRoute: typeof PmoRoute
   SelectRoute: typeof SelectRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/select'
       fullPath: '/select'
       preLoaderRoute: typeof SelectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pmo': {
+      id: '/pmo'
+      path: '/pmo'
+      fullPath: '/pmo'
+      preLoaderRoute: typeof PmoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PmoRoute: PmoRoute,
   SelectRoute: SelectRoute,
 }
 export const routeTree = rootRouteImport
