@@ -1,12 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Briefcase, CheckCircle2, Hourglass, AlertCircle } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Briefcase, CheckCircle2, Hourglass, AlertCircle, Download } from "lucide-react";
 import {
   LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
   PieChart, Pie, Cell, Legend,
 } from "recharts";
 import { AppShell, useRequireAuth } from "@/components/app-shell";
-import { Card, CardHeader, StatCard, Badge, ProgressBar } from "@/components/ui-bits";
-import { KPIS_PMO, PROGRESS_SERIES, STATUS_PIE, PROJECTS } from "@/lib/mock-data";
+import { Card, CardHeader, StatCard, ProgressBar, StatusBadge } from "@/components/ui-bits";
+import {
+  KPIS_PMO, PROGRESS_SERIES, STATUS_PIE, PROJECTS,
+  SPARK_PMO_TOTAL, SPARK_PMO_COMPLETED, SPARK_PMO_PROGRESS, SPARK_PMO_DELAYED,
+} from "@/lib/mock-data";
 
 export const Route = createFileRoute("/pmo")({
   component: PmoDashboard,
@@ -25,10 +28,10 @@ function PmoDashboard() {
       pageSubtitle="نظرة عامة على المشاريع التقنية"
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="إجمالي المشاريع" value={KPIS_PMO.total} unit="مشروع" delta="12%" icon={<Briefcase className="h-4 w-4" />} tone="primary" />
-        <StatCard label="المشاريع المكتملة" value={KPIS_PMO.completed} unit="مشروع" delta="8%" icon={<CheckCircle2 className="h-4 w-4" />} tone="success" />
-        <StatCard label="قيد التنفيذ" value={KPIS_PMO.inProgress} unit="مشروع" delta="15%" icon={<Hourglass className="h-4 w-4" />} tone="warning" />
-        <StatCard label="المتأخرة" value={KPIS_PMO.delayed} unit="مشروع" delta="5%" deltaType="down" icon={<AlertCircle className="h-4 w-4" />} tone="danger" />
+        <StatCard label="إجمالي المشاريع" value={KPIS_PMO.total} unit="مشروع" delta="12%" icon={<Briefcase className="h-4 w-4" />} tone="primary" spark={SPARK_PMO_TOTAL} updated="اليوم 09:20" />
+        <StatCard label="المشاريع المكتملة" value={KPIS_PMO.completed} unit="مشروع" delta="8%" icon={<CheckCircle2 className="h-4 w-4" />} tone="success" spark={SPARK_PMO_COMPLETED} updated="اليوم 09:20" />
+        <StatCard label="قيد التنفيذ" value={KPIS_PMO.inProgress} unit="مشروع" delta="15%" icon={<Hourglass className="h-4 w-4" />} tone="warning" spark={SPARK_PMO_PROGRESS} updated="اليوم 09:20" />
+        <StatCard label="المتأخرة" value={KPIS_PMO.delayed} unit="مشروع" delta="5%" deltaType="down" icon={<AlertCircle className="h-4 w-4" />} tone="danger" spark={SPARK_PMO_DELAYED} updated="اليوم 09:20" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
