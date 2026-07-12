@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SelectRouteImport } from './routes/select'
 import { Route as PmoRouteImport } from './routes/pmo'
+import { Route as PmRouteImport } from './routes/pm'
 import { Route as ManagerRouteImport } from './routes/manager'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -22,6 +23,11 @@ const SelectRoute = SelectRouteImport.update({
 const PmoRoute = PmoRouteImport.update({
   id: '/pmo',
   path: '/pmo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PmRoute = PmRouteImport.update({
+  id: '/pm',
+  path: '/pm',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ManagerRoute = ManagerRouteImport.update({
@@ -38,12 +44,14 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/manager': typeof ManagerRoute
+  '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
   '/select': typeof SelectRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/manager': typeof ManagerRoute
+  '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
   '/select': typeof SelectRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/manager': typeof ManagerRoute
+  '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
   '/select': typeof SelectRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/manager' | '/pmo' | '/select'
+  fullPaths: '/' | '/manager' | '/pm' | '/pmo' | '/select'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/manager' | '/pmo' | '/select'
-  id: '__root__' | '/' | '/manager' | '/pmo' | '/select'
+  to: '/' | '/manager' | '/pm' | '/pmo' | '/select'
+  id: '__root__' | '/' | '/manager' | '/pm' | '/pmo' | '/select'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ManagerRoute: typeof ManagerRoute
+  PmRoute: typeof PmRoute
   PmoRoute: typeof PmoRoute
   SelectRoute: typeof SelectRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/pmo'
       fullPath: '/pmo'
       preLoaderRoute: typeof PmoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pm': {
+      id: '/pm'
+      path: '/pm'
+      fullPath: '/pm'
+      preLoaderRoute: typeof PmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/manager': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ManagerRoute: ManagerRoute,
+  PmRoute: PmRoute,
   PmoRoute: PmoRoute,
   SelectRoute: SelectRoute,
 }
