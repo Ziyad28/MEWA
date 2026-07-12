@@ -28,26 +28,22 @@ interface NavItem {
 const NAV: Record<Role, NavItem[]> = {
   pmo: [
     { to: "/pmo", label: "الرئيسية", icon: Home },
-    { to: "/pmo?tab=projects", label: "المشاريع", icon: FolderKanban },
-    { to: "/pmo?tab=manage", label: "إدارة المشاريع", icon: Search },
-    { to: "/pmo?tab=docs", label: "الوثائق", icon: FileText },
-    { to: "/pmo?tab=sectors", label: "القطاعات", icon: Layers },
-    { to: "/pmo?tab=reports", label: "التقارير", icon: BarChart3 },
-    { to: "/pmo?tab=ai", label: "تحليلات الذكاء الاصطناعي", icon: Sparkles },
+    { to: "/projects", label: "المشاريع", icon: FolderKanban },
+    { to: "/documents", label: "الوثائق", icon: FileText },
+    { to: "/reports", label: "التقارير", icon: BarChart3 },
+    { to: "/ai-insights", label: "تحليلات الذكاء الاصطناعي", icon: Sparkles },
   ],
   manager: [
     { to: "/manager", label: "الرئيسية", icon: Home },
-    { to: "/manager?tab=kpi", label: "لوحة المؤشرات", icon: BarChart3 },
-    { to: "/manager?tab=reports", label: "التقارير", icon: FileText },
-    { to: "/manager?tab=ai", label: "تحليلات الذكاء الاصطناعي", icon: Sparkles },
+    { to: "/projects", label: "المشاريع", icon: FolderKanban },
+    { to: "/reports", label: "التقارير", icon: BarChart3 },
+    { to: "/ai-insights", label: "تحليلات الذكاء الاصطناعي", icon: Sparkles },
   ],
   pm: [
     { to: "/pm", label: "الرئيسية", icon: Home },
-    { to: "/pm?tab=mine", label: "مشاريعي", icon: FolderKanban },
-    { to: "/pm?tab=details", label: "تفاصيل المشروع", icon: Search },
-    { to: "/pm?tab=docs", label: "الوثائق", icon: FileText },
-    { to: "/pm?tab=updates", label: "تحديثات المشروع", icon: Bell },
-    { to: "/pm?tab=ai", label: "تحليلات المشروع", icon: Sparkles },
+    { to: "/projects", label: "المشاريع", icon: FolderKanban },
+    { to: "/documents", label: "الوثائق", icon: FileText },
+    { to: "/ai-insights", label: "تحليلات المشروع", icon: Sparkles },
   ],
 };
 
