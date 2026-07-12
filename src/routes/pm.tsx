@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { TrendingUp, Hourglass, CheckCircle2, AlertCircle, Building2, User, Calendar, Flag, FileText } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { AppShell, useRequireAuth } from "@/components/app-shell";
-import { Card, CardHeader, Badge } from "@/components/ui-bits";
-import { KPIS_PM, PROGRESS_SERIES, PROJECTS } from "@/lib/mock-data";
+import { Card, CardHeader, StatCard, Badge, HealthRing } from "@/components/ui-bits";
+import { KPIS_PM, PROGRESS_SERIES, PROJECTS, COMPANIES } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/pm")({
   component: PmDashboard,
@@ -12,7 +13,10 @@ function PmDashboard() {
   const user = useRequireAuth("pm");
   if (!user) return null;
 
-  const project = PROJECTS[0];
+  // PM sees only their assigned projects
+  const myProjects = PROJECTS.filter((p) => p.manager === user.name);
+  const project = myProjects[0] ?? PROJECTS[1]!;
+  const company = COMPANIES.find((c) => c.id === project.companyId);
 
   return (
     <AppShell
@@ -20,33 +24,18 @@ function PmDashboard() {
       userName={user.name}
       roleLabel={user.roleLabel}
       pageTitle="لوحة تحكم مدير المشروع"
-      pageSubtitle="نظرة عامة على المشروع"
+      pageSubtitle="نظرة عامة على مشاريعك"
     >
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-5">
-          <div className="text-sm text-muted-foreground">نسبة تقدم المشروع</div>
-          <div className="mt-2 text-3xl font-bold text-primary">{KPIS_PM.progress}%</div>
-        </Card>
-        <Card className="p-5">
-          <div className="text-sm text-muted-foreground">قيد التنفيذ</div>
-          <div className="mt-2 text-3xl font-bold text-foreground">{KPIS_PM.inProgress}</div>
-          <div className="text-xs text-muted-foreground mt-1">مهام</div>
-        </Card>
-        <Card className="p-5">
-          <div className="text-sm text-muted-foreground">مكتملة</div>
-          <div className="mt-2 text-3xl font-bold text-foreground">{KPIS_PM.completed}</div>
-          <div className="text-xs text-muted-foreground mt-1">مهام</div>
-        </Card>
-        <Card className="p-5">
-          <div className="text-sm text-muted-foreground">متأخرة</div>
-          <div className="mt-2 text-3xl font-bold text-red-600">{KPIS_PM.overdue}</div>
-          <div className="text-xs text-muted-foreground mt-1">مهام</div>
-        </Card>
+        <StatCard label="نسبة تقدم المشروع" value={`${KPIS_PM.progress}%`} delta="6%" icon={<TrendingUp className="h-4 w-4" />} tone="primary" spark={[45,52,58,62,66,68]} updated="اليوم 08:15" />
+        <StatCard label="قيد التنفيذ" value={KPIS_PM.inProgress} unit="مهام" icon={<Hourglass className="h-4 w-4" />} tone="warning" spark={[6,8,9,10,11,12]} updated="اليوم 08:15" />
+        <StatCard label="مكتملة" value={KPIS_PM.completed} unit="مهام" delta="2 مهام" icon={<CheckCircle2 className="h-4 w-4" />} tone="success" spark={[2,3,4,6,7,8]} updated="اليوم 08:15" />
+        <StatCard label="متأخرة" value={KPIS_PM.overdue} unit="مهام" delta="1 مهمة" deltaType="down" icon={<AlertCircle className="h-4 w-4" />} tone="danger" spark={[6,5,5,4,4,4]} updated="اليوم 08:15" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2">
-          <CardHeader title="نسبة تقدم المشروع" />
+          <CardHeader title="نسبة تقدم المشروع" subtitle={project.name} />
           <div className="px-5 pb-5 h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={PROGRESS_SERIES}>
@@ -61,43 +50,41 @@ function PmDashboard() {
         </Card>
 
         <Card>
-          <CardHeader title="معلومات المشروع" />
-          <div className="px-5 pb-5 space-y-3 text-sm">
-            <Row label="اسم المشروع" value={project.name} />
-            <Row label="القطاع" value={project.sector} />
-            <Row label="تاريخ البداية" value={project.start} />
-            <Row label="تاريخ الانتهاء المخطط" value={project.end} />
-            <Row label="مدير المشروع" value={user.name} />
+          <CardHeader title="معلومات المشروع" action={<Link to="/projects/$id" params={{ id: String(project.id) }} className="text-xs text-primary hover:underline">فتح المشروع</Link>} />
+          <div className="px-5 pb-5 space-y-2.5 text-sm">
+            <div className="flex items-center justify-center pb-2">
+              <HealthRing value={project.health} size={72} />
+            </div>
+            <Row icon={<Flag className="h-3.5 w-3.5" />} label="اسم المشروع" value={project.name} />
+            <Row icon={<Building2 className="h-3.5 w-3.5" />} label="الشركة المنفذة" value={company?.name ?? "-"} />
+            <Row icon={<Flag className="h-3.5 w-3.5" />} label="القطاع" value={project.sector} />
+            <Row icon={<Calendar className="h-3.5 w-3.5" />} label="البداية" value={project.start} />
+            <Row icon={<Calendar className="h-3.5 w-3.5" />} label="الانتهاء" value={project.end} />
+            <Row icon={<User className="h-3.5 w-3.5" />} label="مدير المشروع" value={user.name} />
           </div>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
-          <CardHeader title="أحدث الوثائق" />
-          <div className="px-2 pb-3">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-xs text-muted-foreground">
-                  <th className="text-right px-3 py-2 font-medium">اسم الوثيقة</th>
-                  <th className="text-right px-3 py-2 font-medium">النوع</th>
-                  <th className="text-right px-3 py-2 font-medium">تاريخ التحديث</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { n: "خطة المشروع v2.0", t: "خطة", d: "2025/06/15" },
-                  { n: "تقرير الأداء الشهري", t: "تقرير", d: "2025/06/14" },
-                  { n: "متطلبات المشروع", t: "متطلبات", d: "2025/06/12" },
-                ].map((d) => (
-                  <tr key={d.n} className="border-t border-border">
-                    <td className="px-3 py-3">{d.n}</td>
-                    <td className="px-3 py-3"><Badge tone="muted">{d.t}</Badge></td>
-                    <td className="px-3 py-3 text-muted-foreground">{d.d}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <CardHeader title="أحدث الوثائق" action={<Link to="/documents" className="text-xs text-primary hover:underline">عرض الكل</Link>} />
+          <div className="px-5 pb-4 space-y-2">
+            {[
+              { n: "خطة المشروع v2.0", t: "خطة", d: "2025/06/15" },
+              { n: "تقرير الأداء الشهري", t: "تقرير", d: "2025/06/14" },
+              { n: "متطلبات المشروع", t: "متطلبات", d: "2025/06/12" },
+            ].map((d) => (
+              <div key={d.n} className="flex items-center justify-between px-3 py-2.5 rounded-lg border border-border text-sm">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <FileText className="h-4 w-4 text-primary shrink-0" />
+                  <div className="min-w-0">
+                    <div className="font-medium truncate">{d.n}</div>
+                    <div className="text-[11px] text-muted-foreground">{d.t} · {d.d}</div>
+                  </div>
+                </div>
+                <Badge tone="muted">{d.t}</Badge>
+              </div>
+            ))}
           </div>
         </Card>
 
@@ -122,11 +109,11 @@ function PmDashboard() {
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Row({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-start justify-between gap-4 py-1.5 border-b border-border/50 last:border-0">
-      <div className="text-muted-foreground">{label}</div>
-      <div className="font-medium text-foreground">{value}</div>
+    <div className="flex items-center justify-between gap-3 py-1.5 border-b border-border/50 last:border-0">
+      <div className="text-muted-foreground text-xs inline-flex items-center gap-1.5">{icon}{label}</div>
+      <div className="font-medium text-foreground text-xs text-left">{value}</div>
     </div>
   );
 }

@@ -10,16 +10,31 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SelectRouteImport } from './routes/select'
+import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as PmoRouteImport } from './routes/pmo'
 import { Route as PmRouteImport } from './routes/pm'
 import { Route as ManagerRouteImport } from './routes/manager'
+import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as CompaniesRouteImport } from './routes/companies'
+import { Route as AiInsightsRouteImport } from './routes/ai-insights'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
 import { Route as CompaniesIdRouteImport } from './routes/companies.$id'
 
 const SelectRoute = SelectRouteImport.update({
   id: '/select',
   path: '/select',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PmoRoute = PmoRouteImport.update({
@@ -37,15 +52,30 @@ const ManagerRoute = ManagerRouteImport.update({
   path: '/manager',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DocumentsRoute = DocumentsRouteImport.update({
+  id: '/documents',
+  path: '/documents',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CompaniesRoute = CompaniesRouteImport.update({
   id: '/companies',
   path: '/companies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiInsightsRoute = AiInsightsRouteImport.update({
+  id: '/ai-insights',
+  path: '/ai-insights',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsIdRoute = ProjectsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => ProjectsRoute,
 } as any)
 const CompaniesIdRoute = CompaniesIdRouteImport.update({
   id: '/$id',
@@ -55,68 +85,102 @@ const CompaniesIdRoute = CompaniesIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai-insights': typeof AiInsightsRoute
   '/companies': typeof CompaniesRouteWithChildren
+  '/documents': typeof DocumentsRoute
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
+  '/projects': typeof ProjectsRouteWithChildren
+  '/reports': typeof ReportsRoute
   '/select': typeof SelectRoute
   '/companies/$id': typeof CompaniesIdRoute
+  '/projects/$id': typeof ProjectsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai-insights': typeof AiInsightsRoute
   '/companies': typeof CompaniesRouteWithChildren
+  '/documents': typeof DocumentsRoute
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
+  '/projects': typeof ProjectsRouteWithChildren
+  '/reports': typeof ReportsRoute
   '/select': typeof SelectRoute
   '/companies/$id': typeof CompaniesIdRoute
+  '/projects/$id': typeof ProjectsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ai-insights': typeof AiInsightsRoute
   '/companies': typeof CompaniesRouteWithChildren
+  '/documents': typeof DocumentsRoute
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
+  '/projects': typeof ProjectsRouteWithChildren
+  '/reports': typeof ReportsRoute
   '/select': typeof SelectRoute
   '/companies/$id': typeof CompaniesIdRoute
+  '/projects/$id': typeof ProjectsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ai-insights'
     | '/companies'
+    | '/documents'
     | '/manager'
     | '/pm'
     | '/pmo'
+    | '/projects'
+    | '/reports'
     | '/select'
     | '/companies/$id'
+    | '/projects/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ai-insights'
     | '/companies'
+    | '/documents'
     | '/manager'
     | '/pm'
     | '/pmo'
+    | '/projects'
+    | '/reports'
     | '/select'
     | '/companies/$id'
+    | '/projects/$id'
   id:
     | '__root__'
     | '/'
+    | '/ai-insights'
     | '/companies'
+    | '/documents'
     | '/manager'
     | '/pm'
     | '/pmo'
+    | '/projects'
+    | '/reports'
     | '/select'
     | '/companies/$id'
+    | '/projects/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AiInsightsRoute: typeof AiInsightsRoute
   CompaniesRoute: typeof CompaniesRouteWithChildren
+  DocumentsRoute: typeof DocumentsRoute
   ManagerRoute: typeof ManagerRoute
   PmRoute: typeof PmRoute
   PmoRoute: typeof PmoRoute
+  ProjectsRoute: typeof ProjectsRouteWithChildren
+  ReportsRoute: typeof ReportsRoute
   SelectRoute: typeof SelectRoute
 }
 
@@ -127,6 +191,20 @@ declare module '@tanstack/react-router' {
       path: '/select'
       fullPath: '/select'
       preLoaderRoute: typeof SelectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pmo': {
@@ -150,11 +228,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManagerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/documents': {
+      id: '/documents'
+      path: '/documents'
+      fullPath: '/documents'
+      preLoaderRoute: typeof DocumentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/companies': {
       id: '/companies'
       path: '/companies'
       fullPath: '/companies'
       preLoaderRoute: typeof CompaniesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-insights': {
+      id: '/ai-insights'
+      path: '/ai-insights'
+      fullPath: '/ai-insights'
+      preLoaderRoute: typeof AiInsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -163,6 +255,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/projects/$id': {
+      id: '/projects/$id'
+      path: '/$id'
+      fullPath: '/projects/$id'
+      preLoaderRoute: typeof ProjectsIdRouteImport
+      parentRoute: typeof ProjectsRoute
     }
     '/companies/$id': {
       id: '/companies/$id'
@@ -186,24 +285,30 @@ const CompaniesRouteWithChildren = CompaniesRoute._addFileChildren(
   CompaniesRouteChildren,
 )
 
+interface ProjectsRouteChildren {
+  ProjectsIdRoute: typeof ProjectsIdRoute
+}
+
+const ProjectsRouteChildren: ProjectsRouteChildren = {
+  ProjectsIdRoute: ProjectsIdRoute,
+}
+
+const ProjectsRouteWithChildren = ProjectsRoute._addFileChildren(
+  ProjectsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AiInsightsRoute: AiInsightsRoute,
   CompaniesRoute: CompaniesRouteWithChildren,
+  DocumentsRoute: DocumentsRoute,
   ManagerRoute: ManagerRoute,
   PmRoute: PmRoute,
   PmoRoute: PmoRoute,
+  ProjectsRoute: ProjectsRouteWithChildren,
+  ReportsRoute: ReportsRoute,
   SelectRoute: SelectRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
