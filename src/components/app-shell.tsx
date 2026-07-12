@@ -88,17 +88,18 @@ export function AppShell({
 
         <nav className="flex-1 px-3 py-4 space-y-1">
           {navItems.map((item) => {
+            const base = item.to.split("?")[0] as string;
             const active =
-              (item.to === pathname && !item.to.includes("?")) ||
-              (item.to.startsWith(pathname) && pathname !== "/");
+              base === pathname ||
+              (base !== "/" && pathname.startsWith(base + "/"));
             const Icon = item.icon;
             return (
               <Link
                 key={item.to + item.label}
-                to={item.to.split("?")[0] as string}
+                to={base}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
                   active
-                    ? "bg-white text-primary-deep font-semibold"
+                    ? "bg-white text-primary-deep font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
                     : "text-white/85 hover:bg-white/10"
                 }`}
               >
