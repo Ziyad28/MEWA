@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SelectRouteImport } from './routes/select'
+import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as PmoRouteImport } from './routes/pmo'
 import { Route as PmRouteImport } from './routes/pm'
 import { Route as ManagerRouteImport } from './routes/manager'
@@ -20,6 +21,11 @@ import { Route as CompaniesIdRouteImport } from './routes/companies.$id'
 const SelectRoute = SelectRouteImport.update({
   id: '/select',
   path: '/select',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PmoRoute = PmoRouteImport.update({
@@ -59,6 +65,7 @@ export interface FileRoutesByFullPath {
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
+  '/projects': typeof ProjectsRoute
   '/select': typeof SelectRoute
   '/companies/$id': typeof CompaniesIdRoute
 }
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
+  '/projects': typeof ProjectsRoute
   '/select': typeof SelectRoute
   '/companies/$id': typeof CompaniesIdRoute
 }
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
   '/pmo': typeof PmoRoute
+  '/projects': typeof ProjectsRoute
   '/select': typeof SelectRoute
   '/companies/$id': typeof CompaniesIdRoute
 }
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/manager'
     | '/pm'
     | '/pmo'
+    | '/projects'
     | '/select'
     | '/companies/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -98,6 +108,7 @@ export interface FileRouteTypes {
     | '/manager'
     | '/pm'
     | '/pmo'
+    | '/projects'
     | '/select'
     | '/companies/$id'
   id:
@@ -107,6 +118,7 @@ export interface FileRouteTypes {
     | '/manager'
     | '/pm'
     | '/pmo'
+    | '/projects'
     | '/select'
     | '/companies/$id'
   fileRoutesById: FileRoutesById
@@ -117,6 +129,7 @@ export interface RootRouteChildren {
   ManagerRoute: typeof ManagerRoute
   PmRoute: typeof PmRoute
   PmoRoute: typeof PmoRoute
+  ProjectsRoute: typeof ProjectsRoute
   SelectRoute: typeof SelectRoute
 }
 
@@ -127,6 +140,13 @@ declare module '@tanstack/react-router' {
       path: '/select'
       fullPath: '/select'
       preLoaderRoute: typeof SelectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pmo': {
@@ -192,6 +212,7 @@ const rootRouteChildren: RootRouteChildren = {
   ManagerRoute: ManagerRoute,
   PmRoute: PmRoute,
   PmoRoute: PmoRoute,
+  ProjectsRoute: ProjectsRoute,
   SelectRoute: SelectRoute,
 }
 export const routeTree = rootRouteImport
