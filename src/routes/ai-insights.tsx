@@ -7,7 +7,7 @@ import { AI_RECOMMENDATIONS, PROJECTS } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/ai-insights")({
   component: AIInsightsPage,
-  head: () => ({ meta: [{ title: "تحليلات الذكاء الاصطناعي — منصة إدارة المشاريع" }] }),
+  head: () => ({ meta: [{ title: "القرارات الذكية — منصة إدارة المشاريع" }] }),
 });
 
 function AIInsightsPage() {
