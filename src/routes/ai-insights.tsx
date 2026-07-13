@@ -7,7 +7,7 @@ import { AI_RECOMMENDATIONS, PROJECTS } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/ai-insights")({
   component: AIInsightsPage,
-  head: () => ({ meta: [{ title: "تحليلات الذكاء الاصطناعي — منصة إدارة المشاريع" }] }),
+  head: () => ({ meta: [{ title: "القرارات الذكية — منصة إدارة المشاريع" }] }),
 });
 
 function AIInsightsPage() {
@@ -29,8 +29,8 @@ function AIInsightsPage() {
       role={user.role}
       userName={user.name}
       roleLabel={user.roleLabel}
-      pageTitle="تحليلات الذكاء الاصطناعي"
-      pageSubtitle="رؤى وتحليلات آلية لدعم القرار وحوكمة المشاريع"
+      pageTitle="القرارات الذكية"
+      pageSubtitle="توصيات ذكية وقرارات مقترحة لدعم الحوكمة والإجراءات التصحيحية"
     >
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <MetricBlock icon={<TrendingUp className="h-4 w-4" />} label="متوسط مؤشر الصحة" value={`${avgHealth}%`} tone="success" />

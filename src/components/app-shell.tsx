@@ -16,7 +16,7 @@ import {
   Calendar,
   ChevronDown,
 } from "lucide-react";
-import logo from "@/assets/mewa-logo.png.asset.json";
+import logoWhite from "@/assets/mewa-logo-secondary.png.asset.json";
 import { getUser, logout, type Role } from "@/lib/auth";
 
 interface NavItem {
@@ -31,19 +31,19 @@ const NAV: Record<Role, NavItem[]> = {
     { to: "/projects", label: "المشاريع", icon: FolderKanban },
     { to: "/documents", label: "الوثائق", icon: FileText },
     { to: "/reports", label: "التقارير", icon: BarChart3 },
-    { to: "/ai-insights", label: "تحليلات الذكاء الاصطناعي", icon: Sparkles },
+    { to: "/ai-insights", label: "القرارات الذكية", icon: Sparkles },
   ],
   manager: [
     { to: "/manager", label: "الرئيسية", icon: Home },
     { to: "/projects", label: "المشاريع", icon: FolderKanban },
     { to: "/reports", label: "التقارير", icon: BarChart3 },
-    { to: "/ai-insights", label: "تحليلات الذكاء الاصطناعي", icon: Sparkles },
+    { to: "/ai-insights", label: "القرارات الذكية", icon: Sparkles },
   ],
   pm: [
     { to: "/pm", label: "الرئيسية", icon: Home },
     { to: "/projects", label: "المشاريع", icon: FolderKanban },
     { to: "/documents", label: "الوثائق", icon: FileText },
-    { to: "/ai-insights", label: "تحليلات المشروع", icon: Sparkles },
+    { to: "/ai-insights", label: "القرارات الذكية", icon: Sparkles },
   ],
 };
 
@@ -76,13 +76,13 @@ export function AppShell({
     <div dir="rtl" className="min-h-screen bg-background text-foreground flex">
       {/* Sidebar */}
       <aside className="w-[260px] shrink-0 bg-sidebar text-sidebar-foreground flex flex-col min-h-screen">
-        <div className="px-5 py-5 border-b border-white/10">
-          <div className="flex items-center gap-3">
-            <img src={logo.url} alt="وزارة البيئة" className="h-12 w-auto bg-white/5 rounded p-1" />
-          </div>
-          <div className="mt-3 text-[13px] leading-5 text-white/85">
+        <div className="px-5 pt-6 pb-5 border-b border-white/10 flex flex-col items-center text-center">
+          <img src={logoWhite.url} alt="وزارة البيئة والمياه والزراعة" className="h-20 w-auto" />
+          <div className="mt-3 text-[13px] font-semibold text-white leading-5">
             وزارة البيئة والمياه والزراعة
-            <div className="text-[11px] text-white/60">Ministry of Environment Water & Agriculture</div>
+          </div>
+          <div className="text-[10px] text-white/70 mt-0.5 tracking-wide">
+            Ministry of Environment Water &amp; Agriculture
           </div>
         </div>
 

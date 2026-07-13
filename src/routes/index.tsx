@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { User, Lock, LogIn, Fingerprint } from "lucide-react";
-import logo from "@/assets/mewa-logo.png.asset.json";
+import logo from "@/assets/mewa-logo-primary.png.asset.json";
+import logoWhite from "@/assets/mewa-logo-secondary.png.asset.json";
 import heroImg from "@/assets/login-hero.jpg";
 import { getUser, login, roleHome } from "@/lib/auth";
 
@@ -43,7 +44,7 @@ function LoginPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-primary-deep/70 via-primary-deep/40 to-primary-deep/90" />
         <div className="relative z-10 h-full flex flex-col p-10 text-white">
           <div className="flex items-center gap-3">
-            <img src={logo.url} alt="" className="h-14 w-auto bg-white/10 backdrop-blur rounded-md p-1" />
+            <img src={logoWhite.url} alt="" className="h-20 w-auto" />
           </div>
           <div className="flex-1 flex items-center">
             <div>
