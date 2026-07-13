@@ -26,6 +26,8 @@ export interface Project {
 export interface Company {
   id: number;
   name: string;
+  nameEn: string;
+  domain: string;
   description: string;
   regNo: string;
   address: string;
@@ -41,12 +43,12 @@ export interface Company {
 }
 
 export const COMPANIES: Company[] = [
-  { id: 1, name: "شركة تقنيات المياه المتقدمة", description: "حلول رقمية لإدارة قطاع المياه والبنية التحتية.", regNo: "1010234567", address: "الرياض - حي العليا", email: "info@waterco.sa", phone: "+966 11 234 5678", website: "waterco.sa", contactPerson: "م. سعد الغامدي", sector: "المياه", status: "نشط", performance: 88, commitment: 92, since: "2022/03/15" },
-  { id: 2, name: "الحلول البيئية الذكية", description: "أنظمة رصد ومراقبة بيئية متكاملة.", regNo: "1010345678", address: "جدة - حي الروضة", email: "contact@envsmart.sa", phone: "+966 12 345 6789", website: "envsmart.sa", contactPerson: "أ. نورة العتيبي", sector: "البيئة", status: "نشط", performance: 76, commitment: 81, since: "2021/07/20" },
-  { id: 3, name: "مجموعة الزراعة الرقمية", description: "منصات تقنية للزراعة الذكية وإنترنت الأشياء.", regNo: "1010456789", address: "الدمام - حي الفيصلية", email: "hello@agridigital.sa", phone: "+966 13 456 7890", website: "agridigital.sa", contactPerson: "م. فيصل القحطاني", sector: "الزراعة", status: "نشط", performance: 82, commitment: 78, since: "2023/01/10" },
-  { id: 4, name: "شركة البنية التحتية الوطنية", description: "تنفيذ مشاريع البنية التحتية التقنية.", regNo: "1010567890", address: "الرياض - حي الملقا", email: "info@nis.sa", phone: "+966 11 567 8901", website: "nis.sa", contactPerson: "م. عبدالرحمن الدوسري", sector: "المياه", status: "نشط", performance: 70, commitment: 68, since: "2020/11/02" },
-  { id: 5, name: "مركز الأمن السيبراني", description: "خدمات الأمن السيبراني وحماية البيانات.", regNo: "1010678901", address: "الرياض - حي السفارات", email: "info@cybersec.sa", phone: "+966 11 678 9012", website: "cybersec.sa", contactPerson: "أ. ريم الزهراني", sector: "البيئة", status: "قيد المراجعة", performance: 74, commitment: 80, since: "2022/09/05" },
-  { id: 6, name: "شركة التحول الرقمي المتحدة", description: "حلول التحول الرقمي للجهات الحكومية.", regNo: "1010789012", address: "الرياض - حي الياسمين", email: "info@dtu.sa", phone: "+966 11 789 0123", website: "dtu.sa", contactPerson: "م. ماجد العنزي", sector: "الزراعة", status: "نشط", performance: 90, commitment: 94, since: "2021/02/18" },
+  { id: 1, name: "شركة الاتصالات السعودية (stc)", nameEn: "stc", domain: "stc.com.sa", description: "خدمات الاتصالات وحلول تقنية المعلومات للجهات الحكومية.", regNo: "1010150269", address: "الرياض - حي العليا", email: "gov@stc.com.sa", phone: "+966 11 455 0000", website: "stc.com.sa", contactPerson: "م. سعد الغامدي", sector: "المياه", status: "نشط", performance: 88, commitment: 92, since: "2022/03/15" },
+  { id: 2, name: "شركة علم", nameEn: "Elm", domain: "elm.sa", description: "حلول أعمال رقمية آمنة للقطاع الحكومي.", regNo: "1010203854", address: "الرياض - حي الملقا", email: "gov@elm.sa", phone: "+966 11 806 2000", website: "elm.sa", contactPerson: "أ. نورة العتيبي", sector: "البيئة", status: "نشط", performance: 76, commitment: 81, since: "2021/07/20" },
+  { id: 3, name: "شركة إجادة للاستشارات", nameEn: "Ejada", domain: "ejada.com", description: "حلول التحول الرقمي وتكامل الأنظمة للقطاع العام.", regNo: "1010192431", address: "الرياض - حي الورود", email: "info@ejada.com", phone: "+966 11 293 9666", website: "ejada.com", contactPerson: "م. فيصل القحطاني", sector: "الزراعة", status: "نشط", performance: 82, commitment: 78, since: "2023/01/10" },
+  { id: 4, name: "شركة حلول للخدمات الرقمية (stc s)", nameEn: "Solutions by stc", domain: "solutions.com.sa", description: "خدمات إدارة تقنية المعلومات والحوسبة السحابية.", regNo: "1010333820", address: "الرياض - حي الياسمين", email: "hello@solutions.com.sa", phone: "+966 11 200 6666", website: "solutions.com.sa", contactPerson: "م. عبدالرحمن الدوسري", sector: "المياه", status: "نشط", performance: 70, commitment: 68, since: "2020/11/02" },
+  { id: 5, name: "الشركة السعودية للصناعات العسكرية (SAMI)", nameEn: "SAMI", domain: "sami.com.sa", description: "أنظمة أمنية وسيبرانية متقدمة.", regNo: "1010528540", address: "الرياض - حي السفارات", email: "info@sami.com.sa", phone: "+966 11 517 7777", website: "sami.com.sa", contactPerson: "أ. ريم الزهراني", sector: "البيئة", status: "قيد المراجعة", performance: 74, commitment: 80, since: "2022/09/05" },
+  { id: 6, name: "شركة تكامل للخدمات (SITE)", nameEn: "SITE", domain: "site.sa", description: "بنية تحتية رقمية آمنة وخدمات سحابية سيادية.", regNo: "1010587123", address: "الرياض - حي الملز", email: "info@site.sa", phone: "+966 11 288 8888", website: "site.sa", contactPerson: "م. ماجد العنزي", sector: "الزراعة", status: "نشط", performance: 90, commitment: 94, since: "2021/02/18" },
 ];
 
 export const PROJECTS: Project[] = [
