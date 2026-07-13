@@ -46,19 +46,33 @@ function CompanyDetail() {
 
       {/* Company info */}
       <Card>
-        <div className="p-5 flex items-start gap-5">
-          <div className="h-16 w-16 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-            <Building2 className="h-8 w-8" />
+        <div className="p-6 flex items-start gap-5">
+          <div className="h-20 w-20 rounded-xl bg-white border border-border flex items-center justify-center shrink-0 overflow-hidden">
+            <img
+              src={`https://www.google.com/s2/favicons?sz=128&domain=${company.domain}`}
+              alt={company.nameEn}
+              className="h-14 w-14 object-contain"
+              onError={(e) => {
+                const el = e.currentTarget as HTMLImageElement;
+                el.style.display = "none";
+              }}
+            />
           </div>
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
-            <InfoRow label="رقم السجل" value={company.regNo} />
-            <InfoRow label="القطاع" value={company.sector} />
-            <InfoRow label="مسؤول التواصل" value={company.contactPerson} />
-            <InfoRow label="حالة التعاون" value={company.status} />
-            <InfoRow label="البريد الإلكتروني" value={company.email} icon={<Mail className="h-3.5 w-3.5" />} />
-            <InfoRow label="رقم الهاتف" value={company.phone} icon={<Phone className="h-3.5 w-3.5" />} />
-            <InfoRow label="العنوان" value={company.address} icon={<MapPin className="h-3.5 w-3.5" />} />
-            <InfoRow label="الموقع الإلكتروني" value={company.website} icon={<Globe className="h-3.5 w-3.5" />} />
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge tone="primary">{company.sector}</Badge>
+              <Badge tone={company.status === "نشط" ? "success" : company.status === "قيد المراجعة" ? "warning" : "muted"}>{company.status}</Badge>
+              <span className="text-[11px] text-muted-foreground">شراكة منذ {company.since}</span>
+            </div>
+            <div className="mt-2 text-[13px] text-muted-foreground">{company.nameEn}</div>
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+              <InfoRow label="رقم السجل" value={company.regNo} />
+              <InfoRow label="مسؤول التواصل" value={company.contactPerson} />
+              <InfoRow label="البريد الإلكتروني" value={company.email} icon={<Mail className="h-3.5 w-3.5" />} />
+              <InfoRow label="رقم الهاتف" value={company.phone} icon={<Phone className="h-3.5 w-3.5" />} />
+              <InfoRow label="العنوان" value={company.address} icon={<MapPin className="h-3.5 w-3.5" />} />
+              <InfoRow label="الموقع الإلكتروني" value={company.website} icon={<Globe className="h-3.5 w-3.5" />} />
+            </div>
           </div>
         </div>
       </Card>
