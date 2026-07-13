@@ -16,7 +16,7 @@ import {
   Calendar,
   ChevronDown,
 } from "lucide-react";
-import logo from "@/assets/mewa-logo.png.asset.json";
+import logoWhite from "@/assets/mewa-logo-secondary.png.asset.json";
 import { getUser, logout, type Role } from "@/lib/auth";
 
 interface NavItem {
@@ -31,19 +31,19 @@ const NAV: Record<Role, NavItem[]> = {
     { to: "/projects", label: "المشاريع", icon: FolderKanban },
     { to: "/documents", label: "الوثائق", icon: FileText },
     { to: "/reports", label: "التقارير", icon: BarChart3 },
-    { to: "/ai-insights", label: "تحليلات الذكاء الاصطناعي", icon: Sparkles },
+    { to: "/ai-insights", label: "القرارات الذكية", icon: Sparkles },
   ],
   manager: [
     { to: "/manager", label: "الرئيسية", icon: Home },
     { to: "/projects", label: "المشاريع", icon: FolderKanban },
     { to: "/reports", label: "التقارير", icon: BarChart3 },
-    { to: "/ai-insights", label: "تحليلات الذكاء الاصطناعي", icon: Sparkles },
+    { to: "/ai-insights", label: "القرارات الذكية", icon: Sparkles },
   ],
   pm: [
     { to: "/pm", label: "الرئيسية", icon: Home },
     { to: "/projects", label: "المشاريع", icon: FolderKanban },
     { to: "/documents", label: "الوثائق", icon: FileText },
-    { to: "/ai-insights", label: "تحليلات المشروع", icon: Sparkles },
+    { to: "/ai-insights", label: "القرارات الذكية", icon: Sparkles },
   ],
 };
 
