@@ -64,44 +64,65 @@ function CompaniesList() {
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filtered.map((c) => (
-          <div key={c.id} className="bg-card border border-border rounded-xl p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)] hover:shadow-md transition-shadow flex flex-col">
-            <div className="flex items-start gap-3">
-              <div className="h-12 w-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                <Building2 className="h-6 w-6" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-foreground truncate">{c.name}</h3>
-                <div className="mt-1 flex items-center gap-2">
-                  <Badge tone="primary">{c.sector}</Badge>
-                  <Badge tone={c.status === "نشط" ? "success" : c.status === "قيد المراجعة" ? "warning" : "muted"}>{c.status}</Badge>
+        {filtered.map((c) => {
+          const active = PROJECTS.filter((p) => p.companyId === c.id && p.status !== "مكتملة").length;
+          const total = PROJECTS.filter((p) => p.companyId === c.id).length;
+          return (
+            <Link
+              key={c.id}
+              to="/companies/$id"
+              params={{ id: String(c.id) }}
+              className="bg-card border border-border rounded-xl p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)] hover:shadow-md hover:border-primary/40 transition-all flex flex-col"
+            >
+              <div className="flex items-start gap-3">
+                <div className="h-14 w-14 rounded-xl bg-white border border-border flex items-center justify-center shrink-0 overflow-hidden">
+                  <img
+                    src={`https://www.google.com/s2/favicons?sz=128&domain=${c.domain}`}
+                    alt={c.nameEn}
+                    className="h-10 w-10 object-contain"
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-foreground truncate">{c.name}</h3>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">{c.nameEn}</div>
+                  <div className="mt-1.5 flex items-center gap-2 flex-wrap">
+                    <Badge tone="primary">{c.sector}</Badge>
+                    <Badge tone={c.status === "نشط" ? "success" : c.status === "قيد المراجعة" ? "warning" : "muted"}>{c.status}</Badge>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="mt-4 space-y-1.5 text-xs text-muted-foreground">
-              <div>مسؤول التواصل: <span className="text-foreground">{c.contactPerson}</span></div>
-              <div className="flex items-center gap-1.5"><Mail className="h-3 w-3" /> {c.email}</div>
-              <div className="flex items-center gap-1.5"><Phone className="h-3 w-3" /> {c.phone}</div>
-            </div>
+              <p className="mt-4 text-xs text-muted-foreground leading-relaxed line-clamp-2">{c.description}</p>
 
-            <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-              <div>
-                <div className="text-xs text-muted-foreground">متوسط الأداء</div>
-                <div className="text-lg font-bold text-primary">{c.performance}%</div>
+              <div className="mt-4 grid grid-cols-3 gap-2 text-center pt-4 border-t border-border">
+                <div>
+                  <div className="text-[10px] text-muted-foreground">مشاريع نشطة</div>
+                  <div className="text-sm font-bold text-foreground flex items-center justify-center gap-1"><FolderKanban className="h-3 w-3 text-primary" />{active}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-muted-foreground">إجمالي</div>
+                  <div className="text-sm font-bold text-foreground">{total}</div>
+                </div>
+                <div>
+                  <div className="text-[10px] text-muted-foreground">الأداء</div>
+                  <div className={`text-sm font-bold flex items-center justify-center gap-1 ${c.performance >= 80 ? "text-green-600" : c.performance >= 65 ? "text-amber-600" : "text-red-600"}`}>
+                    <TrendingUp className="h-3 w-3" />{c.performance}%
+                  </div>
+                </div>
               </div>
-              <Link
-                to="/companies/$id"
-                params={{ id: String(c.id) }}
-                className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg bg-primary-deep text-white text-xs font-semibold hover:bg-primary"
-              >
-                عرض التفاصيل
-                <ArrowLeft className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-          </div>
-        ))}
+
+              <div className="mt-4 flex items-center justify-between text-[11px] text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5"><Mail className="h-3 w-3" />{c.email}</span>
+                <span className="text-primary font-semibold inline-flex items-center gap-1">التفاصيل <ArrowLeft className="h-3 w-3" /></span>
+              </div>
+            </Link>
+          );
+        })}
       </div>
     </AppShell>
   );
 }
+
+// Suppress unused warnings for icons kept for future use
+void Building2; void Phone;
