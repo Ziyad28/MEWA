@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { User, Lock, LogIn, Fingerprint } from "lucide-react";
-import logo from "@/assets/mewa-logo.png.asset.json";
+import logo from "@/assets/mewa-logo-primary.png.asset.json";
+import logoWhite from "@/assets/mewa-logo-secondary.png.asset.json";
 import heroImg from "@/assets/login-hero.jpg";
 import { getUser, login, roleHome } from "@/lib/auth";
 
