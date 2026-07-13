@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Search, Building2, Mail, Phone, ArrowLeft } from "lucide-react";
+import { Search, Building2, Mail, Phone, ArrowLeft, TrendingUp, FolderKanban } from "lucide-react";
+import { PROJECTS } from "@/lib/mock-data";
 import { AppShell, useRequireAuth } from "@/components/app-shell";
 import { Card, Badge } from "@/components/ui-bits";
 import { COMPANIES, SECTORS } from "@/lib/mock-data";
