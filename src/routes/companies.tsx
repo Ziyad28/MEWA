@@ -5,7 +5,7 @@ import { PROJECTS } from "@/lib/mock-data";
 import { AppShell, useRequireAuth } from "@/components/app-shell";
 import { Card, Badge } from "@/components/ui-bits";
 import { COMPANIES, SECTORS } from "@/lib/mock-data";
-import { getUser } from "@/lib/auth";
+
 
 export const Route = createFileRoute("/companies")({
   component: CompaniesList,
