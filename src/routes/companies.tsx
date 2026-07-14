@@ -17,14 +17,22 @@ function CompaniesList() {
   const [sector, setSector] = useState<string>("all");
   const [status, setStatus] = useState<string>("all");
 
+  const scoped = useMemo(() => {
+    if (user?.role === "pm") {
+      const myCompanyIds = new Set(PROJECTS.filter((p) => p.manager === user.name).map((p) => p.companyId));
+      return COMPANIES.filter((c) => myCompanyIds.has(c.id));
+    }
+    return COMPANIES;
+  }, [user]);
+
   const filtered = useMemo(() => {
-    return COMPANIES.filter((c) => {
+    return scoped.filter((c) => {
       if (q && !c.name.includes(q)) return false;
       if (sector !== "all" && c.sector !== sector) return false;
       if (status !== "all" && c.status !== status) return false;
       return true;
     });
-  }, [q, sector, status]);
+  }, [q, sector, status, scoped]);
 
   if (!user) return null;
 
