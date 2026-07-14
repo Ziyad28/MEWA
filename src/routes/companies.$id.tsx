@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Building2, Mail, Phone, Globe, MapPin, FileText, Download, ArrowRight } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { Mail, Phone, Globe, MapPin, FileText, Download, ArrowRight, FileSignature, CalendarDays, CalendarCheck2, User as UserIcon, Clock } from "lucide-react";
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { AppShell, useRequireAuth } from "@/components/app-shell";
 import { Card, CardHeader, Badge, ProgressBar } from "@/components/ui-bits";
 import { COMPANIES, PROJECTS } from "@/lib/mock-data";
