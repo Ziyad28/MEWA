@@ -24,8 +24,13 @@ function ProjectsPage() {
   const [company, setCompany] = useState<string>("all");
   const [view, setView] = useState<"table" | "card">("table");
 
+  const scoped = useMemo(
+    () => (user?.role === "pm" ? PROJECTS.filter((p) => p.manager === user.name) : PROJECTS),
+    [user]
+  );
+
   const filtered = useMemo(() => {
-    return PROJECTS.filter((p) => {
+    return scoped.filter((p) => {
       if (q && !p.name.includes(q) && !p.manager.includes(q)) return false;
       if (sector !== "all" && p.sector !== sector) return false;
       if (status !== "all" && p.status !== status) return false;
@@ -33,18 +38,19 @@ function ProjectsPage() {
       if (company !== "all" && String(p.companyId) !== company) return false;
       return true;
     });
-  }, [q, sector, status, priority, company]);
+  }, [scoped, q, sector, status, priority, company]);
 
   if (!user) return null;
   const canAdd = user.role === "pmo";
+  const isPm = user.role === "pm";
 
   return (
     <AppShell
       role={user.role}
       userName={user.name}
       roleLabel={user.roleLabel}
-      pageTitle="المشاريع"
-      pageSubtitle="إدارة ومتابعة جميع المشاريع التقنية التابعة للوزارة"
+      pageTitle={isPm ? "مشاريعي" : "مشاريع الوزارة"}
+      pageSubtitle={isPm ? "المشاريع التي أنت مكلّف بإدارتها" : "إدارة ومتابعة جميع المشاريع التقنية التابعة للوزارة"}
     >
       <Card className="p-4">
         <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
