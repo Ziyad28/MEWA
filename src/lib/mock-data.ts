@@ -35,20 +35,35 @@ export interface Company {
   phone: string;
   website: string;
   contactPerson: string;
+  contactRole: string;
   sector: Sector;
   status: "نشط" | "قيد المراجعة" | "منتهي";
   performance: number;
   commitment: number;
   since: string;
+  contractNo: string;
+  contractStart: string;
+  contractEnd: string;
+  lastUpdate: string;
+  perfHistory: { month: string; value: number }[];
 }
 
+const PH = (base: number) => [
+  { month: "يناير", value: Math.max(40, base - 12) },
+  { month: "فبراير", value: Math.max(45, base - 8) },
+  { month: "مارس", value: Math.max(50, base - 5) },
+  { month: "أبريل", value: Math.max(55, base - 2) },
+  { month: "مايو", value: base - 1 },
+  { month: "يونيو", value: base },
+];
+
 export const COMPANIES: Company[] = [
-  { id: 1, name: "شركة الاتصالات السعودية (stc)", nameEn: "stc", domain: "stc.com.sa", description: "خدمات الاتصالات وحلول تقنية المعلومات للجهات الحكومية.", regNo: "1010150269", address: "الرياض - حي العليا", email: "gov@stc.com.sa", phone: "+966 11 455 0000", website: "stc.com.sa", contactPerson: "م. سعد الغامدي", sector: "المياه", status: "نشط", performance: 88, commitment: 92, since: "2022/03/15" },
-  { id: 2, name: "شركة علم", nameEn: "Elm", domain: "elm.sa", description: "حلول أعمال رقمية آمنة للقطاع الحكومي.", regNo: "1010203854", address: "الرياض - حي الملقا", email: "gov@elm.sa", phone: "+966 11 806 2000", website: "elm.sa", contactPerson: "أ. نورة العتيبي", sector: "البيئة", status: "نشط", performance: 76, commitment: 81, since: "2021/07/20" },
-  { id: 3, name: "شركة إجادة للاستشارات", nameEn: "Ejada", domain: "ejada.com", description: "حلول التحول الرقمي وتكامل الأنظمة للقطاع العام.", regNo: "1010192431", address: "الرياض - حي الورود", email: "info@ejada.com", phone: "+966 11 293 9666", website: "ejada.com", contactPerson: "م. فيصل القحطاني", sector: "الزراعة", status: "نشط", performance: 82, commitment: 78, since: "2023/01/10" },
-  { id: 4, name: "شركة حلول للخدمات الرقمية (stc s)", nameEn: "Solutions by stc", domain: "solutions.com.sa", description: "خدمات إدارة تقنية المعلومات والحوسبة السحابية.", regNo: "1010333820", address: "الرياض - حي الياسمين", email: "hello@solutions.com.sa", phone: "+966 11 200 6666", website: "solutions.com.sa", contactPerson: "م. عبدالرحمن الدوسري", sector: "المياه", status: "نشط", performance: 70, commitment: 68, since: "2020/11/02" },
-  { id: 5, name: "الشركة السعودية للصناعات العسكرية (SAMI)", nameEn: "SAMI", domain: "sami.com.sa", description: "أنظمة أمنية وسيبرانية متقدمة.", regNo: "1010528540", address: "الرياض - حي السفارات", email: "info@sami.com.sa", phone: "+966 11 517 7777", website: "sami.com.sa", contactPerson: "أ. ريم الزهراني", sector: "البيئة", status: "قيد المراجعة", performance: 74, commitment: 80, since: "2022/09/05" },
-  { id: 6, name: "شركة تكامل للخدمات (SITE)", nameEn: "SITE", domain: "site.sa", description: "بنية تحتية رقمية آمنة وخدمات سحابية سيادية.", regNo: "1010587123", address: "الرياض - حي الملز", email: "info@site.sa", phone: "+966 11 288 8888", website: "site.sa", contactPerson: "م. ماجد العنزي", sector: "الزراعة", status: "نشط", performance: 90, commitment: 94, since: "2021/02/18" },
+  { id: 1, name: "شركة الاتصالات السعودية (stc)", nameEn: "stc", domain: "stc.com.sa", description: "خدمات الاتصالات وحلول تقنية المعلومات للجهات الحكومية.", regNo: "1010150269", address: "الرياض - حي العليا", email: "gov@stc.com.sa", phone: "+966 11 455 0000", website: "stc.com.sa", contactPerson: "م. سعد الغامدي", contactRole: "مدير حسابات القطاع الحكومي", sector: "المياه", status: "نشط", performance: 88, commitment: 92, since: "2022/03/15", contractNo: "MEWA-2022-018", contractStart: "2022/03/15", contractEnd: "2026/03/14", lastUpdate: "2025/06/28", perfHistory: PH(88) },
+  { id: 2, name: "شركة علم", nameEn: "Elm", domain: "elm.sa", description: "حلول أعمال رقمية آمنة للقطاع الحكومي.", regNo: "1010203854", address: "الرياض - حي الملقا", email: "gov@elm.sa", phone: "+966 11 806 2000", website: "elm.sa", contactPerson: "أ. نورة العتيبي", contactRole: "مديرة تنفيذ المشاريع", sector: "البيئة", status: "نشط", performance: 76, commitment: 81, since: "2021/07/20", contractNo: "MEWA-2021-034", contractStart: "2021/07/20", contractEnd: "2025/12/31", lastUpdate: "2025/06/24", perfHistory: PH(76) },
+  { id: 3, name: "شركة إجادة للاستشارات", nameEn: "Ejada", domain: "ejada.com", description: "حلول التحول الرقمي وتكامل الأنظمة للقطاع العام.", regNo: "1010192431", address: "الرياض - حي الورود", email: "info@ejada.com", phone: "+966 11 293 9666", website: "ejada.com", contactPerson: "م. فيصل القحطاني", contactRole: "مدير برنامج التحول الرقمي", sector: "الزراعة", status: "نشط", performance: 82, commitment: 78, since: "2023/01/10", contractNo: "MEWA-2023-005", contractStart: "2023/01/10", contractEnd: "2026/01/09", lastUpdate: "2025/06/22", perfHistory: PH(82) },
+  { id: 4, name: "شركة حلول للخدمات الرقمية (stc s)", nameEn: "Solutions by stc", domain: "solutions.com.sa", description: "خدمات إدارة تقنية المعلومات والحوسبة السحابية.", regNo: "1010333820", address: "الرياض - حي الياسمين", email: "hello@solutions.com.sa", phone: "+966 11 200 6666", website: "solutions.com.sa", contactPerson: "م. عبدالرحمن الدوسري", contactRole: "مدير الحسابات الحكومية", sector: "المياه", status: "نشط", performance: 70, commitment: 68, since: "2020/11/02", contractNo: "MEWA-2020-042", contractStart: "2020/11/02", contractEnd: "2025/11/01", lastUpdate: "2025/06/20", perfHistory: PH(70) },
+  { id: 5, name: "الشركة السعودية للصناعات العسكرية (SAMI)", nameEn: "SAMI", domain: "sami.com.sa", description: "أنظمة أمنية وسيبرانية متقدمة.", regNo: "1010528540", address: "الرياض - حي السفارات", email: "info@sami.com.sa", phone: "+966 11 517 7777", website: "sami.com.sa", contactPerson: "أ. ريم الزهراني", contactRole: "مديرة الشراكات الحكومية", sector: "البيئة", status: "قيد المراجعة", performance: 74, commitment: 80, since: "2022/09/05", contractNo: "MEWA-2022-061", contractStart: "2022/09/05", contractEnd: "2025/09/04", lastUpdate: "2025/06/18", perfHistory: PH(74) },
+  { id: 6, name: "شركة تكامل للخدمات (SITE)", nameEn: "SITE", domain: "site.sa", description: "بنية تحتية رقمية آمنة وخدمات سحابية سيادية.", regNo: "1010587123", address: "الرياض - حي الملز", email: "info@site.sa", phone: "+966 11 288 8888", website: "site.sa", contactPerson: "م. ماجد العنزي", contactRole: "المدير التنفيذي للعمليات", sector: "الزراعة", status: "نشط", performance: 90, commitment: 94, since: "2021/02/18", contractNo: "MEWA-2021-011", contractStart: "2021/02/18", contractEnd: "2026/02/17", lastUpdate: "2025/06/29", perfHistory: PH(90) },
 ];
 
 export const PROJECTS: Project[] = [
