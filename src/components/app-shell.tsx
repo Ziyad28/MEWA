@@ -77,13 +77,13 @@ export function AppShell({
     <div dir="rtl" className="min-h-screen bg-background text-foreground flex">
       {/* Sidebar */}
       <aside className="w-[260px] shrink-0 bg-sidebar text-sidebar-foreground flex flex-col min-h-screen">
-        <div className="px-5 pt-6 pb-5 border-b border-white/10 flex flex-col items-center text-center">
-          <img src={logoWhite.url} alt="وزارة البيئة والمياه والزراعة" className="h-20 w-auto" />
-          <div className="mt-3 text-[13px] font-semibold text-white leading-5">
-            وزارة البيئة والمياه والزراعة
+        <div className="px-4 pt-5 pb-4 border-b border-white/10 flex items-center gap-3">
+          <div className="h-11 w-11 rounded-lg bg-white/10 border border-white/15 flex items-center justify-center shrink-0">
+            <img src={logoWhite.url} alt="وزارة البيئة والمياه والزراعة" className="h-8 w-auto" />
           </div>
-          <div className="text-[10px] text-white/70 mt-0.5 tracking-wide">
-            Ministry of Environment Water &amp; Agriculture
+          <div className="leading-tight min-w-0">
+            <div className="text-[12px] font-semibold text-white truncate">وزارة البيئة والمياه والزراعة</div>
+            <div className="text-[9.5px] text-white/65 mt-0.5 truncate">Ministry of Environment Water &amp; Agriculture</div>
           </div>
         </div>
 
