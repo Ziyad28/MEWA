@@ -28,20 +28,21 @@ interface NavItem {
 const NAV: Record<Role, NavItem[]> = {
   pmo: [
     { to: "/pmo", label: "الرئيسية", icon: Home },
-    { to: "/projects", label: "المشاريع", icon: FolderKanban },
+    { to: "/projects", label: "مشاريع الوزارة", icon: FolderKanban },
     { to: "/documents", label: "الوثائق", icon: FileText },
+    { to: "/companies", label: "الشركات المتعاونة", icon: Building2 },
     { to: "/reports", label: "التقارير", icon: BarChart3 },
     { to: "/ai-insights", label: "القرارات الذكية", icon: Sparkles },
   ],
   manager: [
     { to: "/manager", label: "الرئيسية", icon: Home },
-    { to: "/projects", label: "المشاريع", icon: FolderKanban },
+    { to: "/projects", label: "مشاريع الوزارة", icon: FolderKanban },
     { to: "/reports", label: "التقارير", icon: BarChart3 },
     { to: "/ai-insights", label: "القرارات الذكية", icon: Sparkles },
   ],
   pm: [
     { to: "/pm", label: "الرئيسية", icon: Home },
-    { to: "/projects", label: "المشاريع", icon: FolderKanban },
+    { to: "/projects", label: "مشاريعي", icon: FolderKanban },
     { to: "/documents", label: "الوثائق", icon: FileText },
     { to: "/ai-insights", label: "القرارات الذكية", icon: Sparkles },
   ],
