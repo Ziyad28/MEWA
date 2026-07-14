@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Building2, Mail, Phone, Globe, MapPin, FileText, Download, ArrowRight } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { Mail, Phone, Globe, MapPin, FileText, Download, ArrowRight, FileSignature, CalendarDays, CalendarCheck2, User as UserIcon, Clock } from "lucide-react";
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { AppShell, useRequireAuth } from "@/components/app-shell";
 import { Card, CardHeader, Badge, ProgressBar } from "@/components/ui-bits";
 import { COMPANIES, PROJECTS } from "@/lib/mock-data";
@@ -62,18 +62,33 @@ function CompanyDetail() {
             <div className="flex items-center gap-2 flex-wrap">
               <Badge tone="primary">{company.sector}</Badge>
               <Badge tone={company.status === "نشط" ? "success" : company.status === "قيد المراجعة" ? "warning" : "muted"}>{company.status}</Badge>
+              <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1"><Clock className="h-3 w-3" />آخر تحديث {company.lastUpdate}</span>
               <span className="text-[11px] text-muted-foreground">شراكة منذ {company.since}</span>
             </div>
-            <div className="mt-2 text-[13px] text-muted-foreground">{company.nameEn}</div>
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
-              <InfoRow label="رقم السجل" value={company.regNo} />
-              <InfoRow label="مسؤول التواصل" value={company.contactPerson} />
+            <h2 className="mt-2 text-lg font-bold text-foreground">{company.name}</h2>
+            <div className="text-[12px] text-muted-foreground">{company.nameEn}</div>
+            <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-3xl">{company.description}</p>
+            <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+              <InfoRow label="رقم السجل التجاري" value={company.regNo} />
+              <InfoRow label="مجال العمل" value={company.sector} />
+              <InfoRow label="مسؤول التواصل" value={company.contactPerson} icon={<UserIcon className="h-3.5 w-3.5" />} />
+              <InfoRow label="المسمى الوظيفي" value={company.contactRole} />
               <InfoRow label="البريد الإلكتروني" value={company.email} icon={<Mail className="h-3.5 w-3.5" />} />
               <InfoRow label="رقم الهاتف" value={company.phone} icon={<Phone className="h-3.5 w-3.5" />} />
               <InfoRow label="العنوان" value={company.address} icon={<MapPin className="h-3.5 w-3.5" />} />
               <InfoRow label="الموقع الإلكتروني" value={company.website} icon={<Globe className="h-3.5 w-3.5" />} />
             </div>
           </div>
+        </div>
+      </Card>
+
+      {/* Contract card */}
+      <Card>
+        <CardHeader title="بيانات العقد" />
+        <div className="px-5 pb-5 grid grid-cols-1 md:grid-cols-3 gap-3">
+          <ContractTile icon={<FileSignature className="h-4 w-4" />} label="رقم العقد" value={company.contractNo} />
+          <ContractTile icon={<CalendarDays className="h-4 w-4" />} label="بداية العقد" value={company.contractStart} />
+          <ContractTile icon={<CalendarCheck2 className="h-4 w-4" />} label="نهاية العقد" value={company.contractEnd} />
         </div>
       </Card>
 
@@ -174,18 +189,46 @@ function CompanyDetail() {
           <CardHeader title="تحليل الأداء عبر المشاريع" />
           <div className="px-5 pb-5 h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={perf}>
+              <BarChart data={perf} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eef2f0" />
-                <XAxis dataKey="name" reversed tick={{ fontSize: 11, fill: "#667085" }} />
-                <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#667085" }} />
+                <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" domain={[0, 100]} />
                 <Tooltip />
-                <Bar dataKey="value" fill="#005D45" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="value" fill="#00573F" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </Card>
       </div>
+
+      {/* Performance trend */}
+      <Card>
+        <CardHeader title="مؤشر أداء الشركة (آخر 6 أشهر)" />
+        <div className="px-5 pb-5 h-56">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={company.perfHistory} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eef2f0" />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#667085" }} />
+              <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" domain={[0, 100]} />
+              <Tooltip />
+              <Line type="monotone" dataKey="value" stroke="#C8A24A" strokeWidth={3} dot={{ r: 4, fill: "#C8A24A", strokeWidth: 2, stroke: "#fff" }} activeDot={{ r: 6 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
     </AppShell>
+  );
+}
+
+function ContractTile({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3">
+      <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">{icon}</div>
+      <div className="min-w-0">
+        <div className="text-[11px] text-muted-foreground">{label}</div>
+        <div className="text-sm font-semibold text-foreground truncate">{value}</div>
+      </div>
+    </div>
   );
 }
 

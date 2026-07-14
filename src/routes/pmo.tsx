@@ -39,12 +39,18 @@ function PmoDashboard() {
           <CardHeader title="نسبة تقدم المشاريع" />
           <div className="px-5 pb-5 h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={PROGRESS_SERIES}>
+              <LineChart data={PROGRESS_SERIES} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="progGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#00573F" stopOpacity={0.25} />
+                    <stop offset="100%" stopColor="#00573F" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eef2f0" />
-                <XAxis dataKey="month" reversed tick={{ fontSize: 12, fill: "#667085" }} />
-                <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" />
+                <XAxis dataKey="month" tick={{ fontSize: 12, fill: "#667085" }} />
+                <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" domain={[0, 100]} />
                 <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#005D45" strokeWidth={2.5} dot={{ r: 4, fill: "#005D45" }} />
+                <Line type="monotone" dataKey="value" stroke="#00573F" strokeWidth={3} dot={{ r: 4, fill: "#00573F", strokeWidth: 2, stroke: "#fff" }} activeDot={{ r: 6 }} fill="url(#progGrad)" />
               </LineChart>
             </ResponsiveContainer>
           </div>

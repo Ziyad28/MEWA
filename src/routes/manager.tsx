@@ -35,12 +35,12 @@ function ManagerDashboard() {
           <CardHeader title="نسبة تقدم المشاريع" />
           <div className="px-5 pb-5 h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={barData}>
+              <BarChart data={barData} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eef2f0" />
-                <XAxis dataKey="name" reversed tick={{ fontSize: 11, fill: "#667085" }} />
-                <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#667085" }} />
+                <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" domain={[0, 100]} />
                 <Tooltip />
-                <Bar dataKey="value" fill="#005D45" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="value" fill="#00573F" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
