@@ -62,18 +62,33 @@ function CompanyDetail() {
             <div className="flex items-center gap-2 flex-wrap">
               <Badge tone="primary">{company.sector}</Badge>
               <Badge tone={company.status === "نشط" ? "success" : company.status === "قيد المراجعة" ? "warning" : "muted"}>{company.status}</Badge>
+              <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1"><Clock className="h-3 w-3" />آخر تحديث {company.lastUpdate}</span>
               <span className="text-[11px] text-muted-foreground">شراكة منذ {company.since}</span>
             </div>
-            <div className="mt-2 text-[13px] text-muted-foreground">{company.nameEn}</div>
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
-              <InfoRow label="رقم السجل" value={company.regNo} />
-              <InfoRow label="مسؤول التواصل" value={company.contactPerson} />
+            <h2 className="mt-2 text-lg font-bold text-foreground">{company.name}</h2>
+            <div className="text-[12px] text-muted-foreground">{company.nameEn}</div>
+            <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-3xl">{company.description}</p>
+            <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+              <InfoRow label="رقم السجل التجاري" value={company.regNo} />
+              <InfoRow label="مجال العمل" value={company.sector} />
+              <InfoRow label="مسؤول التواصل" value={company.contactPerson} icon={<UserIcon className="h-3.5 w-3.5" />} />
+              <InfoRow label="المسمى الوظيفي" value={company.contactRole} />
               <InfoRow label="البريد الإلكتروني" value={company.email} icon={<Mail className="h-3.5 w-3.5" />} />
               <InfoRow label="رقم الهاتف" value={company.phone} icon={<Phone className="h-3.5 w-3.5" />} />
               <InfoRow label="العنوان" value={company.address} icon={<MapPin className="h-3.5 w-3.5" />} />
               <InfoRow label="الموقع الإلكتروني" value={company.website} icon={<Globe className="h-3.5 w-3.5" />} />
             </div>
           </div>
+        </div>
+      </Card>
+
+      {/* Contract card */}
+      <Card>
+        <CardHeader title="بيانات العقد" />
+        <div className="px-5 pb-5 grid grid-cols-1 md:grid-cols-3 gap-3">
+          <ContractTile icon={<FileSignature className="h-4 w-4" />} label="رقم العقد" value={company.contractNo} />
+          <ContractTile icon={<CalendarDays className="h-4 w-4" />} label="بداية العقد" value={company.contractStart} />
+          <ContractTile icon={<CalendarCheck2 className="h-4 w-4" />} label="نهاية العقد" value={company.contractEnd} />
         </div>
       </Card>
 
