@@ -189,18 +189,46 @@ function CompanyDetail() {
           <CardHeader title="تحليل الأداء عبر المشاريع" />
           <div className="px-5 pb-5 h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={perf}>
+              <BarChart data={perf} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#eef2f0" />
-                <XAxis dataKey="name" reversed tick={{ fontSize: 11, fill: "#667085" }} />
-                <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" />
+                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#667085" }} />
+                <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" domain={[0, 100]} />
                 <Tooltip />
-                <Bar dataKey="value" fill="#005D45" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="value" fill="#00573F" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </Card>
       </div>
+
+      {/* Performance trend */}
+      <Card>
+        <CardHeader title="مؤشر أداء الشركة (آخر 6 أشهر)" />
+        <div className="px-5 pb-5 h-56">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={company.perfHistory} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eef2f0" />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#667085" }} />
+              <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" domain={[0, 100]} />
+              <Tooltip />
+              <Line type="monotone" dataKey="value" stroke="#C8A24A" strokeWidth={3} dot={{ r: 4, fill: "#C8A24A", strokeWidth: 2, stroke: "#fff" }} activeDot={{ r: 6 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
     </AppShell>
+  );
+}
+
+function ContractTile({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3">
+      <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">{icon}</div>
+      <div className="min-w-0">
+        <div className="text-[11px] text-muted-foreground">{label}</div>
+        <div className="text-sm font-semibold text-foreground truncate">{value}</div>
+      </div>
+    </div>
   );
 }
 
