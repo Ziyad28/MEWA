@@ -1,10 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { User, Lock, LogIn, Fingerprint } from "lucide-react";
-import logo from "@/assets/mewa-logo-primary.png.asset.json";
-import logoWhite from "@/assets/mewa-logo-secondary.png.asset.json";
-import heroImg from "@/assets/login-hero.jpg";
-import { getUser, login, roleHome } from "@/lib/auth";
+import ministryLogo from "@/assets/mewa-logo.svg";
+import ministryLogoOnDark from "@/assets/mewa-logo-on-dark.svg";
+import heroImg from "@/assets/login-hero-hq.png";
+import { DEMO_PASSWORD, getUser, login } from "@/lib/auth";
 
 export const Route = createFileRoute("/")({
   component: LoginPage,
@@ -12,9 +12,10 @@ export const Route = createFileRoute("/")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("pmo@mewa.gov.sa");
-  const [password, setPassword] = useState("••••••••");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [remember, setRemember] = useState(false);
 
   useEffect(() => {
@@ -24,9 +25,10 @@ function LoginPage() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const u = login(email);
+    setNotice(null);
+    const u = login(email, password, remember);
     if (!u) {
-      setError("البريد الإلكتروني غير معروف. جرّب: pmo@mewa.gov.sa أو manager@mewa.gov.sa أو pm@mewa.gov.sa");
+      setError("البريد الإلكتروني أو كلمة المرور غير صحيحة، أو أن الحساب معطّل.");
       return;
     }
     navigate({ to: "/select" });
@@ -39,25 +41,31 @@ function LoginPage() {
         <img
           src={heroImg}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-70"
+          className="absolute inset-0 h-full w-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary-deep/70 via-primary-deep/40 to-primary-deep/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-deep/40 via-primary-deep/25 to-primary-deep/78" />
         <div className="relative z-10 h-full flex flex-col p-10 text-white">
           <div className="flex items-center gap-3">
-            <img src={logoWhite.url} alt="" className="h-20 w-auto" />
+            <img
+              src={ministryLogoOnDark}
+              alt="وزارة البيئة والمياه والزراعة"
+              className="h-auto w-[280px] max-w-full drop-shadow-md"
+            />
           </div>
           <div className="flex-1 flex items-center">
             <div>
-              <h1 className="text-3xl font-bold leading-snug">
-                منصة
-                <br />
-                إدارة وحوكمة المشاريع التقنية
+              <h1 className="text-3xl font-bold leading-snug [text-shadow:0_2px_14px_rgba(0,0,0,0.55)]">
+                المنصة الذكية لإدارة الشركات والمشاريع
               </h1>
-              <p className="mt-3 text-white/80 text-sm">إدارة ذكية لمشاريع الوزارة</p>
             </div>
           </div>
-          <div className="text-xs text-white/70">
-            جميع الحقوق محفوظة © 2025 وزارة البيئة والمياه والزراعة
+          <div className="border-t border-white/15 pt-4 space-y-1.5 [text-shadow:0_1px_6px_rgba(0,0,0,0.45)]">
+            <p className="text-sm font-medium text-white/90">
+              وكالة الوزارة لتقنية المعلومات والتحول الرقمي
+            </p>
+            <p className="text-xs text-white/65">
+              جميع الحقوق محفوظة © 2026 وزارة البيئة والمياه والزراعة
+            </p>
           </div>
         </div>
       </div>
@@ -66,7 +74,11 @@ function LoginPage() {
       <div className="flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md">
           <div className="lg:hidden mb-6 flex justify-center">
-            <img src={logo.url} alt="" className="h-16 w-auto" />
+            <img
+              src={ministryLogo}
+              alt="وزارة البيئة والمياه والزراعة"
+              className="h-auto w-[280px] max-w-full"
+            />
           </div>
           <h2 className="text-2xl font-bold text-foreground">تسجيل الدخول</h2>
           <p className="text-sm text-muted-foreground mt-1">يرجى إدخال بيانات الدخول الخاصة بك</p>
@@ -104,14 +116,29 @@ function LoginPage() {
                 />
                 تذكرني
               </label>
-              <a href="#" className="text-primary hover:underline">
+              <button
+                type="button"
+                onClick={() => {
+                  setError(null);
+                  setNotice(
+                    "استعادة كلمة المرور ستُفعّل عند ربط المنصة بخدمة البريد والباك إند. حاليًا يستطيع مسؤول النظام إعادة تعيينها من إدارة المستخدمين.",
+                  );
+                }}
+                className="text-primary hover:underline"
+              >
                 نسيت كلمة المرور؟
-              </a>
+              </button>
             </div>
 
             {error && (
               <div className="text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md p-3">
                 {error}
+              </div>
+            )}
+
+            {notice && (
+              <div className="rounded-md border border-primary/20 bg-primary/10 p-3 text-sm leading-6 text-primary-deep">
+                {notice}
               </div>
             )}
 
@@ -131,6 +158,12 @@ function LoginPage() {
 
             <button
               type="button"
+              onClick={() => {
+                setError(null);
+                setNotice(
+                  "الدخول عبر النفاذ الوطني جاهز في الواجهة، وسيُفعّل بعد ربط المنصة بخدمة النفاذ الوطني والباك إند.",
+                );
+              }}
               className="w-full h-12 rounded-lg border border-border bg-background hover:bg-accent text-sm font-medium flex items-center justify-center gap-2"
             >
               <Fingerprint className="h-4 w-4" />
@@ -138,7 +171,11 @@ function LoginPage() {
             </button>
 
             <p className="text-[11px] text-muted-foreground text-center pt-2">
-              حسابات تجريبية: pmo@mewa.gov.sa · manager@mewa.gov.sa · pm@mewa.gov.sa
+              حسابات تجريبية: admin@mewa.gov.sa · pmo@mewa.gov.sa · manager@mewa.gov.sa ·
+              pm@mewa.gov.sa · capacity@mewa.gov.sa · goust@mewa.gov.sa
+            </p>
+            <p className="text-[11px] font-semibold text-primary text-center">
+              كلمة المرور التجريبية لجميع الحسابات: <span dir="ltr">{DEMO_PASSWORD}</span>
             </p>
           </form>
         </div>

@@ -9,6 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WorkshopInvitationsRouteImport } from './routes/workshop-invitations'
+import { Route as UsersRouteImport } from './routes/users'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SelectRouteImport } from './routes/select'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProjectsRouteImport } from './routes/projects'
@@ -17,11 +20,29 @@ import { Route as PmRouteImport } from './routes/pm'
 import { Route as ManagerRouteImport } from './routes/manager'
 import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as CompaniesRouteImport } from './routes/companies'
+import { Route as CapacityBuildingRouteImport } from './routes/capacity-building'
+import { Route as AuditLogRouteImport } from './routes/audit-log'
 import { Route as AiInsightsRouteImport } from './routes/ai-insights'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
 import { Route as CompaniesIdRouteImport } from './routes/companies.$id'
+import { Route as CapacityBuildingIdRouteImport } from './routes/capacity-building.$id'
 
+const WorkshopInvitationsRoute = WorkshopInvitationsRouteImport.update({
+  id: '/workshop-invitations',
+  path: '/workshop-invitations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsersRoute = UsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SelectRoute = SelectRouteImport.update({
   id: '/select',
   path: '/select',
@@ -62,6 +83,16 @@ const CompaniesRoute = CompaniesRouteImport.update({
   path: '/companies',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CapacityBuildingRoute = CapacityBuildingRouteImport.update({
+  id: '/capacity-building',
+  path: '/capacity-building',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditLogRoute = AuditLogRouteImport.update({
+  id: '/audit-log',
+  path: '/audit-log',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AiInsightsRoute = AiInsightsRouteImport.update({
   id: '/ai-insights',
   path: '/ai-insights',
@@ -82,10 +113,17 @@ const CompaniesIdRoute = CompaniesIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => CompaniesRoute,
 } as any)
+const CapacityBuildingIdRoute = CapacityBuildingIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CapacityBuildingRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ai-insights': typeof AiInsightsRoute
+  '/audit-log': typeof AuditLogRoute
+  '/capacity-building': typeof CapacityBuildingRouteWithChildren
   '/companies': typeof CompaniesRouteWithChildren
   '/documents': typeof DocumentsRoute
   '/manager': typeof ManagerRoute
@@ -94,12 +132,18 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRouteWithChildren
   '/reports': typeof ReportsRoute
   '/select': typeof SelectRoute
+  '/settings': typeof SettingsRoute
+  '/users': typeof UsersRoute
+  '/workshop-invitations': typeof WorkshopInvitationsRoute
+  '/capacity-building/$id': typeof CapacityBuildingIdRoute
   '/companies/$id': typeof CompaniesIdRoute
   '/projects/$id': typeof ProjectsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ai-insights': typeof AiInsightsRoute
+  '/audit-log': typeof AuditLogRoute
+  '/capacity-building': typeof CapacityBuildingRouteWithChildren
   '/companies': typeof CompaniesRouteWithChildren
   '/documents': typeof DocumentsRoute
   '/manager': typeof ManagerRoute
@@ -108,6 +152,10 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRouteWithChildren
   '/reports': typeof ReportsRoute
   '/select': typeof SelectRoute
+  '/settings': typeof SettingsRoute
+  '/users': typeof UsersRoute
+  '/workshop-invitations': typeof WorkshopInvitationsRoute
+  '/capacity-building/$id': typeof CapacityBuildingIdRoute
   '/companies/$id': typeof CompaniesIdRoute
   '/projects/$id': typeof ProjectsIdRoute
 }
@@ -115,6 +163,8 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ai-insights': typeof AiInsightsRoute
+  '/audit-log': typeof AuditLogRoute
+  '/capacity-building': typeof CapacityBuildingRouteWithChildren
   '/companies': typeof CompaniesRouteWithChildren
   '/documents': typeof DocumentsRoute
   '/manager': typeof ManagerRoute
@@ -123,6 +173,10 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRouteWithChildren
   '/reports': typeof ReportsRoute
   '/select': typeof SelectRoute
+  '/settings': typeof SettingsRoute
+  '/users': typeof UsersRoute
+  '/workshop-invitations': typeof WorkshopInvitationsRoute
+  '/capacity-building/$id': typeof CapacityBuildingIdRoute
   '/companies/$id': typeof CompaniesIdRoute
   '/projects/$id': typeof ProjectsIdRoute
 }
@@ -131,6 +185,8 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/ai-insights'
+    | '/audit-log'
+    | '/capacity-building'
     | '/companies'
     | '/documents'
     | '/manager'
@@ -139,12 +195,18 @@ export interface FileRouteTypes {
     | '/projects'
     | '/reports'
     | '/select'
+    | '/settings'
+    | '/users'
+    | '/workshop-invitations'
+    | '/capacity-building/$id'
     | '/companies/$id'
     | '/projects/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/ai-insights'
+    | '/audit-log'
+    | '/capacity-building'
     | '/companies'
     | '/documents'
     | '/manager'
@@ -153,12 +215,18 @@ export interface FileRouteTypes {
     | '/projects'
     | '/reports'
     | '/select'
+    | '/settings'
+    | '/users'
+    | '/workshop-invitations'
+    | '/capacity-building/$id'
     | '/companies/$id'
     | '/projects/$id'
   id:
     | '__root__'
     | '/'
     | '/ai-insights'
+    | '/audit-log'
+    | '/capacity-building'
     | '/companies'
     | '/documents'
     | '/manager'
@@ -167,6 +235,10 @@ export interface FileRouteTypes {
     | '/projects'
     | '/reports'
     | '/select'
+    | '/settings'
+    | '/users'
+    | '/workshop-invitations'
+    | '/capacity-building/$id'
     | '/companies/$id'
     | '/projects/$id'
   fileRoutesById: FileRoutesById
@@ -174,6 +246,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AiInsightsRoute: typeof AiInsightsRoute
+  AuditLogRoute: typeof AuditLogRoute
+  CapacityBuildingRoute: typeof CapacityBuildingRouteWithChildren
   CompaniesRoute: typeof CompaniesRouteWithChildren
   DocumentsRoute: typeof DocumentsRoute
   ManagerRoute: typeof ManagerRoute
@@ -182,10 +256,34 @@ export interface RootRouteChildren {
   ProjectsRoute: typeof ProjectsRouteWithChildren
   ReportsRoute: typeof ReportsRoute
   SelectRoute: typeof SelectRoute
+  SettingsRoute: typeof SettingsRoute
+  UsersRoute: typeof UsersRoute
+  WorkshopInvitationsRoute: typeof WorkshopInvitationsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/workshop-invitations': {
+      id: '/workshop-invitations'
+      path: '/workshop-invitations'
+      fullPath: '/workshop-invitations'
+      preLoaderRoute: typeof WorkshopInvitationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/users': {
+      id: '/users'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof UsersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/select': {
       id: '/select'
       path: '/select'
@@ -242,6 +340,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompaniesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/capacity-building': {
+      id: '/capacity-building'
+      path: '/capacity-building'
+      fullPath: '/capacity-building'
+      preLoaderRoute: typeof CapacityBuildingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit-log': {
+      id: '/audit-log'
+      path: '/audit-log'
+      fullPath: '/audit-log'
+      preLoaderRoute: typeof AuditLogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ai-insights': {
       id: '/ai-insights'
       path: '/ai-insights'
@@ -270,8 +382,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CompaniesIdRouteImport
       parentRoute: typeof CompaniesRoute
     }
+    '/capacity-building/$id': {
+      id: '/capacity-building/$id'
+      path: '/$id'
+      fullPath: '/capacity-building/$id'
+      preLoaderRoute: typeof CapacityBuildingIdRouteImport
+      parentRoute: typeof CapacityBuildingRoute
+    }
   }
 }
+
+interface CapacityBuildingRouteChildren {
+  CapacityBuildingIdRoute: typeof CapacityBuildingIdRoute
+}
+
+const CapacityBuildingRouteChildren: CapacityBuildingRouteChildren = {
+  CapacityBuildingIdRoute: CapacityBuildingIdRoute,
+}
+
+const CapacityBuildingRouteWithChildren =
+  CapacityBuildingRoute._addFileChildren(CapacityBuildingRouteChildren)
 
 interface CompaniesRouteChildren {
   CompaniesIdRoute: typeof CompaniesIdRoute
@@ -300,6 +430,8 @@ const ProjectsRouteWithChildren = ProjectsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AiInsightsRoute: AiInsightsRoute,
+  AuditLogRoute: AuditLogRoute,
+  CapacityBuildingRoute: CapacityBuildingRouteWithChildren,
   CompaniesRoute: CompaniesRouteWithChildren,
   DocumentsRoute: DocumentsRoute,
   ManagerRoute: ManagerRoute,
@@ -308,7 +440,20 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsRoute: ProjectsRouteWithChildren,
   ReportsRoute: ReportsRoute,
   SelectRoute: SelectRoute,
+  SettingsRoute: SettingsRoute,
+  UsersRoute: UsersRoute,
+  WorkshopInvitationsRoute: WorkshopInvitationsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

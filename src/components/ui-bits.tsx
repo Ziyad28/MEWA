@@ -9,7 +9,7 @@ export function Card({
 }) {
   return (
     <div
-      className={`bg-card border border-border rounded-xl shadow-[0_1px_2px_rgba(16,24,40,0.04)] ${className}`}
+      className={`bg-card border border-border rounded-xl shadow-[0_1px_3px_rgba(16,24,40,0.08)] ${className}`}
     >
       {children}
     </div>
@@ -18,10 +18,10 @@ export function Card({
 
 export function CardHeader({ title, action, subtitle }: { title: string; action?: ReactNode; subtitle?: string }) {
   return (
-    <div className="flex items-center justify-between px-5 pt-4 pb-3">
+    <div className="flex items-center justify-between gap-4 px-6 pt-5 pb-4">
       <div>
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+        <h3 className="text-base font-bold tracking-tight text-foreground">{title}</h3>
+        {subtitle && <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>}
       </div>
       {action}
     </div>
@@ -31,7 +31,7 @@ export function CardHeader({ title, action, subtitle }: { title: string; action?
 /** Inline SVG sparkline — no dependency */
 export function Sparkline({
   data,
-  color = "#005D45",
+  color = "#1B8354",
   width = 88,
   height = 28,
 }: {
@@ -89,34 +89,35 @@ export function StatCard({
   updated?: string;
 }) {
   const toneMap = {
-    primary: { bg: "bg-primary/10", fg: "text-primary", spark: "#005D45" },
-    warning: { bg: "bg-amber-50", fg: "text-amber-600", spark: "#F59E0B" },
-    danger: { bg: "bg-red-50", fg: "text-red-600", spark: "#DC2626" },
-    success: { bg: "bg-green-50", fg: "text-green-600", spark: "#16A34A" },
+    primary: { bg: "bg-[#ecfdf3]", fg: "text-[#166a45]", border: "border-[#abefc6]", bar: "bg-primary", spark: "#1B8354" },
+    warning: { bg: "bg-amber-50", fg: "text-amber-600", border: "border-amber-100", bar: "bg-amber-500", spark: "#F59E0B" },
+    danger: { bg: "bg-red-50", fg: "text-red-600", border: "border-red-100", bar: "bg-red-500", spark: "#DC2626" },
+    success: { bg: "bg-green-50", fg: "text-green-600", border: "border-green-100", bar: "bg-green-600", spark: "#16A34A" },
   } as const;
   const t = toneMap[tone];
   return (
-    <div className="bg-card border border-border rounded-xl p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)] hover:shadow-md transition-shadow">
+    <div className="relative overflow-hidden bg-card border border-border rounded-xl p-5 shadow-[0_1px_3px_rgba(16,24,40,0.08)] transition-shadow duration-200 hover:shadow-[0_4px_10px_rgba(16,24,40,0.10)]">
+      <div className={`absolute inset-x-0 top-0 h-1 ${t.bar}`} />
       <div className="flex items-start justify-between">
         <div className="min-w-0">
           <div className="text-sm text-muted-foreground">{label}</div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <div className="text-3xl font-bold text-foreground leading-none">{value}</div>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <div className="text-[34px] font-extrabold tracking-tight text-foreground leading-none">{value}</div>
             {unit && <div className="text-xs text-muted-foreground">{unit}</div>}
           </div>
         </div>
         {icon && (
-          <div className={`h-9 w-9 rounded-lg flex items-center justify-center ${t.bg} ${t.fg} shrink-0`}>
+          <div className={`h-11 w-11 rounded-xl border flex items-center justify-center ${t.bg} ${t.fg} ${t.border} shrink-0`}>
             {icon}
           </div>
         )}
       </div>
-      <div className="mt-3 flex items-end justify-between gap-3">
+      <div className="mt-4 flex items-end justify-between gap-3">
         <div className="min-w-0">
           {delta && (
             <div
-              className={`text-xs font-medium ${
-                deltaType === "up" ? "text-green-600" : "text-red-600"
+              className={`inline-flex items-center rounded-full px-2 py-1 text-[11px] font-semibold ${
+                deltaType === "up" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
               }`}
             >
               {deltaType === "up" ? "▲" : "▼"} {delta} عن الشهر الماضي
@@ -124,7 +125,7 @@ export function StatCard({
           )}
           {updated && <div className="text-[11px] text-muted-foreground mt-1">آخر تحديث: {updated}</div>}
         </div>
-        {spark && spark.length > 0 && <Sparkline data={spark} color={t.spark} />}
+        {spark && spark.length > 0 && <Sparkline data={spark} color={t.spark} width={96} height={32} />}
       </div>
     </div>
   );
@@ -138,15 +139,15 @@ export function Badge({
   tone?: "primary" | "success" | "warning" | "danger" | "muted";
 }) {
   const map = {
-    primary: "bg-primary/10 text-primary",
-    success: "bg-green-100 text-green-700",
-    warning: "bg-amber-100 text-amber-700",
-    danger: "bg-red-100 text-red-700",
-    muted: "bg-muted text-muted-foreground",
+    primary: "border border-[#abefc6] bg-[#ecfdf3] text-[#166a45]",
+    success: "border border-[#abefc6] bg-[#ecfdf3] text-[#067647]",
+    warning: "border border-[#fedf89] bg-[#fffaeb] text-[#b54708]",
+    danger: "border border-[#fecdca] bg-[#fef3f2] text-[#b42318]",
+    muted: "border border-border bg-muted text-muted-foreground",
   };
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${map[tone]}`}
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${map[tone]}`}
     >
       {children}
     </span>
@@ -217,11 +218,14 @@ export function Tabs({
 }) {
   return (
     <div className="border-b border-border">
-      <div className="flex items-center gap-1 overflow-x-auto">
+      <div role="tablist" className="flex items-center gap-1 overflow-x-auto">
         {tabs.map((t) => {
           const isActive = t.id === active;
           return (
             <button
+              type="button"
+              role="tab"
+              aria-selected={isActive}
               key={t.id}
               onClick={() => onChange(t.id)}
               className={`relative px-4 py-3 text-sm whitespace-nowrap transition-colors ${
@@ -244,7 +248,7 @@ export function Tabs({
 export function EmptyState({ icon, title, description, action }: { icon?: ReactNode; title: string; description?: string; action?: ReactNode }) {
   return (
     <div className="text-center py-16 px-6">
-      <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/5 text-primary flex items-center justify-center">
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-[#ecfdf3] text-primary">
         {icon}
       </div>
       <h3 className="mt-4 text-base font-semibold text-foreground">{title}</h3>

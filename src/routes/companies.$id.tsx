@@ -1,9 +1,28 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Mail, Phone, Globe, MapPin, FileText, Download, ArrowRight, FileSignature, CalendarDays, CalendarCheck2, User as UserIcon, Clock } from "lucide-react";
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
-import { AppShell, useRequireAuth } from "@/components/app-shell";
+import {
+  Mail,
+  Phone,
+  Globe,
+  MapPin,
+  FileText,
+  Download,
+  ArrowRight,
+  FileSignature,
+  CalendarDays,
+  CalendarCheck2,
+  User as UserIcon,
+  Clock,
+  History,
+  BriefcaseBusiness,
+} from "lucide-react";
+import { AppShell, useRequirePermission } from "@/components/app-shell";
+import { CompanyLogo } from "@/components/company-logo";
+import { CompanyPrototypeWorkspace } from "@/components/company-prototype-workspace";
+import { PerformanceBarChart, ProgressAreaChart } from "@/components/dashboard-charts";
 import { Card, CardHeader, Badge, ProgressBar } from "@/components/ui-bits";
-import { COMPANIES, PROJECTS } from "@/lib/mock-data";
+import { COMPANY_PROFILES } from "@/lib/mock-data";
+import { downloadDocument, usePortalData } from "@/lib/portal-store";
+import { can, canAccessCompany } from "@/lib/access-control";
 
 export const Route = createFileRoute("/companies/$id")({
   component: CompanyDetail,
@@ -11,32 +30,41 @@ export const Route = createFileRoute("/companies/$id")({
     <div dir="rtl" className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <h2 className="text-xl font-semibold">الشركة غير موجودة</h2>
-        <Link to="/companies" className="text-primary text-sm mt-2 inline-block">العودة إلى قائمة الشركات</Link>
+        <Link to="/companies" className="text-primary text-sm mt-2 inline-block">
+          العودة إلى قائمة الشركات
+        </Link>
       </div>
     </div>
   ),
 });
 
 function CompanyDetail() {
-  const user = useRequireAuth();
+  const user = useRequirePermission("companies.view");
+  const { companies, projects } = usePortalData();
   const { id } = Route.useParams();
-  const company = COMPANIES.find((c) => String(c.id) === id);
+  const company = companies.find((c) => String(c.id) === id);
   if (!company) throw notFound();
   if (!user) return null;
+  if (!canAccessCompany(user, company.id, projects)) throw notFound();
 
-  const related = PROJECTS.filter((p) => p.companyId === company.id);
+  const related = projects.filter((p) => p.companyId === company.id);
+  const profile = COMPANY_PROFILES[company.id];
   const perf = related.map((p) => ({ name: p.name.slice(0, 12), value: p.progress }));
 
   return (
     <AppShell
-      role="company"
+      role={user.role}
+      navigationScope="companies"
       userName={user.name}
       roleLabel={user.roleLabel}
       pageTitle={company.name}
       pageSubtitle={company.description}
     >
       <div className="flex items-center gap-2 text-sm">
-        <Link to="/companies" className="text-primary hover:underline inline-flex items-center gap-1">
+        <Link
+          to="/companies"
+          className="text-primary hover:underline inline-flex items-center gap-1"
+        >
           <ArrowRight className="h-4 w-4" />
           الشركات المتعاونة
         </Link>
@@ -47,36 +75,63 @@ function CompanyDetail() {
       {/* Company info */}
       <Card>
         <div className="p-6 flex items-start gap-5">
-          <div className="h-20 w-20 rounded-xl bg-white border border-border flex items-center justify-center shrink-0 overflow-hidden">
-            <img
-              src={`https://www.google.com/s2/favicons?sz=128&domain=${company.domain}`}
-              alt={company.nameEn}
-              className="h-14 w-14 object-contain"
-              onError={(e) => {
-                const el = e.currentTarget as HTMLImageElement;
-                el.style.display = "none";
-              }}
-            />
+          <div className="h-24 w-40 rounded-xl bg-white border border-border flex items-center justify-center shrink-0 overflow-hidden p-3">
+            <CompanyLogo domain={company.domain} name={company.name} className="h-16 w-32" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <Badge tone="primary">{company.sector}</Badge>
-              <Badge tone={company.status === "نشط" ? "success" : company.status === "قيد المراجعة" ? "warning" : "muted"}>{company.status}</Badge>
-              <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1"><Clock className="h-3 w-3" />آخر تحديث {company.lastUpdate}</span>
+              <Badge
+                tone={
+                  company.status === "نشط"
+                    ? "success"
+                    : company.status === "قيد المراجعة"
+                      ? "warning"
+                      : "muted"
+                }
+              >
+                {company.status}
+              </Badge>
+              <span className="text-[11px] text-muted-foreground inline-flex items-center gap-1">
+                <Clock className="h-3 w-3" />
+                آخر تحديث {company.lastUpdate}
+              </span>
               <span className="text-[11px] text-muted-foreground">شراكة منذ {company.since}</span>
             </div>
             <h2 className="mt-2 text-lg font-bold text-foreground">{company.name}</h2>
             <div className="text-[12px] text-muted-foreground">{company.nameEn}</div>
-            <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-3xl">{company.description}</p>
+            <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-3xl">
+              {company.description}
+            </p>
             <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
               <InfoRow label="رقم السجل التجاري" value={company.regNo} />
               <InfoRow label="مجال العمل" value={company.sector} />
-              <InfoRow label="مسؤول التواصل" value={company.contactPerson} icon={<UserIcon className="h-3.5 w-3.5" />} />
+              <InfoRow
+                label="مسؤول التواصل"
+                value={company.contactPerson}
+                icon={<UserIcon className="h-3.5 w-3.5" />}
+              />
               <InfoRow label="المسمى الوظيفي" value={company.contactRole} />
-              <InfoRow label="البريد الإلكتروني" value={company.email} icon={<Mail className="h-3.5 w-3.5" />} />
-              <InfoRow label="رقم الهاتف" value={company.phone} icon={<Phone className="h-3.5 w-3.5" />} />
-              <InfoRow label="العنوان" value={company.address} icon={<MapPin className="h-3.5 w-3.5" />} />
-              <InfoRow label="الموقع الإلكتروني" value={company.website} icon={<Globe className="h-3.5 w-3.5" />} />
+              <InfoRow
+                label="البريد الإلكتروني"
+                value={company.email}
+                icon={<Mail className="h-3.5 w-3.5" />}
+              />
+              <InfoRow
+                label="رقم الهاتف"
+                value={company.phone}
+                icon={<Phone className="h-3.5 w-3.5" />}
+              />
+              <InfoRow
+                label="العنوان"
+                value={company.address}
+                icon={<MapPin className="h-3.5 w-3.5" />}
+              />
+              <InfoRow
+                label="الموقع الإلكتروني"
+                value={company.website}
+                icon={<Globe className="h-3.5 w-3.5" />}
+              />
             </div>
           </div>
         </div>
@@ -86,32 +141,53 @@ function CompanyDetail() {
       <Card>
         <CardHeader title="بيانات العقد" />
         <div className="px-5 pb-5 grid grid-cols-1 md:grid-cols-3 gap-3">
-          <ContractTile icon={<FileSignature className="h-4 w-4" />} label="رقم العقد" value={company.contractNo} />
-          <ContractTile icon={<CalendarDays className="h-4 w-4" />} label="بداية العقد" value={company.contractStart} />
-          <ContractTile icon={<CalendarCheck2 className="h-4 w-4" />} label="نهاية العقد" value={company.contractEnd} />
+          <ContractTile
+            icon={<FileSignature className="h-4 w-4" />}
+            label="رقم العقد"
+            value={company.contractNo}
+          />
+          <ContractTile
+            icon={<CalendarDays className="h-4 w-4" />}
+            label="بداية العقد"
+            value={company.contractStart}
+          />
+          <ContractTile
+            icon={<CalendarCheck2 className="h-4 w-4" />}
+            label="نهاية العقد"
+            value={company.contractEnd}
+          />
         </div>
       </Card>
 
       {/* Performance KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="p-5">
-          <div className="text-sm text-muted-foreground">المشاريع الحالية</div>
-          <div className="mt-2 text-3xl font-bold">{related.filter(p => p.status !== "مكتملة").length}</div>
+          <div className="text-sm text-muted-foreground">مشاريع الوكالة الحالية</div>
+          <div className="mt-2 text-3xl font-bold">
+            {related.filter((p) => p.status !== "مكتملة").length}
+          </div>
         </Card>
         <Card className="p-5">
-          <div className="text-sm text-muted-foreground">المشاريع المكتملة</div>
-          <div className="mt-2 text-3xl font-bold text-green-600">{related.filter(p => p.status === "مكتملة").length}</div>
+          <div className="text-sm text-muted-foreground">مشاريع الوكالة المكتملة</div>
+          <div className="mt-2 text-3xl font-bold text-green-600">
+            {related.filter((p) => p.status === "مكتملة").length}
+          </div>
         </Card>
         <Card className="p-5">
           <div className="text-sm text-muted-foreground">متوسط نسبة الإنجاز</div>
           <div className="mt-2 text-3xl font-bold text-primary">
-            {related.length ? Math.round(related.reduce((a, p) => a + p.progress, 0) / related.length) : 0}%
+            {related.length
+              ? Math.round(related.reduce((a, p) => a + p.progress, 0) / related.length)
+              : 0}
+            %
           </div>
         </Card>
         <Card className="p-5">
           <div className="text-sm text-muted-foreground">تقييم الأداء</div>
           <div className="mt-2 text-3xl font-bold">{company.performance}%</div>
-          <div className="text-xs text-muted-foreground mt-1">التزام بالوقت: {company.commitment}%</div>
+          <div className="text-xs text-muted-foreground mt-1">
+            التزام بالوقت: {company.commitment}%
+          </div>
         </Card>
       </div>
 
@@ -134,11 +210,25 @@ function CompanyDetail() {
             <tbody>
               {related.map((p) => (
                 <tr key={p.id} className="border-t border-border">
-                  <td className="px-3 py-3 font-medium">{p.name}</td>
+                  <td className="px-3 py-3 font-medium">
+                    <a href={`/projects/${p.id}`} className="hover:text-primary hover:underline">
+                      {p.name}
+                    </a>
+                  </td>
                   <td className="px-3 py-3">{p.sector}</td>
                   <td className="px-3 py-3">{p.manager}</td>
                   <td className="px-3 py-3">
-                    <Badge tone={p.status === "مكتملة" ? "success" : p.status === "متأخرة" ? "danger" : "warning"}>{p.status}</Badge>
+                    <Badge
+                      tone={
+                        p.status === "مكتملة"
+                          ? "success"
+                          : p.status === "متأخرة"
+                            ? "danger"
+                            : "warning"
+                      }
+                    >
+                      {p.status}
+                    </Badge>
                   </td>
                   <td className="px-3 py-3 w-32">
                     <div className="flex items-center gap-2">
@@ -151,7 +241,11 @@ function CompanyDetail() {
                 </tr>
               ))}
               {related.length === 0 && (
-                <tr><td colSpan={7} className="text-center text-muted-foreground py-8">لا توجد مشاريع مرتبطة.</td></tr>
+                <tr>
+                  <td colSpan={7} className="text-center text-muted-foreground py-8">
+                    لا توجد مشاريع مرتبطة.
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
@@ -168,15 +262,33 @@ function CompanyDetail() {
               { n: "ملحق نطاق العمل", t: "مستند", d: "2025/01/20" },
               { n: "اتفاقية مستوى الخدمة", t: "عقد", d: "2024/09/12" },
             ].map((doc) => (
-              <div key={doc.n} className="flex items-center justify-between px-3 py-2.5 rounded-lg border border-border text-sm">
+              <div
+                key={doc.n}
+                className="flex items-center justify-between px-3 py-2.5 rounded-lg border border-border text-sm"
+              >
                 <div className="flex items-center gap-3">
                   <FileText className="h-4 w-4 text-primary" />
                   <div>
                     <div className="font-medium">{doc.n}</div>
-                    <div className="text-xs text-muted-foreground">{doc.t} · {doc.d}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {doc.t} · {doc.d}
+                    </div>
                   </div>
                 </div>
-                <button className="h-8 w-8 rounded-md hover:bg-accent flex items-center justify-center text-muted-foreground">
+                <button
+                  title={`تنزيل ${doc.n}`}
+                  onClick={() =>
+                    downloadDocument({
+                      id: Date.now(),
+                      name: doc.n,
+                      type: doc.t,
+                      date: doc.d,
+                      size: "—",
+                      uploadedBy: company.name,
+                    })
+                  }
+                  className="h-8 w-8 rounded-md hover:bg-accent flex items-center justify-center text-muted-foreground"
+                >
                   <Download className="h-4 w-4" />
                 </button>
               </div>
@@ -185,45 +297,88 @@ function CompanyDetail() {
         </Card>
 
         {/* Performance chart */}
-        <Card>
-          <CardHeader title="تحليل الأداء عبر المشاريع" />
-          <div className="px-5 pb-5 h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={perf} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eef2f0" />
-                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#667085" }} />
-                <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" domain={[0, 100]} />
-                <Tooltip />
-                <Bar dataKey="value" fill="#00573F" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+        <Card className="overflow-hidden">
+          <CardHeader
+            title="تحليل الأداء عبر المشاريع"
+            subtitle="مقارنة الأداء الحالي لمشاريع الشركة"
+          />
+          <div className="px-4 pb-5 h-[300px]">
+            <PerformanceBarChart data={perf} label="مؤشر الأداء" />
           </div>
         </Card>
       </div>
 
       {/* Performance trend */}
-      <Card>
-        <CardHeader title="مؤشر أداء الشركة (آخر 6 أشهر)" />
-        <div className="px-5 pb-5 h-56">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={company.perfHistory} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#eef2f0" />
-              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#667085" }} />
-              <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" domain={[0, 100]} />
-              <Tooltip />
-              <Line type="monotone" dataKey="value" stroke="#C8A24A" strokeWidth={3} dot={{ r: 4, fill: "#C8A24A", strokeWidth: 2, stroke: "#fff" }} activeDot={{ r: 6 }} />
-            </LineChart>
-          </ResponsiveContainer>
+      <Card className="overflow-hidden">
+        <CardHeader
+          title="مؤشر أداء الشركة"
+          subtitle="اتجاه الأداء خلال آخر 6 أشهر"
+          action={
+            <span className="rounded-full bg-[#C8A24A]/10 px-3 py-1 text-[11px] font-semibold text-[#9A7518]">
+              اتجاه تصاعدي
+            </span>
+          }
+        />
+        <div className="px-4 pb-5 h-[280px]">
+          <ProgressAreaChart data={company.perfHistory} color="#C8A24A" label="مؤشر الأداء" />
         </div>
       </Card>
+
+      {can(user.role, "companies.manage") && <CompanyPrototypeWorkspace companyId={company.id} />}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card className="p-5">
+          <div className="flex items-center gap-2 font-bold">
+            <BriefcaseBusiness className="h-5 w-5 text-primary" />
+            نبذة عن الشركة
+          </div>
+          <p className="mt-3 text-sm leading-7 text-muted-foreground">
+            {profile?.overview ?? company.description}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {profile?.specialties.map((item) => (
+              <Badge key={item} tone="primary">
+                {item}
+              </Badge>
+            ))}
+          </div>
+        </Card>
+        <Card className="p-5">
+          <div className="flex items-center gap-2 font-bold">
+            <History className="h-5 w-5 text-primary" />
+            تاريخ التعاون مع الوكالة
+          </div>
+          <p className="mt-3 text-sm leading-7 text-muted-foreground">{profile?.history}</p>
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="rounded-lg bg-primary/5 p-3">
+              <div className="text-xs text-muted-foreground">بداية الشراكة</div>
+              <div className="mt-1 font-bold">{company.since}</div>
+            </div>
+            <div className="rounded-lg bg-primary/5 p-3">
+              <div className="text-xs text-muted-foreground">مشاريع مع الوكالة</div>
+              <div className="mt-1 font-bold">{related.length} مشاريع</div>
+            </div>
+          </div>
+        </Card>
+      </div>
     </AppShell>
   );
 }
 
-function ContractTile({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function ContractTile({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
   return (
     <div className="flex items-center gap-3 rounded-xl border border-border bg-background px-4 py-3">
-      <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">{icon}</div>
+      <div className="h-9 w-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+        {icon}
+      </div>
       <div className="min-w-0">
         <div className="text-[11px] text-muted-foreground">{label}</div>
         <div className="text-sm font-semibold text-foreground truncate">{value}</div>

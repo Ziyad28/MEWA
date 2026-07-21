@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Briefcase, CheckCircle2, Hourglass, TrendingUp } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { AppShell, useRequireAuth } from "@/components/app-shell";
+import { PerformanceBarChart } from "@/components/dashboard-charts";
 import { Card, CardHeader, StatCard, ProgressBar, StatusBadge } from "@/components/ui-bits";
 import { KPIS_MANAGER, PROJECTS } from "@/lib/mock-data";
+import { downloadDocument } from "@/lib/portal-store";
 
 export const Route = createFileRoute("/manager")({
   component: ManagerDashboard,
@@ -30,19 +31,11 @@ function ManagerDashboard() {
         <StatCard label="مكتملة" value={KPIS_MANAGER.completed} unit="مشروع" delta="1 مشروع" icon={<CheckCircle2 className="h-4 w-4" />} tone="success" spark={[1,1,2,2,3,3]} updated="اليوم 09:20" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader title="نسبة تقدم المشاريع" />
-          <div className="px-5 pb-5 h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={barData} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eef2f0" />
-                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#667085" }} />
-                <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" domain={[0, 100]} />
-                <Tooltip />
-                <Bar dataKey="value" fill="#00573F" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <Card className="overflow-hidden">
+          <CardHeader title="نسبة تقدم المشاريع" subtitle="مقارنة مستوى الإنجاز لأبرز مشاريع الإدارة" action={<span className="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">6 مشاريع</span>} />
+          <div className="px-4 pb-5 h-[300px]">
+            <PerformanceBarChart data={barData} label="نسبة التقدم" />
           </div>
         </Card>
 
@@ -84,7 +77,7 @@ function ManagerDashboard() {
         <CardHeader title="التقارير" action={<Link to="/reports" className="text-xs text-primary hover:underline">عرض جميع التقارير</Link>} />
         <div className="px-5 pb-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
           {["تقرير الأداء الشهري", "تقرير المخاطر الاستراتيجية", "تقرير أداء الشركات"].map((r) => (
-            <button key={r} className="text-right flex items-center justify-between px-4 py-3 rounded-lg border border-border text-sm hover:bg-accent">
+            <button onClick={() => downloadDocument({ id: Date.now(), name: r, type: "تقرير", uploadedBy: "إدارة الوكالة", date: new Date().toLocaleDateString("en-CA"), size: "—" })} key={r} className="text-right flex items-center justify-between px-4 py-3 rounded-lg border border-border text-sm hover:bg-accent">
               <span>{r}</span>
               <span className="text-muted-foreground text-xs">تنزيل</span>
             </button>

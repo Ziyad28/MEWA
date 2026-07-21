@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { TrendingUp, Hourglass, CheckCircle2, AlertCircle, Building2, User, Calendar, Flag, FileText } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { AppShell, useRequireAuth } from "@/components/app-shell";
+import { ProgressAreaChart } from "@/components/dashboard-charts";
 import { Card, CardHeader, StatCard, Badge, HealthRing } from "@/components/ui-bits";
 import { KPIS_PM, PROGRESS_SERIES, PROJECTS, COMPANIES } from "@/lib/mock-data";
 
@@ -33,19 +33,11 @@ function PmDashboard() {
         <StatCard label="متأخرة" value={KPIS_PM.overdue} unit="مهام" delta="1 مهمة" deltaType="down" icon={<AlertCircle className="h-4 w-4" />} tone="danger" spark={[6,5,5,4,4,4]} updated="اليوم 08:15" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="lg:col-span-2">
-          <CardHeader title="نسبة تقدم المشروع" subtitle={project.name} />
-          <div className="px-5 pb-5 h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={PROGRESS_SERIES}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eef2f0" />
-                <XAxis dataKey="month" reversed tick={{ fontSize: 12, fill: "#667085" }} />
-                <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" />
-                <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#005D45" strokeWidth={2.5} dot={{ r: 4, fill: "#005D45" }} />
-              </LineChart>
-            </ResponsiveContainer>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <Card className="lg:col-span-2 overflow-hidden">
+          <CardHeader title="نسبة تقدم المشروع" subtitle={project.name} action={<span className="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">آخر 6 أشهر</span>} />
+          <div className="px-4 pb-5 h-[300px]">
+            <ProgressAreaChart data={PROGRESS_SERIES} />
           </div>
         </Card>
 

@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Briefcase, CheckCircle2, Hourglass, AlertCircle, Download } from "lucide-react";
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
-  PieChart, Pie, Cell, Legend,
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
+  PieChart, Pie, Cell,
 } from "recharts";
 import { AppShell, useRequireAuth } from "@/components/app-shell";
 import { Card, CardHeader, StatCard, ProgressBar, StatusBadge } from "@/components/ui-bits";
@@ -10,6 +10,7 @@ import {
   KPIS_PMO, PROGRESS_SERIES, STATUS_PIE, PROJECTS,
   SPARK_PMO_TOTAL, SPARK_PMO_COMPLETED, SPARK_PMO_PROGRESS, SPARK_PMO_DELAYED,
 } from "@/lib/mock-data";
+import { downloadDocument } from "@/lib/portal-store";
 
 export const Route = createFileRoute("/pmo")({
   component: PmoDashboard,
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/pmo")({
 function PmoDashboard() {
   const user = useRequireAuth("pmo");
   if (!user) return null;
+  const statusTotal = STATUS_PIE.reduce((sum, item) => sum + item.value, 0);
 
   return (
     <AppShell
@@ -34,44 +36,103 @@ function PmoDashboard() {
         <StatCard label="المتأخرة" value={KPIS_PMO.delayed} unit="مشروع" delta="5%" deltaType="down" icon={<AlertCircle className="h-4 w-4" />} tone="danger" spark={SPARK_PMO_DELAYED} updated="اليوم 09:20" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader title="نسبة تقدم المشاريع" />
-          <div className="px-5 pb-5 h-64">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <Card className="overflow-hidden">
+          <CardHeader
+            title="نسبة تقدم المشاريع"
+            subtitle="متوسط التقدم التراكمي للمحفظة"
+            action={<span className="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">آخر 6 أشهر</span>}
+          />
+          <div className="px-4 pb-5 h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={PROGRESS_SERIES} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
+              <AreaChart data={PROGRESS_SERIES} margin={{ top: 12, right: 14, left: 0, bottom: 8 }}>
                 <defs>
                   <linearGradient id="progGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#00573F" stopOpacity={0.25} />
+                    <stop offset="0%" stopColor="#006C51" stopOpacity={0.28} />
+                    <stop offset="55%" stopColor="#006C51" stopOpacity={0.08} />
                     <stop offset="100%" stopColor="#00573F" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eef2f0" />
-                <XAxis dataKey="month" tick={{ fontSize: 12, fill: "#667085" }} />
-                <YAxis tick={{ fontSize: 12, fill: "#667085" }} unit="%" domain={[0, 100]} />
-                <Tooltip />
-                <Line type="monotone" dataKey="value" stroke="#00573F" strokeWidth={3} dot={{ r: 4, fill: "#00573F", strokeWidth: 2, stroke: "#fff" }} activeDot={{ r: 6 }} fill="url(#progGrad)" />
-              </LineChart>
+                <CartesianGrid vertical={false} strokeDasharray="4 5" stroke="#E7ECE9" />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#667085" }} dy={10} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#667085" }} tickFormatter={(value) => `${value}%`} domain={[0, 100]} width={42} />
+                <Tooltip
+                  cursor={{ stroke: "#006C51", strokeWidth: 1, strokeDasharray: "4 4", strokeOpacity: 0.35 }}
+                  contentStyle={{ border: "1px solid #E2E8E5", borderRadius: 12, boxShadow: "0 10px 30px rgba(16,24,40,0.10)", fontSize: 12 }}
+                  labelStyle={{ color: "#344054", fontWeight: 600, marginBottom: 4 }}
+                  formatter={(value) => [`${value}%`, "نسبة التقدم"]}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#006C51"
+                  strokeWidth={3.5}
+                  fill="url(#progGrad)"
+                  dot={{ r: 4.5, fill: "#FFFFFF", strokeWidth: 3, stroke: "#006C51" }}
+                  activeDot={{ r: 7, fill: "#006C51", stroke: "#FFFFFF", strokeWidth: 3 }}
+                />
+              </AreaChart>
             </ResponsiveContainer>
           </div>
         </Card>
 
-        <Card>
-          <CardHeader title="حالة المشاريع" />
-          <div className="px-5 pb-5 h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={STATUS_PIE} dataKey="value" innerRadius={55} outerRadius={85} paddingAngle={2}>
-                  {STATUS_PIE.map((s) => <Cell key={s.name} fill={s.color} />)}
-                </Pie>
-                <Legend verticalAlign="middle" align="left" layout="vertical" iconType="circle"
-                  formatter={(v, e) => {
-                    const item = STATUS_PIE.find(x => x.name === v);
-                    return <span style={{ color: "#111827", fontSize: 12 }}>{item ? `${item.value} (${Math.round(item.value / (45+67+16) * 100)}%) ${v}` : v}</span>;
-                  }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+        <Card className="overflow-hidden">
+          <CardHeader
+            title="حالة المشاريع"
+            subtitle="توزيع المشاريع حسب الحالة الحالية"
+            action={<span className="rounded-full bg-muted px-3 py-1 text-[11px] font-semibold text-muted-foreground">الإجمالي {statusTotal}</span>}
+          />
+          <div className="grid h-[300px] grid-cols-[minmax(0,1fr)_180px] items-center gap-3 px-5 pb-5">
+            <div className="relative h-full min-w-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={STATUS_PIE}
+                    dataKey="value"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={72}
+                    outerRadius={103}
+                    paddingAngle={3}
+                    cornerRadius={7}
+                    stroke="#FFFFFF"
+                    strokeWidth={4}
+                  >
+                    {STATUS_PIE.map((status) => <Cell key={status.name} fill={status.color} />)}
+                  </Pie>
+                  <Tooltip
+                    contentStyle={{ border: "1px solid #E2E8E5", borderRadius: 12, boxShadow: "0 10px 30px rgba(16,24,40,0.10)", fontSize: 12 }}
+                    formatter={(value, name) => [`${value} مشروع`, name]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-3xl font-extrabold tracking-tight text-foreground">{statusTotal}</span>
+                <span className="mt-1 text-xs text-muted-foreground">مشروع</span>
+              </div>
+            </div>
+            <div className="space-y-3">
+              {STATUS_PIE.map((status) => {
+                const percentage = Math.round((status.value / statusTotal) * 100);
+                return (
+                  <div key={status.name} className="rounded-xl border border-border/70 bg-muted/25 p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-2 text-xs font-medium text-foreground">
+                        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: status.color }} />
+                        {status.name}
+                      </div>
+                      <span className="text-sm font-bold text-foreground">{status.value}</span>
+                    </div>
+                    <div className="mt-2 flex items-center gap-2">
+                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-border/70">
+                        <div className="h-full rounded-full" style={{ width: `${percentage}%`, backgroundColor: status.color }} />
+                      </div>
+                      <span className="w-8 text-left text-[11px] font-semibold text-muted-foreground">{percentage}%</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </Card>
       </div>
@@ -116,7 +177,7 @@ function PmoDashboard() {
           <CardHeader title="التقارير" action={<Link to="/reports" className="text-xs text-primary hover:underline">عرض الكل</Link>} />
           <div className="px-5 pb-5 space-y-2">
             {["التقرير الشهري للمشاريع", "تقرير حالة المشاريع", "تقرير الأداء حسب القطاع"].map((r) => (
-              <button key={r} className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg border border-border text-sm text-right hover:bg-accent">
+              <button onClick={() => downloadDocument({ id: Date.now(), name: r, type: "تقرير", uploadedBy: "مكتب إدارة المشاريع", date: new Date().toLocaleDateString("en-CA"), size: "—" })} key={r} className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg border border-border text-sm text-right hover:bg-accent">
                 <span>{r}</span>
                 <Download className="h-3.5 w-3.5 text-muted-foreground" />
               </button>

@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Lina Sans", "Lina Sans Arabic", "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -40,46 +40,41 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.5rem;
 
-  --background: oklch(0.985 0.003 150);
-  --foreground: oklch(0.20 0.02 260);
+  /* Saudi Platforms Code semantic tokens */
+  --background: #f9fafb;
+  --foreground: #161616;
+  --card: #ffffff;
+  --card-foreground: #161616;
+  --popover: #ffffff;
+  --popover-foreground: #161616;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.20 0.02 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.20 0.02 260);
+  --primary: #1b8354;
+  --primary-foreground: #ffffff;
+  --primary-dark: #166a45;
+  --primary-deep: #104631;
 
-  /* Ministry green #005D45 */
-  --primary: oklch(0.42 0.09 165);
-  --primary-foreground: oklch(1 0 0);
-  --primary-dark: oklch(0.36 0.08 165);
-  --primary-deep: oklch(0.30 0.07 165);
+  --secondary: #f3f4f6;
+  --secondary-foreground: #1f2a37;
+  --muted: #f3f4f6;
+  --muted-foreground: #4d5761;
+  --accent: #f0fdf4;
+  --accent-foreground: #14573a;
 
-  --secondary: oklch(0.965 0.008 165);
-  --secondary-foreground: oklch(0.30 0.07 165);
+  --destructive: #b42318;
+  --destructive-foreground: #ffffff;
+  --border: #d2d6db;
+  --input: #9da4ae;
+  --ring: #1b8354;
 
-  --muted: oklch(0.965 0.006 200);
-  --muted-foreground: oklch(0.52 0.02 250);
+  --success: #067647;
+  --warning: #b54708;
+  --gold: #f5bd02;
 
-  --accent: oklch(0.96 0.015 165);
-  --accent-foreground: oklch(0.30 0.07 165);
-
-  --destructive: oklch(0.58 0.22 27);
-  --destructive-foreground: oklch(1 0 0);
-
-  --border: oklch(0.92 0.005 180);
-  --input: oklch(0.92 0.005 180);
-  --ring: oklch(0.42 0.09 165);
-
-  --success: oklch(0.65 0.17 145);
-  --warning: oklch(0.78 0.16 75);
-  --gold: oklch(0.83 0.15 85);
-
-  /* Sidebar dark green #004634 */
-  --sidebar: oklch(0.33 0.07 165);
-  --sidebar-foreground: oklch(0.97 0.01 165);
-  --sidebar-active: oklch(0.28 0.06 165);
+  --sidebar: #104631;
+  --sidebar-foreground: #ffffff;
+  --sidebar-active: #0d3828;
 }
 
 @layer base {
@@ -89,16 +84,88 @@
 
   html {
     font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  a[href] {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 3px solid #54c08a;
+    outline-offset: 2px;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    border-color: var(--input);
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]):focus,
+  select:focus,
+  textarea:focus {
+    border-color: var(--primary);
+  }
+
+  ::selection {
+    background: #b8eacb;
+    color: #104631;
   }
 }
 
 /* RTL scrollbar and focus polish */
 [dir="rtl"] {
   text-align: right;
+}
+
+.dga-skip-link {
+  position: fixed;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 9999;
+  transform: translateY(-160%);
+  border-radius: 0.5rem;
+  background: #ffffff;
+  color: #104631;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgb(16 70 49 / 18%);
+}
+
+.dga-skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (forced-colors: active) {
+  * {
+    border-color: CanvasText;
+  }
 }
