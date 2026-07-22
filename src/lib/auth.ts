@@ -19,7 +19,7 @@ export const DEMO_PASSWORD = "Mewa@2026";
 
 const DEMO_USERS: Record<string, User> = {
   "admin@mewa.gov.sa": { name: "مسؤول النظام", email: "admin@mewa.gov.sa", role: "admin", roleLabel: "مسؤول النظام" },
-  "pmo@mewa.gov.sa": { name: "فهد المطيري", email: "pmo@mewa.gov.sa", role: "pmo", roleLabel: "موظف مكتب إدارة المشاريع (PMO)" },
+  "pmo@mewa.gov.sa": { name: "فهد المطيري", email: "pmo@mewa.gov.sa", role: "pmo", roleLabel: "موظف الوزارة" },
   
   // 1. الإدارة العامة للتحول الرقمي
   "dt_gm@mewa.gov.sa": { name: "مدير التحول الرقمي", email: "dt_gm@mewa.gov.sa", role: "manager", roleLabel: "المدير العام", departmentId: "dt", isGeneralManager: true },
@@ -44,7 +44,7 @@ const DEMO_USERS: Record<string, User> = {
   "manager@mewa.gov.sa": { name: "عبدالله الحربي", email: "manager@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "dt", isGeneralManager: true },
   "pm@mewa.gov.sa": { name: "خالد الشهري", email: "pm@mewa.gov.sa", role: "pm", roleLabel: "مدير المشروع" },
   "capacity@mewa.gov.sa": { name: "نورة العتيبي", email: "capacity@mewa.gov.sa", role: "capacity", roleLabel: "مسؤول الشركات وبناء القدرات" },
-  "goust@mewa.gov.sa": { name: "منال الشهري", email: "goust@mewa.gov.sa", role: "employee", roleLabel: "موظف" },
+  "guest@mewa.gov.sa": { name: "منال الشهري", email: "guest@mewa.gov.sa", role: "employee", roleLabel: "مدعو لورشة عمل" },
 };
 
 const KEY = "mewa_user";
@@ -53,11 +53,11 @@ const USERS_KEY = "mewa_users_v1";
 
 export const ROLE_LABELS: Record<Role, string> = {
   admin: "مسؤول النظام",
-  pmo: "موظف مكتب إدارة المشاريع (PMO)",
+  pmo: "موظف الوزارة",
   manager: "مدير الإدارة",
   pm: "مدير المشروع",
   capacity: "مسؤول الشركات وبناء القدرات",
-  employee: "موظف",
+  employee: "مدعو لورشة عمل",
 };
 
 export function getManagedUsers(): User[] {
@@ -67,7 +67,7 @@ export function getManagedUsers(): User[] {
     if (!raw) return Object.values(DEMO_USERS);
     const stored = (JSON.parse(raw) as User[]).map((user) => {
       const isManal =
-        user.email.toLowerCase() === "goust@mewa.gov.sa" || user.name.trim() === "منال الشهري";
+        user.email.toLowerCase() === "guest@mewa.gov.sa" || user.name.trim() === "منال الشهري";
       return isManal
         ? { ...user, role: "employee" as const, roleLabel: ROLE_LABELS.employee }
         : user;

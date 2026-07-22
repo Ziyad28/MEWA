@@ -154,49 +154,46 @@ function LoginPage() {
 
             <details className="mt-4 text-[11px] text-muted-foreground bg-muted/30 border border-border/50 rounded-lg p-3 transition-all [&_summary::-webkit-details-marker]:hidden">
               <summary className="cursor-pointer text-center font-medium text-primary hover:text-primary-deep flex items-center justify-center gap-1 select-none">
-                <span>عرض جميع الحسابات التجريبية للنظام ({DEMO_PASSWORD})</span>
+                <span>عرض جميع الحسابات التجريبية للنظام (كلمة المرور: {DEMO_PASSWORD})</span>
               </summary>
-              <div className="mt-4 space-y-3 text-right border-t border-border/50 pt-3">
-                <div className="space-y-1">
-                  <div className="font-semibold text-foreground">أدوار النظام الأساسية:</div>
-                  <div className="grid grid-cols-2 gap-1 text-[10px]">
-                    <div>مسؤول نظام: <code>admin@...</code></div>
-                    <div>مكتب مشاريع: <code>pmo@...</code></div>
-                    <div>مدير مشروع: <code>pm@...</code></div>
-                    <div>موظف: <code>goust@...</code></div>
+              <div className="mt-4 space-y-4 text-right border-t border-border/50 pt-3">
+                <div className="space-y-1.5">
+                  <div className="font-semibold text-foreground text-xs">أدوار النظام الأساسية:</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[10px]">
+                    <div>مسؤول النظام: <code className="text-primary-deep font-medium">admin@mewa.gov.sa</code></div>
+                    <div>موظف الوزارة: <code className="text-primary-deep font-medium">pmo@mewa.gov.sa</code></div>
+                    <div>مدير مشروع: <code className="text-primary-deep font-medium">pm@mewa.gov.sa</code></div>
+                    <div>مدعو لورشة عمل: <code className="text-primary-deep font-medium">guest@mewa.gov.sa</code></div>
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <div className="font-semibold text-foreground">التحول الرقمي:</div>
-                  <div className="grid grid-cols-2 gap-1 text-[10px]">
-                    <div className="col-span-2 text-primary font-medium">المدير العام: <code>dt_gm@...</code></div>
-                    <div>تقنيات ناشئة: <code>dt_sub1@...</code></div>
-                    <div>بنية مؤسسية: <code>dt_sub2@...</code></div>
-                    <div>تخطيط وتميز: <code>dt_sub3@...</code></div>
-                    <div>خدمات إلكترونية: <code>dt_sub4@...</code></div>
+                <div className="space-y-1.5">
+                  <div className="font-semibold text-foreground text-xs">الإدارة العامة للتحول الرقمي:</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[10px]">
+                    <div className="col-span-1 md:col-span-2 text-primary font-medium">المدير العام: <code className="text-primary-deep">dt_gm@mewa.gov.sa</code></div>
+                    <div>مدير التقنيات الناشئة: <code className="text-primary-deep font-medium">dt_sub1@mewa.gov.sa</code></div>
+                    <div>مدير البنية المؤسسية: <code className="text-primary-deep font-medium">dt_sub2@mewa.gov.sa</code></div>
+                    <div>مدير التخطيط والتميز: <code className="text-primary-deep font-medium">dt_sub3@mewa.gov.sa</code></div>
+                    <div>مدير الخدمات الإلكترونية: <code className="text-primary-deep font-medium">dt_sub4@mewa.gov.sa</code></div>
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <div className="font-semibold text-foreground">الحلول التطبيقية:</div>
-                  <div className="grid grid-cols-2 gap-1 text-[10px]">
-                    <div className="col-span-2 text-primary font-medium">المدير العام: <code>app_gm@...</code></div>
-                    <div>حلول مؤسسية: <code>app_sub1@...</code></div>
-                    <div>ذكاء الأعمال: <code>app_sub2@...</code></div>
-                    <div>منتجات رقمية: <code>app_sub3@...</code></div>
+                <div className="space-y-1.5">
+                  <div className="font-semibold text-foreground text-xs">الإدارة العامة للحلول التطبيقية:</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[10px]">
+                    <div className="col-span-1 md:col-span-2 text-primary font-medium">المدير العام: <code className="text-primary-deep">app_gm@mewa.gov.sa</code></div>
+                    <div>مدير الحلول المؤسسية: <code className="text-primary-deep font-medium">app_sub1@mewa.gov.sa</code></div>
+                    <div>مدير ذكاء الأعمال: <code className="text-primary-deep font-medium">app_sub2@mewa.gov.sa</code></div>
+                    <div>مدير المنتجات الرقمية: <code className="text-primary-deep font-medium">app_sub3@mewa.gov.sa</code></div>
                   </div>
                 </div>
-                <div className="space-y-1">
-                  <div className="font-semibold text-foreground">البنية التحتية:</div>
-                  <div className="grid grid-cols-2 gap-1 text-[10px]">
-                    <div className="col-span-2 text-primary font-medium">المدير العام: <code>infra_gm@...</code></div>
-                    <div>قواعد بيانات: <code>infra_sub1@...</code></div>
-                    <div>الشبكات: <code>infra_sub2@...</code></div>
-                    <div>تشغيل أنظمة: <code>infra_sub3@...</code></div>
-                    <div>دعم فني: <code>infra_sub4@...</code></div>
+                <div className="space-y-1.5">
+                  <div className="font-semibold text-foreground text-xs">الإدارة العامة للبنية التحتية:</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[10px]">
+                    <div className="col-span-1 md:col-span-2 text-primary font-medium">المدير العام: <code className="text-primary-deep">infra_gm@mewa.gov.sa</code></div>
+                    <div>مدير قواعد البيانات: <code className="text-primary-deep font-medium">infra_sub1@mewa.gov.sa</code></div>
+                    <div>مدير الشبكات: <code className="text-primary-deep font-medium">infra_sub2@mewa.gov.sa</code></div>
+                    <div>مدير تشغيل أنظمة: <code className="text-primary-deep font-medium">infra_sub3@mewa.gov.sa</code></div>
+                    <div>مدير خدمات المستفيدين: <code className="text-primary-deep font-medium">infra_sub4@mewa.gov.sa</code></div>
                   </div>
-                </div>
-                <div className="text-center text-[10px] text-muted-foreground pt-2">
-                  * جميع الإيميلات تنتهي بـ <code>mewa.gov.sa</code>
                 </div>
               </div>
             </details>
