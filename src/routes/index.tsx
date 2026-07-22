@@ -170,13 +170,54 @@ function LoginPage() {
               الدخول عبر النفاذ الوطني الموحد
             </button>
 
-            <p className="text-[11px] text-muted-foreground text-center pt-2">
-              حسابات تجريبية: admin@mewa.gov.sa · pmo@mewa.gov.sa · manager@mewa.gov.sa ·
-              pm@mewa.gov.sa · capacity@mewa.gov.sa · goust@mewa.gov.sa
-            </p>
-            <p className="text-[11px] font-semibold text-primary text-center">
-              كلمة المرور التجريبية لجميع الحسابات: <span dir="ltr">{DEMO_PASSWORD}</span>
-            </p>
+            <details className="mt-4 text-[11px] text-muted-foreground bg-muted/30 border border-border/50 rounded-lg p-3 transition-all [&_summary::-webkit-details-marker]:hidden">
+              <summary className="cursor-pointer text-center font-medium text-primary hover:text-primary-deep flex items-center justify-center gap-1 select-none">
+                <span>عرض جميع الحسابات التجريبية للنظام ({DEMO_PASSWORD})</span>
+              </summary>
+              <div className="mt-4 space-y-3 text-right border-t border-border/50 pt-3">
+                <div className="space-y-1">
+                  <div className="font-semibold text-foreground">أدوار النظام الأساسية:</div>
+                  <div className="grid grid-cols-2 gap-1 text-[10px]">
+                    <div>مسؤول نظام: <code>admin@...</code></div>
+                    <div>مكتب مشاريع: <code>pmo@...</code></div>
+                    <div>مدير مشروع: <code>pm@...</code></div>
+                    <div>موظف: <code>goust@...</code></div>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <div className="font-semibold text-foreground">التحول الرقمي:</div>
+                  <div className="grid grid-cols-2 gap-1 text-[10px]">
+                    <div className="col-span-2 text-primary font-medium">المدير العام: <code>dt_gm@...</code></div>
+                    <div>تقنيات ناشئة: <code>dt_sub1@...</code></div>
+                    <div>بنية مؤسسية: <code>dt_sub2@...</code></div>
+                    <div>تخطيط وتميز: <code>dt_sub3@...</code></div>
+                    <div>خدمات إلكترونية: <code>dt_sub4@...</code></div>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <div className="font-semibold text-foreground">الحلول التطبيقية:</div>
+                  <div className="grid grid-cols-2 gap-1 text-[10px]">
+                    <div className="col-span-2 text-primary font-medium">المدير العام: <code>app_gm@...</code></div>
+                    <div>حلول مؤسسية: <code>app_sub1@...</code></div>
+                    <div>ذكاء الأعمال: <code>app_sub2@...</code></div>
+                    <div>منتجات رقمية: <code>app_sub3@...</code></div>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <div className="font-semibold text-foreground">البنية التحتية:</div>
+                  <div className="grid grid-cols-2 gap-1 text-[10px]">
+                    <div className="col-span-2 text-primary font-medium">المدير العام: <code>infra_gm@...</code></div>
+                    <div>قواعد بيانات: <code>infra_sub1@...</code></div>
+                    <div>الشبكات: <code>infra_sub2@...</code></div>
+                    <div>تشغيل أنظمة: <code>infra_sub3@...</code></div>
+                    <div>دعم فني: <code>infra_sub4@...</code></div>
+                  </div>
+                </div>
+                <div className="text-center text-[10px] text-muted-foreground pt-2">
+                  * جميع الإيميلات تنتهي بـ <code>mewa.gov.sa</code>
+                </div>
+              </div>
+            </details>
           </form>
         </div>
       </div>
