@@ -4,8 +4,9 @@ import { Briefcase, CheckCircle2, Hourglass, TrendingUp, Plus, X } from "lucide-
 import { AppShell, useRequireAuth } from "@/components/app-shell";
 import { PerformanceBarChart } from "@/components/dashboard-charts";
 import { Card, CardHeader, StatCard, EmptyState, Badge } from "@/components/ui-bits";
-import { ORG_STRUCTURE, SECTORS, type Sector } from "@/lib/mock-data";
+import { ORG_STRUCTURE, COMPANIES } from "@/lib/mock-data";
 import { usePortalData, saveProjects, saveDocuments, type PrototypeProject, type StoredDocument } from "@/lib/portal-store";
+import { getManagedUsers } from "@/lib/auth";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/manager")({
@@ -18,10 +19,14 @@ function ManagerDashboard() {
 
   const [activeTab, setActiveTab] = useState<string>("all");
   const [showAddProject, setShowAddProject] = useState(false);
+  const usersList = useMemo(() => getManagedUsers(), []);
+  const pmUsers = usersList.filter((u) => u.role === "pm");
+
   const [form, setForm] = useState({
     name: "",
-    sector: "المياه" as Sector,
     subDepartmentId: user?.isGeneralManager ? "direct" : (user?.subDepartmentId ?? ""),
+    pmEmail: "",
+    companyId: "internal",
   });
 
   const departmentId = user?.departmentId as keyof typeof ORG_STRUCTURE;
@@ -62,8 +67,9 @@ function ManagerDashboard() {
     const newProject: PrototypeProject = {
       id: Date.now(),
       name: form.name,
-      manager: user?.name ?? "غير محدد",
-      sector: form.sector,
+      manager: usersList.find(u => u.email === form.pmEmail)?.name ?? "غير محدد",
+      sector: "التقنية",
+      companyId: form.companyId === "internal" ? undefined : Number(form.companyId),
       progress: 0,
       status: "مخططة",
       priority: "متوسطة",
@@ -260,13 +266,34 @@ function ManagerDashboard() {
               )}
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">القطاع</label>
+                <label className="text-sm font-medium text-foreground">إسناد لمدير مشروع <span className="text-destructive">*</span></label>
                 <select
-                  value={form.sector}
-                  onChange={e => setForm({...form, sector: e.target.value as Sector})}
+                  required
+                  value={form.pmEmail}
+                  onChange={e => setForm({...form, pmEmail: e.target.value})}
                   className="w-full h-10 px-3 rounded-md border border-input bg-transparent text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 >
-                  {SECTORS.map(s => <option key={s} value={s}>{s}</option>)}
+                  <option value="" disabled>اختر مدير المشروع...</option>
+                  {pmUsers.map(pm => (
+                    <option key={pm.email} value={pm.email}>{pm.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">الجهة المنفذة <span className="text-destructive">*</span></label>
+                <select
+                  required
+                  value={form.companyId}
+                  onChange={e => setForm({...form, companyId: e.target.value})}
+                  className="w-full h-10 px-3 rounded-md border border-input bg-transparent text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                >
+                  <option value="internal">تنفيذ داخلي (موظفي الوزارة)</option>
+                  <optgroup label="الشركات المنفذة">
+                    {COMPANIES.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </optgroup>
                 </select>
               </div>
 
