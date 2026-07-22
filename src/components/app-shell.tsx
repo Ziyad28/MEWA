@@ -307,18 +307,6 @@ export function AppShell({
                 </span>
               )}
             </button>
-            <button
-              title="الإشعارات"
-              onClick={() => setPanel(panel === "notifications" ? null : "notifications")}
-              className="relative h-9 w-9 rounded-lg border border-border bg-background flex items-center justify-center text-muted-foreground hover:text-primary"
-            >
-              <Bell className="h-4 w-4" />
-              {unreadNotifications > 0 && (
-                <span className="absolute -top-1 -left-1 h-4 min-w-4 px-1 rounded-full bg-primary text-[10px] text-white flex items-center justify-center">
-                  {unreadNotifications}
-                </span>
-              )}
-            </button>
           </div>
           {panel && (
             <div className="absolute z-50 top-14 left-6 w-[360px] max-w-[calc(100vw-2rem)] rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
@@ -337,61 +325,6 @@ export function AppShell({
                   <X className="h-4 w-4" />
                 </button>
               </div>
-              {panel === "notifications" && (
-                <div>
-                  <div className="max-h-[380px] overflow-y-auto divide-y divide-border">
-                    {visibleNotifications.map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() => {
-                          saveNotifications(
-                            getNotifications().map((n) =>
-                              n.id === item.id ? { ...n, read: true } : n,
-                            ),
-                          );
-                          if (item.href) navigate({ to: item.href as never });
-                          setPanel(null);
-                        }}
-                        className={`w-full p-4 text-right hover:bg-accent/60 ${item.read ? "bg-card" : "bg-primary/[0.04]"}`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`h-2 w-2 rounded-full ${item.read ? "bg-border" : "bg-primary"}`}
-                          />
-                          <span className="font-semibold text-sm">{item.title}</span>
-                        </div>
-                        <p className="mt-1 text-xs text-muted-foreground leading-5">{item.body}</p>
-                        {item.actorName && (
-                          <div className="mt-2 text-[10px] font-medium text-foreground/75">
-                            نفّذ بواسطة: {item.actorName}
-                            {item.actorRole ? ` — ${item.actorRole}` : ""}
-                          </div>
-                        )}
-                        <div className="mt-1 text-[10px] text-muted-foreground">
-                          {item.createdAt ?? item.time}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    onClick={() =>
-                      saveNotifications(
-                        getNotifications().map((item) =>
-                          visibleNotifications.some((visible) => visible.id === item.id)
-                            ? { ...item, read: true }
-                            : item,
-                        ),
-                      )
-                    }
-                    className="w-full py-3 text-xs font-semibold text-primary border-t border-border"
-                  >
-                    تحديد الكل كمقروء
-                  </button>
-                  <div className="px-4 py-2.5 text-[10px] text-center text-muted-foreground bg-accent/30">
-                    إشعارات النظام والبريد الإلكتروني مفعلة في وضع المحاكاة
-                  </div>
-                </div>
-              )}
               {panel === "messages" && (
                 <div>
                   <div className="max-h-[300px] overflow-y-auto divide-y divide-border">
