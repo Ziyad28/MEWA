@@ -163,30 +163,108 @@ function UsersPage() {
                 <tr key={user.email} className="border-t border-border">
                   <td className="px-5 py-4 font-semibold">{user.name}</td>
                   <td className="px-5 py-4 text-muted-foreground">{user.email}</td>
-                  <td className="px-5 py-4">
-                    <select
-                      value={user.role}
-                      disabled={user.email === currentUser.email}
-                      onChange={(event) => {
-                        const nextRole = event.target.value as Role;
-                        commit(
-                          users.map((item) =>
-                            item.email === user.email
-                              ? { ...item, role: nextRole, roleLabel: ROLE_LABELS[nextRole] }
-                              : item,
-                          ),
-                          "تغيير دور مستخدم",
-                          `${user.name}: ${ROLE_LABELS[nextRole]}`,
-                        );
-                      }}
-                      className="h-9 rounded-lg border border-border bg-background px-2"
-                    >
-                      {Object.entries(ROLE_LABELS).map(([value, label]) => (
-                        <option key={value} value={value}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
+                  <td className="px-5 py-4 min-w-[200px]">
+                    <div className="flex flex-col gap-2">
+                      <select
+                        value={user.role}
+                        disabled={user.email === currentUser.email}
+                        onChange={(event) => {
+                          const nextRole = event.target.value as Role;
+                          commit(
+                            users.map((item) =>
+                              item.email === user.email
+                                ? { ...item, role: nextRole, roleLabel: ROLE_LABELS[nextRole] }
+                                : item,
+                            ),
+                            "تغيير دور مستخدم",
+                            `${user.name}: ${ROLE_LABELS[nextRole]}`,
+                          );
+                        }}
+                        className="h-9 w-full rounded-lg border border-border bg-background px-2"
+                      >
+                        {Object.entries(ROLE_LABELS).map(([value, label]) => (
+                          <option key={value} value={value}>
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+
+                      {user.role === "manager" && (
+                        <div className="flex flex-col gap-2 mt-1 p-2 bg-muted/30 border border-border/50 rounded-lg">
+                          <select
+                            value={user.isGeneralManager ? "gm" : "sub"}
+                            disabled={user.email === currentUser.email}
+                            onChange={(e) => {
+                              const isGM = e.target.value === "gm";
+                              commit(
+                                users.map((item) =>
+                                  item.email === user.email
+                                    ? {
+                                        ...item,
+                                        isGeneralManager: isGM,
+                                        subDepartmentId: isGM ? undefined : item.subDepartmentId,
+                                        roleLabel: isGM ? "المدير العام" : "مدير إدارة",
+                                      }
+                                    : item,
+                                ),
+                                "تغيير مستوى الإدارة",
+                                user.name
+                              );
+                            }}
+                            className="h-8 w-full text-xs rounded border border-border bg-background px-2"
+                          >
+                            <option value="gm">مدير عام (وكالة كاملة)</option>
+                            <option value="sub">مدير فرعي (إدارة محددة)</option>
+                          </select>
+
+                          <select
+                            value={user.departmentId || ""}
+                            disabled={user.email === currentUser.email}
+                            onChange={(e) => {
+                              commit(
+                                users.map((item) =>
+                                  item.email === user.email
+                                    ? { ...item, departmentId: e.target.value, subDepartmentId: undefined }
+                                    : item,
+                                ),
+                                "تغيير الإدارة العامة",
+                                user.name
+                              );
+                            }}
+                            className="h-8 w-full text-xs rounded border border-border bg-background px-2"
+                          >
+                            <option value="">اختر الإدارة العامة...</option>
+                            {Object.entries(ORG_STRUCTURE).map(([key, org]) => (
+                              <option key={key} value={key}>{org.name}</option>
+                            ))}
+                          </select>
+
+                          {!user.isGeneralManager && user.departmentId && ORG_STRUCTURE[user.departmentId as keyof typeof ORG_STRUCTURE] && (
+                            <select
+                              value={user.subDepartmentId || ""}
+                              disabled={user.email === currentUser.email}
+                              onChange={(e) => {
+                                commit(
+                                  users.map((item) =>
+                                    item.email === user.email
+                                      ? { ...item, subDepartmentId: e.target.value }
+                                      : item,
+                                  ),
+                                  "تغيير الإدارة الفرعية",
+                                  user.name
+                                );
+                              }}
+                              className="h-8 w-full text-xs rounded border border-border bg-background px-2"
+                            >
+                              <option value="">اختر الإدارة الفرعية...</option>
+                              {ORG_STRUCTURE[user.departmentId as keyof typeof ORG_STRUCTURE].subDepartments.map(sub => (
+                                <option key={sub.id} value={sub.id}>{sub.name}</option>
+                              ))}
+                            </select>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </td>
                   <td className="px-5 py-4">
                     <Badge tone={user.active === false ? "muted" : "success"}>

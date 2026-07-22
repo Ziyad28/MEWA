@@ -78,8 +78,10 @@ export function canAccessProject(user: User, project: Partial<Project> & { manag
   
   if (user.role === "manager") {
     if (user.isGeneralManager) {
+      if (!user.departmentId) return false;
       return project.departmentId === user.departmentId;
     } else {
+      if (!user.subDepartmentId) return false;
       return project.subDepartmentId === user.subDepartmentId;
     }
   }

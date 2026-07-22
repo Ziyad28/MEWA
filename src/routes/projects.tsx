@@ -24,7 +24,7 @@ import {
 } from "@/components/ui-bits";
 import { PortfolioIntelligence } from "@/components/portfolio-intelligence";
 import { PageSkeleton } from "@/components/page-skeleton";
-import { PROJECTS, SECTORS, COMPANIES } from "@/lib/mock-data";
+import { ORG_STRUCTURE, PROJECTS, SECTORS, COMPANIES } from "@/lib/mock-data";
 import {
   addNotification,
   downloadExcel,
@@ -52,65 +52,7 @@ export const Route = createFileRoute("/projects")({
   }),
 });
 
-const GENERAL_ADMINISTRATIONS = [
-  "الإدارة العامة للتحول الرقمي",
-  "الإدارة العامة للحلول التطبيقية",
-  "الإدارة العامة للبنية التحتية وخدمات المستفيدين",
-] as const;
 
-const PROJECT_GENERAL_ADMINISTRATION: Record<number, (typeof GENERAL_ADMINISTRATIONS)[number]> = {
-  1: "الإدارة العامة للتحول الرقمي",
-  2: "الإدارة العامة للبنية التحتية وخدمات المستفيدين",
-  3: "الإدارة العامة للبنية التحتية وخدمات المستفيدين",
-  4: "الإدارة العامة للحلول التطبيقية",
-  5: "الإدارة العامة للبنية التحتية وخدمات المستفيدين",
-  6: "الإدارة العامة للتحول الرقمي",
-  7: "الإدارة العامة للحلول التطبيقية",
-  8: "الإدارة العامة للتحول الرقمي",
-  9: "الإدارة العامة للتحول الرقمي",
-  10: "الإدارة العامة للبنية التحتية وخدمات المستفيدين",
-};
-
-function projectGeneralAdministration(project: PrototypeProject) {
-  return PROJECT_GENERAL_ADMINISTRATION[project.id] ?? "الإدارة العامة للتحول الرقمي";
-}
-
-const SUB_DEPARTMENTS: Record<string, string[]> = {
-  "الإدارة العامة للتحول الرقمي": [
-    "إدارة التقنيات الناشئة",
-    "إدارة البنية المؤسسية",
-    "إدارة التخطيط والتميز المؤسسي",
-    "إدارة الخدمات الإلكترونية",
-  ],
-  "الإدارة العامة للحلول التطبيقية": [
-    "إدارة الحلول المؤسسية",
-    "إدارة ذكاء الأعمال",
-    "إدارة المنتجات الرقمية",
-  ],
-  "الإدارة العامة للبنية التحتية وخدمات المستفيدين": [
-    "إدارة قواعد البيانات",
-    "إدارة الشبكات والاتصالات",
-    "إدارة تشغيل أنظمة البنية التحتية",
-    "إدارة خدمات المستفيدين",
-  ],
-};
-
-const PROJECT_SUB_DEPARTMENT: Record<number, string> = {
-  1: "إدارة الخدمات الإلكترونية",
-  2: "إدارة البنية التحتية",
-  3: "إدارة الشبكات",
-  4: "إدارة النظم المالية والإدارية",
-  5: "إدارة مراكز البيانات",
-  6: "إدارة التقنيات الناشئة",
-  7: "إدارة ذكاء الأعمال",
-  8: "إدارة البنية المؤسسية",
-  9: "إدارة التخطيط والتميز المؤسسي",
-  10: "إدارة الأمن السيبراني",
-};
-
-function projectSubDepartment(project: PrototypeProject) {
-  return PROJECT_SUB_DEPARTMENT[project.id] ?? "إدارة غير محددة";
-}
 
 function ProjectsPage() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
@@ -147,15 +89,19 @@ function ProjectsPage() {
     return scoped.filter((p) => {
       if (q && !p.name.includes(q) && !p.manager.includes(q)) return false;
       if (sector !== "all" && p.sector !== sector) return false;
+      const showGenAdminFilter = user?.role === "admin" || user?.role === "pmo";
+      const showSubDeptFilter = showGenAdminFilter ? generalAdministration !== "all" : (user?.role === "manager" && user?.isGeneralManager);
+
       if (
+        showGenAdminFilter &&
         generalAdministration !== "all" &&
-        projectGeneralAdministration(p) !== generalAdministration
+        p.departmentId !== generalAdministration
       )
         return false;
       if (
-        generalAdministration !== "all" &&
+        showSubDeptFilter &&
         subDepartment !== "all" &&
-        projectSubDepartment(p) !== subDepartment
+        p.subDepartmentId !== subDepartment
       )
         return false;
       if (status !== "all" && status !== "مؤرشف" && p.status !== status) return false;
@@ -395,23 +341,26 @@ function ProjectsPage() {
                 </option>
               ))}
             </select>
-            <select
-              value={generalAdministration}
-              onChange={(e) => {
-                setGeneralAdministration(e.target.value);
-                setSubDepartment("all");
-              }}
-              aria-label="الإدارة العامة"
-              className="h-11 px-3 rounded-lg border border-border bg-background text-sm"
-            >
-              <option value="all">الإدارات العامة</option>
-              {GENERAL_ADMINISTRATIONS.map((administration) => (
-                <option key={administration} value={administration}>
-                  {administration}
-                </option>
-              ))}
-            </select>
-            {generalAdministration !== "all" && SUB_DEPARTMENTS[generalAdministration] && (
+            {(user.role === "admin" || user.role === "pmo") && (
+              <select
+                value={generalAdministration}
+                onChange={(e) => {
+                  setGeneralAdministration(e.target.value);
+                  setSubDepartment("all");
+                }}
+                aria-label="الإدارة العامة"
+                className="h-11 px-3 rounded-lg border border-border bg-background text-sm"
+              >
+                <option value="all">الإدارات العامة</option>
+                {Object.entries(ORG_STRUCTURE).map(([key, org]) => (
+                  <option key={key} value={key}>
+                    {org.name}
+                  </option>
+                ))}
+              </select>
+            )}
+            
+            {((user.role === "admin" || user.role === "pmo") ? generalAdministration !== "all" : (user.role === "manager" && user.isGeneralManager)) && (
               <select
                 value={subDepartment}
                 onChange={(e) => setSubDepartment(e.target.value)}
@@ -419,9 +368,12 @@ function ProjectsPage() {
                 className="h-11 px-3 rounded-lg border border-border bg-background text-sm"
               >
                 <option value="all">الإدارات الفرعية</option>
-                {SUB_DEPARTMENTS[generalAdministration].map((dept) => (
-                  <option key={dept} value={dept}>
-                    {dept}
+                {((user.role === "admin" || user.role === "pmo") && ORG_STRUCTURE[generalAdministration as keyof typeof ORG_STRUCTURE]
+                  ? ORG_STRUCTURE[generalAdministration as keyof typeof ORG_STRUCTURE].subDepartments
+                  : (user.departmentId && ORG_STRUCTURE[user.departmentId as keyof typeof ORG_STRUCTURE] ? ORG_STRUCTURE[user.departmentId as keyof typeof ORG_STRUCTURE].subDepartments : [])
+                ).map((dept) => (
+                  <option key={dept.id} value={dept.id}>
+                    {dept.name}
                   </option>
                 ))}
               </select>
