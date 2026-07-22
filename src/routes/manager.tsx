@@ -109,34 +109,21 @@ function ManagerDashboard() {
       <div className="flex flex-col gap-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
           {user.isGeneralManager && org ? (
-            <div className="flex flex-wrap bg-white rounded-lg border border-border p-1 gap-1">
-              <button
-                onClick={() => setActiveTab("all")}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  activeTab === "all" ? "bg-primary text-white shadow-sm" : "text-muted-foreground hover:bg-muted"
-                }`}
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-semibold text-foreground">تصفية حسب الإدارة:</span>
+              <select
+                value={activeTab}
+                onChange={(e) => setActiveTab(e.target.value)}
+                className="h-10 px-3 rounded-lg border border-border bg-background text-sm min-w-[250px] shadow-sm focus:outline-none focus:ring-1 focus:ring-primary"
               >
-                الكل
-              </button>
-              <button
-                onClick={() => setActiveTab("direct")}
-                className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                  activeTab === "direct" ? "bg-primary text-white shadow-sm" : "text-muted-foreground hover:bg-muted"
-                }`}
-              >
-                {org.name} (مباشر)
-              </button>
-              {org.subDepartments.map(sub => (
-                <button
-                  key={sub.id}
-                  onClick={() => setActiveTab(sub.id)}
-                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
-                    activeTab === sub.id ? "bg-primary text-white shadow-sm" : "text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  {sub.name}
-                </button>
-              ))}
+                <option value="all">جميع مشاريع الإدارة العامة</option>
+                <option value="direct">مشاريع الإدارة العامة (مباشرة)</option>
+                <optgroup label="مشاريع الإدارات الفرعية">
+                  {org.subDepartments.map(sub => (
+                    <option key={sub.id} value={sub.id}>{sub.name}</option>
+                  ))}
+                </optgroup>
+              </select>
             </div>
           ) : (
             <div></div> // empty spacer
