@@ -12,20 +12,20 @@ export const Route = createFileRoute("/manager")({
 
 function ManagerDashboard() {
   const user = useRequireAuth("manager");
-  if (!user) return null;
 
   const [activeTab, setActiveTab] = useState<string>("all");
   const [showAddProject, setShowAddProject] = useState(false);
   const [form, setForm] = useState({
     name: "",
     sector: "المياه" as Sector,
-    subDepartmentId: user.isGeneralManager ? "direct" : (user.subDepartmentId ?? ""),
+    subDepartmentId: user?.isGeneralManager ? "direct" : (user?.subDepartmentId ?? ""),
   });
 
-  const departmentId = user.departmentId as keyof typeof ORG_STRUCTURE;
-  const org = ORG_STRUCTURE[departmentId];
+  const departmentId = user?.departmentId as keyof typeof ORG_STRUCTURE;
+  const org = departmentId ? ORG_STRUCTURE[departmentId] : null;
 
   const filteredProjects = useMemo(() => {
+    if (!user) return [];
     return PROJECTS.filter((p) => {
       if (!user.isGeneralManager) {
         return p.subDepartmentId === user.subDepartmentId;
@@ -55,6 +55,8 @@ function ManagerDashboard() {
     alert("تمت إضافة المشروع بنجاح");
     setShowAddProject(false);
   };
+
+  if (!user) return null;
 
   return (
     <AppShell
