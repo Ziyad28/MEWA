@@ -104,15 +104,14 @@ export function PerformanceBarChart({
           stroke="#E7ECE9"
         />
         {layout === "vertical" ? (
-          <>
-            <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#667085" }} tickFormatter={(value) => `${value}%`} domain={[0, 100]} />
-            <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#344054", fontWeight: 500 }} width={120} />
-          </>
+          <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#667085" }} tickFormatter={(value) => `${value}%`} domain={[0, 100]} />
         ) : (
-          <>
-            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#667085" }} dy={10} />
-            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#667085" }} tickFormatter={(value) => `${value}%`} domain={[0, 100]} width={42} />
-          </>
+          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#667085" }} dy={10} />
+        )}
+        {layout === "vertical" ? (
+          <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#344054", fontWeight: 500 }} width={120} />
+        ) : (
+          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#667085" }} tickFormatter={(value) => `${value}%`} domain={[0, 100]} width={42} />
         )}
         <Tooltip
           cursor={{ fill: `${color}0A` }}
