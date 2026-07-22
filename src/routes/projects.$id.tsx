@@ -61,7 +61,6 @@ const TABS = [
   { id: "updates", label: "التحديثات" },
   { id: "documents", label: "الوثائق" },
   { id: "risks", label: "المخاطر" },
-  { id: "ai", label: "تحليل الذكاء الاصطناعي" },
   { id: "activity", label: "سجل النشاط" },
   { id: "workspace", label: "إدارة المشروع" },
 ];
@@ -228,7 +227,6 @@ function ProjectDetail() {
           {tab === "updates" && <UpdatesTab updates={updates} />}
           {tab === "documents" && <DocsTab docs={docs} />}
           {tab === "risks" && <RisksTab risks={risks} />}
-          {tab === "ai" && <AITab project={project} />}
           {tab === "activity" && <ActivityTab activity={activity} />}
           {tab === "workspace" && <ProjectPrototypeWorkspace projectId={project.id} user={user} />}
         </div>
@@ -372,25 +370,6 @@ function Overview({
             label="الانتهاء المخطط"
             value={project.end}
           />
-        </div>
-      </Card>
-
-      <Card className="lg:col-span-3 border-primary/20 bg-primary/[0.02]">
-        <CardHeader
-          title="ملخص الذكاء الاصطناعي"
-          action={
-            <span className="inline-flex items-center gap-1 text-[11px] text-primary font-semibold">
-              <Sparkles className="h-3 w-3" /> مُولّد آليًا
-            </span>
-          }
-        />
-        <div className="px-5 pb-5 text-sm leading-7 text-foreground">
-          يسير المشروع بوتيرة {project.progress >= 60 ? "جيدة" : "متوسطة"} مع نسبة إنجاز{" "}
-          {project.progress}% ومؤشر صحة {project.health}%.
-          {project.delayRisk >= 50
-            ? " ترتفع مؤشرات مخاطر التأخّر بشكل يتطلب مراجعة عاجلة للخطة الزمنية وتعزيز الموارد التقنية."
-            : " تظل مؤشرات المخاطر ضمن الحدود المقبولة مع الحاجة للمتابعة الدورية."}{" "}
-          يُوصى بمواصلة اجتماعات المتابعة الأسبوعية وتحديث سجل المخاطر شهريًا.
         </div>
       </Card>
 
@@ -636,122 +615,6 @@ function RisksTab({ risks }: { risks: typeof RISKS }) {
           ))}
         </tbody>
       </table>
-    </div>
-  );
-}
-
-function AITab({ project }: { project: (typeof PROJECTS)[number] }) {
-  const expectedCompletion =
-    project.delayRisk >= 50
-      ? "متأخّر عن الخطة بحوالي 45 يومًا"
-      : project.progress >= 70
-        ? "قبل الموعد المخطط بأيام قليلة"
-        : "مطابق للخطة الزمنية";
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <Card className="lg:col-span-2 border-primary/20 bg-primary/[0.02]">
-        <CardHeader
-          title="الملخص التنفيذي"
-          action={
-            <span className="inline-flex items-center gap-1 text-[11px] text-primary font-semibold">
-              <Sparkles className="h-3 w-3" /> AI
-            </span>
-          }
-        />
-        <div className="px-5 pb-5 space-y-3 text-sm leading-7">
-          <p>
-            يعرض المشروع نسبة إنجاز {project.progress}% مع مؤشر صحة {project.health}%. تشير
-            التحليلات إلى أن المشروع {expectedCompletion}.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-            <MetricCard
-              label="مؤشر الصحة"
-              value={`${project.health}%`}
-              tone={project.health >= 75 ? "success" : project.health >= 50 ? "warning" : "danger"}
-            />
-            <MetricCard
-              label="مؤشر مخاطر التأخر"
-              value={`${project.delayRisk}%`}
-              tone={
-                project.delayRisk >= 50 ? "danger" : project.delayRisk >= 25 ? "warning" : "success"
-              }
-            />
-            <MetricCard
-              label="نسبة الإنجاز الحالية"
-              value={`${project.progress}%`}
-              tone="primary"
-            />
-            <MetricCard
-              label="الأولوية المقترحة"
-              value={project.priority}
-              tone={project.priority === "عالية" ? "danger" : "primary"}
-            />
-          </div>
-        </div>
-      </Card>
-
-      <Card>
-        <CardHeader title="التوصيات" />
-        <div className="px-5 pb-5 space-y-3">
-          {[
-            "مراجعة الخطة الزمنية للربع القادم",
-            "تعزيز الموارد التقنية بمهارات محددة",
-            "توثيق المخاطر الجديدة ومراجعتها أسبوعيًا",
-            "تفعيل قنوات تواصل مباشرة مع الشركة المنفّذة",
-          ].map((t) => (
-            <div key={t} className="flex items-start gap-2 text-sm">
-              <CheckCircle2 className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-              <span>{t}</span>
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      <Card className="lg:col-span-3">
-        <CardHeader title="خارطة المخاطر التنبؤية" />
-        <div className="px-5 pb-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {[
-            { label: "مخاطر الجدول الزمني", v: project.delayRisk },
-            { label: "مخاطر الموارد", v: Math.max(10, 100 - project.health) },
-            { label: "مخاطر النطاق", v: 30 },
-            { label: "مخاطر الجودة", v: 22 },
-          ].map((r) => (
-            <div key={r.label} className="rounded-lg border border-border p-3">
-              <div className="text-xs text-muted-foreground">{r.label}</div>
-              <div className="mt-2 flex items-center gap-2">
-                <ProgressBar
-                  value={r.v}
-                  tone={r.v >= 60 ? "danger" : r.v >= 35 ? "warning" : "success"}
-                />
-                <span className="text-xs w-8 text-muted-foreground">{r.v}%</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-function MetricCard({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone: "primary" | "success" | "warning" | "danger";
-}) {
-  const map = {
-    primary: "text-primary",
-    success: "text-green-600",
-    warning: "text-amber-600",
-    danger: "text-red-600",
-  };
-  return (
-    <div className="rounded-lg border border-border p-3 bg-card">
-      <div className="text-xs text-muted-foreground">{label}</div>
-      <div className={`mt-1 text-xl font-bold ${map[tone]}`}>{value}</div>
     </div>
   );
 }
