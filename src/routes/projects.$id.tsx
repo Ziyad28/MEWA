@@ -157,7 +157,6 @@ function ProjectDetail() {
             <HealthRing value={project.progress} size={84} label="نسبة الإنجاز" />
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <Badge tone="primary">{project.sector}</Badge>
                 <StatusBadge status={project.status} />
                 <Badge
                   tone={
@@ -349,7 +348,6 @@ function Overview({
             label="مدير المشروع"
             value={project.manager}
           />
-          <InfoRow icon={<Flag className="h-3.5 w-3.5" />} label="القطاع" value={project.sector} />
           <InfoRow
             icon={<Calendar className="h-3.5 w-3.5" />}
             label="تاريخ البداية"
@@ -373,11 +371,6 @@ function Overview({
           title="المخرج القادم"
           value={project.progress >= 75 ? "التسليم التشغيلي" : "اعتماد المرحلة التالية"}
           note="وفق الخطة التنفيذية"
-        />
-        <DetailTile
-          title="حوكمة المتابعة"
-          value={project.delayRisk >= 50 ? "متابعة أسبوعية" : "متابعة شهرية"}
-          note={`مخاطر التأخير ${project.delayRisk}%`}
         />
       </div>
 

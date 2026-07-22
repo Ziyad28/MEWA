@@ -545,13 +545,11 @@ function ProjectsPage() {
               <thead className="sticky top-0 bg-card">
                 <tr className="text-xs text-muted-foreground">
                   <th className="text-right px-4 py-3 font-medium">اسم المشروع</th>
-                  <th className="text-right px-4 py-3 font-medium">القطاع</th>
                   <th className="text-right px-4 py-3 font-medium">الشركة</th>
                   <th className="text-right px-4 py-3 font-medium">مدير المشروع</th>
                   <th className="text-right px-4 py-3 font-medium">الحالة</th>
                   <th className="text-right px-4 py-3 font-medium">الأولوية</th>
                   <th className="text-right px-4 py-3 font-medium">نسبة الإنجاز</th>
-                  <th className="text-right px-4 py-3 font-medium">صحة المشروع</th>
                   {archiveView === "archived" && (
                     <th className="text-right px-4 py-3 font-medium">أرشف بواسطة</th>
                   )}
@@ -578,7 +576,6 @@ function ProjectsPage() {
                           {p.name}
                         </button>
                       </td>
-                      <td className="px-4 py-3">{p.sector}</td>
                       <td className="px-4 py-3 text-muted-foreground">{c?.name || "تنفيذ داخلي (من الوزارة)"}</td>
                       <td className="px-4 py-3">{p.manager}</td>
                       <td className="px-4 py-3">
@@ -611,13 +608,6 @@ function ProjectsPage() {
                           />
                           <span className="text-xs text-muted-foreground w-10">{p.progress}%</span>
                         </div>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span
-                          className={`text-sm font-semibold ${p.health >= 75 ? "text-green-600" : p.health >= 50 ? "text-amber-600" : "text-red-600"}`}
-                        >
-                          {p.health}%
-                        </span>
                       </td>
                       {archiveView === "archived" && (
                         <td className="px-4 py-3">
@@ -681,16 +671,11 @@ function ProjectsPage() {
                 <div className="flex items-start justify-between">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge tone="primary">{p.sector}</Badge>
                       <StatusBadge status={p.status} />
-                      <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-primary/5 text-primary font-semibold">
-                        <Sparkles className="h-3 w-3" /> AI
-                      </span>
                     </div>
                     <h3 className="font-semibold text-foreground truncate">{p.name}</h3>
                     <div className="text-xs text-muted-foreground mt-1">{c?.name || "تنفيذ داخلي (من الوزارة)"}</div>
                   </div>
-                  <HealthRing value={p.health} size={56} label="" />
                 </div>
                 <div className="mt-4 space-y-2">
                   <div className="flex items-center gap-2">
@@ -732,17 +717,7 @@ function ProjectsPage() {
                     </div>
                   )}
                 </div>
-                <div className="mt-4 flex items-center justify-between">
-                  <span className="text-[11px] text-muted-foreground">
-                    مخاطر التأخّر:{" "}
-                    <span
-                      className={
-                        p.delayRisk >= 50 ? "text-red-600 font-semibold" : "text-foreground"
-                      }
-                    >
-                      {p.delayRisk}%
-                    </span>
-                  </span>
+                <div className="mt-4 flex items-center justify-end">
                   <span className="text-primary text-xs font-semibold inline-flex items-center gap-1">
                     التفاصيل <ArrowLeft className="h-3.5 w-3.5" />
                   </span>
