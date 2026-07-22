@@ -26,40 +26,6 @@ export const Route = createFileRoute("/select")({
   }),
 });
 
-function PortalCard({
-  title,
-  description,
-  icon,
-  onClick,
-  compact = false,
-}: {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  onClick: () => void;
-  compact?: boolean;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`group relative flex w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-right shadow-2xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.08] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E2C46F] ${
-        compact ? "md:items-center md:text-center" : "items-start"
-      }`}
-    >
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-      <div
-        className={`inline-flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#D5B254] to-[#947327] p-3 text-white shadow-lg ${
-          compact ? "mb-4" : "mb-5"
-        }`}
-      >
-        {icon}
-      </div>
-      <h2 className="mb-2 text-xl font-bold tracking-tight text-white/95 md:text-2xl">{title}</h2>
-      <p className="text-sm font-medium leading-relaxed text-white/60 md:text-base">{description}</p>
-    </button>
-  );
-}
-
 const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; description: string; path: string; icon: any }[] }> = {
   admin: {
     header: "إدارة المستخدمين والأدوار",
@@ -230,9 +196,17 @@ function SelectUnit() {
           </div>
 
           <div className="mt-6 grid w-full max-w-5xl grid-cols-1 gap-5 md:grid-cols-2">
+            {config.cards.map((card, idx) => (
+              <div key={idx} className={config.cards.length === 1 ? "md:col-span-2 md:mx-auto md:w-[calc(50%-0.625rem)]" : ""}>
+                <PortalCard
+                  title={card.title}
+                  description={card.description}
+                  icon={<card.icon className={config.cards.length === 1 ? "h-7 w-7" : "h-8 w-8"} />}
+                  onClick={() => navigate({ to: card.path })}
+                  compact={config.cards.length === 1}
                 />
               </div>
-            )}
+            ))}
           </div>
         </main>
 

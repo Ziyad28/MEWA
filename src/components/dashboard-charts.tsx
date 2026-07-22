@@ -106,7 +106,7 @@ export function PerformanceBarChart({
         {layout === "vertical" ? (
           <>
             <XAxis type="number" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#667085" }} tickFormatter={(value) => `${value}%`} domain={[0, 100]} />
-            <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#344054", fontWeight: 500 }} width={80} />
+            <YAxis type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#344054", fontWeight: 500 }} width={120} />
           </>
         ) : (
           <>
@@ -120,7 +120,7 @@ export function PerformanceBarChart({
           labelStyle={{ color: "#344054", fontWeight: 600, marginBottom: 4 }}
           formatter={(value) => [`${value}%`, label]}
         />
-        <Bar dataKey="value" fill={`url(#${gradientId})`} radius={layout === "vertical" ? [0, 4, 4, 0] : [4, 4, 0, 0]} />
+        <Bar dataKey="value" fill={`url(#${gradientId})`} radius={layout === "vertical" ? [0, 4, 4, 0] : [4, 4, 0, 0]} maxBarSize={32} barSize={layout === "vertical" ? 16 : undefined} />
       </BarChart>
     </ResponsiveContainer>
   );
