@@ -50,7 +50,7 @@ function CompanyDetail() {
 
   const related = projects.filter((p) => p.companyId === company.id);
   const profile = COMPANY_PROFILES[company.id];
-  const perf = related.map((p) => ({ name: p.name.slice(0, 12), value: p.progress }));
+  const perf = related.map((p) => ({ name: p.name, value: p.progress }));
 
   return (
     <AppShell
