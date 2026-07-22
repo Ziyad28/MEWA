@@ -221,8 +221,8 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
       <Card>
         <CardHeader title="التحديثات والملفات (بانتظار الاعتماد)" />
         <div className="px-5 pb-5">
-          <p className="text-xs text-muted-foreground mb-4">
-            هنا تظهر الإنجازات والملفات التي يرفعها أعضاء الفريق. بصفتك مدير المشروع، يجب أن تعتمدها قبل أن تظهر للمدير العام.
+          <p className="text-xs text-muted-foreground mt-1">
+            هنا تظهر التحديثات والملفات المرفوعة. يتم مراجعتها واعتمادها من قبل مدير الإدارة أو إدارة المشاريع (PMO).
           </p>
           <div className="space-y-3">
             {project.approvals.length === 0 && (
