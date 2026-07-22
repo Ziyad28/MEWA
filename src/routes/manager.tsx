@@ -31,11 +31,11 @@ function ManagerDashboard() {
         <StatCard label="مكتملة" value={KPIS_MANAGER.completed} unit="مشروع" delta="1 مشروع" icon={<CheckCircle2 className="h-4 w-4" />} tone="success" spark={[1,1,2,2,3,3]} updated="اليوم 09:20" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 gap-5">
         <Card className="overflow-hidden">
           <CardHeader title="نسبة تقدم المشاريع" subtitle="مقارنة مستوى الإنجاز لأبرز مشاريع الإدارة" action={<span className="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">6 مشاريع</span>} />
-          <div className="px-4 pb-5 h-[300px]">
-            <PerformanceBarChart data={barData} label="نسبة التقدم" />
+          <div className="px-4 pb-5 h-[350px]">
+            <PerformanceBarChart layout="vertical" data={barData} label="نسبة التقدم" />
           </div>
         </Card>
       </div>
