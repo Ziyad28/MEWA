@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { FileCheck2, FileText, Receipt, Star, Upload } from "lucide-react";
-import { Badge, Card, CardHeader, ProgressBar } from "@/components/ui-bits";
+import { FileCheck2, FileText, Upload } from "lucide-react";
+import { Card, CardHeader } from "@/components/ui-bits";
 import { addNotification, getCompanies, saveCompanies, usePortalData, type PrototypeCompany } from "@/lib/portal-store";
-import { PROJECTS } from "@/lib/mock-data";
 
 export function CompanyPrototypeWorkspace({ companyId }: { companyId: number }) {
   const { companies } = usePortalData();
@@ -10,12 +9,45 @@ export function CompanyPrototypeWorkspace({ companyId }: { companyId: number }) 
   const [attachment, setAttachment] = useState("");
   if (!company) return null;
   const update = (next: PrototypeCompany, notice?: string) => { saveCompanies(getCompanies().map((item) => item.id === next.id ? next : item)); if (notice) addNotification("تحديث شركة", notice, `/companies/${next.id}`); };
-  const average = company.ratings.length ? Math.round(company.ratings.reduce((sum, item) => sum + item.quality + item.schedule + item.communication, 0) / (company.ratings.length * 3)) : company.performance;
 
   return <div className="space-y-4">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><Card><CardHeader title="تقييم الشركة عبر المشاريع" action={<div className="flex items-center gap-1 font-bold text-amber-600"><Star className="h-4 w-4 fill-current" />{average}%</div>} /><div className="px-5 pb-5 space-y-3">{company.ratings.map((rating) => { const project = PROJECTS.find((item) => item.id === rating.projectId); return <div key={rating.projectId} className="rounded-xl border border-border p-3"><div className="font-semibold text-sm">{project?.name ?? `مشروع ${rating.projectId}`}</div><Metric label="الجودة" value={rating.quality} /><Metric label="الالتزام الزمني" value={rating.schedule} /><Metric label="التواصل" value={rating.communication} /></div>; })}</div></Card><Card><CardHeader title="الفواتير" action={<Receipt className="h-5 w-5 text-primary" />} /><div className="px-5 pb-5 space-y-2">{company.invoices.map((invoice) => <div key={invoice.id} className="flex items-center justify-between rounded-xl border border-border p-3"><div><div className="font-semibold text-sm">{invoice.number}</div><div className="text-xs text-muted-foreground">{invoice.date} · {invoice.amount}</div></div><Badge tone={invoice.status === "مدفوعة" ? "success" : "warning"}>{invoice.status}</Badge></div>)}<button onClick={() => { const next = { id: Date.now(), number: `INV-${company.id}-${company.invoices.length + 1}`, amount: "1.00M ر.س", date: new Date().toLocaleDateString("en-CA"), status: "قيد المراجعة" as const }; update({ ...company, invoices: [next, ...company.invoices] }, `أضيفت فاتورة جديدة لشركة ${company.name}.`); }} className="w-full h-10 rounded-lg border border-dashed border-primary/50 text-primary text-sm">+ إضافة فاتورة تجريبية</button></div></Card></div>
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4"><Card><CardHeader title="العقود والمرفقات" action={<FileCheck2 className="h-5 w-5 text-primary" />} /><div className="px-5 pb-5 space-y-2">{company.attachments.map((item) => <div key={item.id} className="flex items-center gap-3 rounded-lg border border-border p-3"><FileText className="h-4 w-4 text-primary" /><div><div className="text-sm font-medium">{item.name}</div><div className="text-[11px] text-muted-foreground">{item.date}</div></div></div>)}<div className="flex gap-2"><input value={attachment} onChange={(e) => setAttachment(e.target.value)} placeholder="اسم العقد أو المرفق" className="h-10 flex-1 rounded-lg border border-border px-3 text-sm" /><button onClick={() => { if (!attachment.trim()) return; update({ ...company, attachments: [{ id: Date.now(), name: attachment.trim(), date: new Date().toLocaleDateString("en-CA") }, ...company.attachments] }, `أضيف مرفق جديد لشركة ${company.name}.`); setAttachment(""); }} className="h-10 px-4 rounded-lg bg-primary text-white inline-flex items-center gap-2"><Upload className="h-4 w-4" />إضافة</button></div></div></Card><Card><CardHeader title="السجل الزمني للتعاون" /><div className="px-5 pb-5 relative"><div className="absolute right-[25px] top-2 bottom-4 w-px bg-border" />{company.timeline.map((item) => <div key={item.id} className="relative pr-8 pb-5"><span className="absolute right-0 top-1 h-3 w-3 rounded-full bg-primary ring-4 ring-primary/10" /><div className="font-semibold text-sm">{item.title}</div><div className="text-[11px] text-muted-foreground">{item.date}</div><p className="text-xs text-muted-foreground mt-1">{item.description}</p></div>)}</div></Card></div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <Card>
+        <CardHeader title="العقود والمرفقات" action={<FileCheck2 className="h-5 w-5 text-primary" />} />
+        <div className="px-5 pb-5 space-y-2">
+          {company.attachments.map((item) => (
+            <div key={item.id} className="flex items-center gap-3 rounded-lg border border-border p-3">
+              <FileText className="h-4 w-4 text-primary" />
+              <div>
+                <div className="text-sm font-medium">{item.name}</div>
+                <div className="text-[11px] text-muted-foreground">{item.date}</div>
+              </div>
+            </div>
+          ))}
+          <div className="flex gap-2">
+            <input value={attachment} onChange={(e) => setAttachment(e.target.value)} placeholder="اسم العقد أو المرفق" className="h-10 flex-1 rounded-lg border border-border px-3 text-sm" />
+            <button onClick={() => { if (!attachment.trim()) return; update({ ...company, attachments: [{ id: Date.now(), name: attachment.trim(), date: new Date().toLocaleDateString("en-CA") }, ...company.attachments] }, `أضيف مرفق جديد لشركة ${company.name}.`); setAttachment(""); }} className="h-10 px-4 rounded-lg bg-primary text-white inline-flex items-center gap-2">
+              <Upload className="h-4 w-4" />
+              إضافة
+            </button>
+          </div>
+        </div>
+      </Card>
+      
+      <Card>
+        <CardHeader title="السجل الزمني للتعاون" />
+        <div className="px-5 pb-5 relative">
+          <div className="absolute right-[25px] top-2 bottom-4 w-px bg-border" />
+          {company.timeline.map((item) => (
+            <div key={item.id} className="relative pr-8 pb-5">
+              <span className="absolute right-0 top-1 h-3 w-3 rounded-full bg-primary ring-4 ring-primary/10" />
+              <div className="font-semibold text-sm">{item.title}</div>
+              <div className="text-[11px] text-muted-foreground">{item.date}</div>
+              <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
+            </div>
+          ))}
+        </div>
+      </Card>
+    </div>
   </div>;
 }
-
-function Metric({ label, value }: { label: string; value: number }) { return <div className="mt-2 flex items-center gap-2"><span className="w-24 text-[11px] text-muted-foreground">{label}</span><ProgressBar value={value} tone={value >= 80 ? "success" : value >= 65 ? "warning" : "danger"} /><span className="w-8 text-[11px]">{value}%</span></div>; }

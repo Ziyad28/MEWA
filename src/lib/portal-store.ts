@@ -64,14 +64,6 @@ export interface PrototypeProject extends Project {
 
 export interface PrototypeCompany extends Company {
   archived?: boolean;
-  ratings: Array<{ projectId: number; quality: number; schedule: number; communication: number }>;
-  invoices: Array<{
-    id: number;
-    number: string;
-    amount: string;
-    date: string;
-    status: "مدفوعة" | "قيد المراجعة";
-  }>;
   attachments: Array<{ id: number; name: string; date: string }>;
   timeline: Array<{ id: number; title: string; date: string; description: string }>;
 }
@@ -134,21 +126,6 @@ const INITIAL_PROJECTS: PrototypeProject[] = PROJECTS.map((project) => ({
 
 const INITIAL_COMPANIES: PrototypeCompany[] = COMPANIES.map((company) => ({
   ...company,
-  ratings: PROJECTS.filter((project) => project.companyId === company.id).map((project) => ({
-    projectId: project.id,
-    quality: Math.min(100, company.performance + 3),
-    schedule: company.commitment,
-    communication: Math.max(60, company.performance - 2),
-  })),
-  invoices: [
-    {
-      id: company.id * 10 + 1,
-      number: `INV-${company.id}-2025`,
-      amount: `${(company.id * 1.25 + 0.8).toFixed(2)}M ر.س`,
-      date: "2025/06/15",
-      status: company.id % 2 ? "مدفوعة" : "قيد المراجعة",
-    },
-  ],
   attachments: [
     {
       id: company.id * 10 + 1,
