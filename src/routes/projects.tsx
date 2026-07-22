@@ -217,6 +217,7 @@ function ProjectsPage() {
         status: form.status as any,
         priority: "متوسطة",
         progress: 0,
+        plannedProgress: 0,
         updated: new Date().toLocaleDateString("en-CA"),
         start: form.start,
         end: form.end,
@@ -676,20 +677,15 @@ function ProjectsPage() {
                     <h3 className="font-semibold text-foreground truncate">{p.name}</h3>
                     <div className="text-xs text-muted-foreground mt-1">{c?.name || "تنفيذ داخلي (من الوزارة)"}</div>
                   </div>
+                  <HealthRing value={p.progress} size={56} label="الفعلي" />
                 </div>
                 <div className="mt-4 space-y-2">
                   <div className="flex items-center gap-2">
                     <ProgressBar
-                      value={p.progress}
-                      tone={
-                        p.status === "متأخرة"
-                          ? "danger"
-                          : p.status === "مكتملة"
-                            ? "success"
-                            : "primary"
-                      }
+                      value={p.plannedProgress ?? p.progress}
+                      tone="muted"
                     />
-                    <span className="text-xs text-muted-foreground w-10">{p.progress}%</span>
+                    <span className="text-xs text-muted-foreground w-[75px]">المخطط: {p.plannedProgress ?? p.progress}%</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-[11px] text-muted-foreground pt-2 border-t border-border">
                     <div>
