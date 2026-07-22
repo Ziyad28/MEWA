@@ -150,25 +150,7 @@ function LoginPage() {
               تسجيل الدخول
             </button>
 
-            <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <div className="flex-1 h-px bg-border" />
-              <span>أو</span>
-              <div className="flex-1 h-px bg-border" />
-            </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                setError(null);
-                setNotice(
-                  "الدخول عبر النفاذ الوطني جاهز في الواجهة، وسيُفعّل بعد ربط المنصة بخدمة النفاذ الوطني والباك إند.",
-                );
-              }}
-              className="w-full h-12 rounded-lg border border-border bg-background hover:bg-accent text-sm font-medium flex items-center justify-center gap-2"
-            >
-              <Fingerprint className="h-4 w-4" />
-              الدخول عبر النفاذ الوطني الموحد
-            </button>
 
             <details className="mt-4 text-[11px] text-muted-foreground bg-muted/30 border border-border/50 rounded-lg p-3 transition-all [&_summary::-webkit-details-marker]:hidden">
               <summary className="cursor-pointer text-center font-medium text-primary hover:text-primary-deep flex items-center justify-center gap-1 select-none">
