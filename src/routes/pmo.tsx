@@ -1,4 +1,4 @@
-﻿import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Briefcase, CheckCircle2, Hourglass, AlertCircle, Download } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
@@ -26,22 +26,22 @@ function PmoDashboard() {
       role="pmo"
       userName={user.name}
       roleLabel={user.roleLabel}
-      pageTitle="ط¶ط¨ط· ط§ظ„ط¬ظˆط¯ط© ظˆط§ظ„ط­ظˆظƒظ…ط©"
-      pageSubtitle="ظ†ط¸ط±ط© ط¹ط§ظ…ط© ط¹ظ„ظ‰ ط§ظ„ظ…ط´ط§ط±ظٹط¹ ط§ظ„طھظ‚ظ†ظٹط©"
+      pageTitle="ضبط الجودة والحوكمة"
+      pageSubtitle="نظرة عامة على المشاريع التقنية"
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="ط¥ط¬ظ…ط§ظ„ظٹ ط§ظ„ظ…ط´ط§ط±ظٹط¹" value={KPIS_PMO.total} unit="ظ…ط´ط±ظˆط¹" delta="12%" icon={<Briefcase className="h-4 w-4" />} tone="primary" spark={SPARK_PMO_TOTAL} updated="ط§ظ„ظٹظˆظ… 09:20" />
-        <StatCard label="ط§ظ„ظ…ط´ط§ط±ظٹط¹ ط§ظ„ظ…ظƒطھظ…ظ„ط©" value={KPIS_PMO.completed} unit="ظ…ط´ط±ظˆط¹" delta="8%" icon={<CheckCircle2 className="h-4 w-4" />} tone="success" spark={SPARK_PMO_COMPLETED} updated="ط§ظ„ظٹظˆظ… 09:20" />
-        <StatCard label="ظ‚ظٹط¯ ط§ظ„طھظ†ظپظٹط°" value={KPIS_PMO.inProgress} unit="ظ…ط´ط±ظˆط¹" delta="15%" icon={<Hourglass className="h-4 w-4" />} tone="warning" spark={SPARK_PMO_PROGRESS} updated="ط§ظ„ظٹظˆظ… 09:20" />
-        <StatCard label="ط§ظ„ظ…طھط£ط®ط±ط©" value={KPIS_PMO.delayed} unit="ظ…ط´ط±ظˆط¹" delta="5%" deltaType="down" icon={<AlertCircle className="h-4 w-4" />} tone="danger" spark={SPARK_PMO_DELAYED} updated="ط§ظ„ظٹظˆظ… 09:20" />
+        <StatCard label="إجمالي المشاريع" value={KPIS_PMO.total} unit="مشروع" delta="12%" icon={<Briefcase className="h-4 w-4" />} tone="primary" spark={SPARK_PMO_TOTAL} updated="اليوم 09:20" />
+        <StatCard label="المشاريع المكتملة" value={KPIS_PMO.completed} unit="مشروع" delta="8%" icon={<CheckCircle2 className="h-4 w-4" />} tone="success" spark={SPARK_PMO_COMPLETED} updated="اليوم 09:20" />
+        <StatCard label="قيد التنفيذ" value={KPIS_PMO.inProgress} unit="مشروع" delta="15%" icon={<Hourglass className="h-4 w-4" />} tone="warning" spark={SPARK_PMO_PROGRESS} updated="اليوم 09:20" />
+        <StatCard label="المتأخرة" value={KPIS_PMO.delayed} unit="مشروع" delta="5%" deltaType="down" icon={<AlertCircle className="h-4 w-4" />} tone="danger" spark={SPARK_PMO_DELAYED} updated="اليوم 09:20" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <Card className="overflow-hidden">
           <CardHeader
-            title="ظ†ط³ط¨ط© طھظ‚ط¯ظ… ط§ظ„ظ…ط´ط§ط±ظٹط¹"
-            subtitle="ظ…طھظˆط³ط· ط§ظ„طھظ‚ط¯ظ… ط§ظ„طھط±ط§ظƒظ…ظٹ ظ„ظ„ظ…ط­ظپط¸ط©"
-            action={<span className="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">ط¢ط®ط± 6 ط£ط´ظ‡ط±</span>}
+            title="نسبة تقدم المشاريع"
+            subtitle="متوسط التقدم التراكمي للمحفظة"
+            action={<span className="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">آخر 6 أشهر</span>}
           />
           <div className="px-4 pb-5 h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -60,7 +60,7 @@ function PmoDashboard() {
                   cursor={{ stroke: "#006C51", strokeWidth: 1, strokeDasharray: "4 4", strokeOpacity: 0.35 }}
                   contentStyle={{ border: "1px solid #E2E8E5", borderRadius: 12, boxShadow: "0 10px 30px rgba(16,24,40,0.10)", fontSize: 12 }}
                   labelStyle={{ color: "#344054", fontWeight: 600, marginBottom: 4 }}
-                  formatter={(value) => [`${value}%`, "ظ†ط³ط¨ط© ط§ظ„طھظ‚ط¯ظ…"]}
+                  formatter={(value) => [`${value}%`, "نسبة التقدم"]}
                 />
                 <Area
                   type="monotone"
@@ -78,9 +78,9 @@ function PmoDashboard() {
 
         <Card className="overflow-hidden">
           <CardHeader
-            title="ط­ط§ظ„ط© ط§ظ„ظ…ط´ط§ط±ظٹط¹"
-            subtitle="طھظˆط²ظٹط¹ ط§ظ„ظ…ط´ط§ط±ظٹط¹ ط­ط³ط¨ ط§ظ„ط­ط§ظ„ط© ط§ظ„ط­ط§ظ„ظٹط©"
-            action={<span className="rounded-full bg-muted px-3 py-1 text-[11px] font-semibold text-muted-foreground">ط§ظ„ط¥ط¬ظ…ط§ظ„ظٹ {statusTotal}</span>}
+            title="حالة المشاريع"
+            subtitle="توزيع المشاريع حسب الحالة الحالية"
+            action={<span className="rounded-full bg-muted px-3 py-1 text-[11px] font-semibold text-muted-foreground">الإجمالي {statusTotal}</span>}
           />
           <div className="grid h-[300px] grid-cols-[minmax(0,1fr)_180px] items-center gap-3 px-5 pb-5">
             <div className="relative h-full min-w-0">
@@ -102,13 +102,13 @@ function PmoDashboard() {
                   </Pie>
                   <Tooltip
                     contentStyle={{ border: "1px solid #E2E8E5", borderRadius: 12, boxShadow: "0 10px 30px rgba(16,24,40,0.10)", fontSize: 12 }}
-                    formatter={(value, name) => [`${value} ظ…ط´ط±ظˆط¹`, name]}
+                    formatter={(value, name) => [`${value} مشروع`, name]}
                   />
                 </PieChart>
               </ResponsiveContainer>
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-3xl font-extrabold tracking-tight text-foreground">{statusTotal}</span>
-                <span className="mt-1 text-xs text-muted-foreground">ظ…ط´ط±ظˆط¹</span>
+                <span className="mt-1 text-xs text-muted-foreground">مشروع</span>
               </div>
             </div>
             <div className="space-y-3">
