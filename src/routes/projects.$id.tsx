@@ -60,7 +60,6 @@ const TABS = [
   { id: "overview", label: "نظرة عامة" },
   { id: "updates", label: "التحديثات" },
   { id: "documents", label: "الوثائق" },
-  { id: "risks", label: "التحديات والملاحظات" },
   { id: "activity", label: "سجل النشاط" },
   { id: "workspace", label: "إدارة المشروع" },
 ];
@@ -80,7 +79,6 @@ function ProjectDetail() {
 
   const company = COMPANIES.find((c) => c.id === project.companyId);
   const docs = documents.filter((d) => d.projectId === project.id);
-  const risks = RISKS.filter((r) => r.projectId === project.id);
   const updates = UPDATES.filter((u) => u.projectId === project.id);
   const recordedActivity = auditEvents
     .filter((event) => event.entity === "مشروع" && event.entityId === project.id)
@@ -209,8 +207,7 @@ function ProjectDetail() {
           tabs={[
             ...TABS.slice(0, 2),
             { ...TABS[2]!, count: docs.length },
-            { ...TABS[3]!, count: risks.length },
-            ...TABS.slice(4),
+            ...TABS.slice(3),
           ]}
           active={tab}
           onChange={setTab}
@@ -220,7 +217,6 @@ function ProjectDetail() {
           {tab === "overview" && <Overview project={project} company={company} />}
           {tab === "updates" && <UpdatesTab updates={updates} />}
           {tab === "documents" && <DocsTab docs={docs} />}
-          {tab === "risks" && <RisksTab risks={risks} />}
           {tab === "activity" && <ActivityTab activity={activity} />}
           {tab === "workspace" && <ProjectPrototypeWorkspace projectId={project.id} user={user} />}
         </div>
@@ -530,31 +526,6 @@ function DocsTab({ docs }: { docs: StoredDocument[] }) {
           ))}
         </tbody>
       </table>
-    </div>
-  );
-}
-
-function RisksTab({ risks }: { risks: typeof RISKS }) {
-  if (risks.length === 0)
-    return (
-      <EmptyState
-        icon={<AlertTriangle className="h-6 w-6" />}
-        title="لا توجد ملاحظات أو تحديات"
-        description="لم يتم تسجيل أي تحديات لهذا المشروع بعد."
-      />
-    );
-  return (
-    <div className="divide-y divide-border px-5">
-      {risks.map((r) => (
-        <div key={r.id} className="py-4">
-          <div className="font-semibold text-sm">{r.risk}</div>
-          {r.mitigation && <div className="text-sm text-muted-foreground mt-1">{r.mitigation}</div>}
-          <div className="flex items-center gap-3 mt-3">
-            <Badge tone={r.status === "مغلق" ? "success" : "warning"}>{r.status}</Badge>
-            <span className="text-xs text-muted-foreground">بواسطة: {r.owner}</span>
-          </div>
-        </div>
-      ))}
     </div>
   );
 }
