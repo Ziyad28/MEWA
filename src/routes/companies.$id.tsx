@@ -45,6 +45,7 @@ function CompanyDetail() {
   const company = companies.find((c) => String(c.id) === id);
   if (!company) throw notFound();
   if (!user) return null;
+  if (user.role === "manager") throw notFound();
   if (!canAccessCompany(user, company.id, projects)) throw notFound();
 
   const related = projects.filter((p) => p.companyId === company.id);

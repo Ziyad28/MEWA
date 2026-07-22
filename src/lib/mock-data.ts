@@ -185,34 +185,3 @@ export const ACTIVITY: ActivityItem[] = [
   { id: 4, projectId: 1, date: "2025/06/10 08:47", actor: "نورة العتيبي", action: "أنشأت تحديثًا", target: "استكمال المرحلة الثانية" },
 ];
 
-export interface ReportItem {
-  id: number;
-  name: string;
-  type: string;
-  period: string;
-  date: string;
-  size: string;
-}
-
-export const REPORTS: ReportItem[] = [
-  { id: 1, name: "التقرير الشهري للمشاريع", type: "شهري", period: "يونيو 2025", date: "2025/06/30", size: "3.2 MB" },
-  { id: 2, name: "تقرير حالة المشاريع", type: "تنفيذي", period: "أسبوعي", date: "2025/06/22", size: "1.4 MB" },
-  { id: 3, name: "تقرير الأداء حسب القطاع", type: "تحليلي", period: "الربع الثاني", date: "2025/06/25", size: "2.7 MB" },
-  { id: 4, name: "تقرير المخاطر الاستراتيجية", type: "مخاطر", period: "الربع الثاني", date: "2025/06/18", size: "1.8 MB" },
-  { id: 5, name: "تقرير أداء الشركات المتعاونة", type: "تحليلي", period: "الربع الثاني", date: "2025/06/28", size: "2.1 MB" },
-];
-
-export interface AIRecommendation {
-  id: number;
-  title: string;
-  description: string;
-  impact: "عالٍ" | "متوسط" | "منخفض";
-  category: "مخاطر" | "أداء" | "جدولة" | "موارد";
-}
-
-export const AI_RECOMMENDATIONS: AIRecommendation[] = [
-  { id: 1, title: "إعادة توزيع الموارد على مشروع الأمن السيبراني", description: "يشير التحليل إلى أن إضافة مورد تقني واحد سيرفع نسبة الإنجاز 12% خلال 30 يومًا.", impact: "عالٍ", category: "موارد" },
-  { id: 2, title: "مراجعة الخطة الزمنية لمنصة الزراعة الذكية", description: "المشروع يظهر مؤشرات تأخّر مركّبة. يُوصى بمراجعة النطاق وإعادة التخطيط.", impact: "عالٍ", category: "جدولة" },
-  { id: 3, title: "تعزيز الرقابة على شركة البنية التحتية الوطنية", description: "معدل التزام الشركة انخفض 6% مقارنة بالربع السابق.", impact: "متوسط", category: "أداء" },
-  { id: 4, title: "توحيد لوحات المخاطر عبر المشاريع البيئية", description: "تكرار في مخاطر التوريد يفتح فرصة لخطة تخفيف موحّدة.", impact: "متوسط", category: "مخاطر" },
-];

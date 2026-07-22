@@ -21,8 +21,6 @@ export type Permission =
   | "reports.viewPortfolio"
   | "reports.viewAssigned"
   | "reports.export"
-  | "ai.view"
-  | "ai.act"
   | "audit.viewAll"
   | "users.manage"
   | "settings.manage"
@@ -44,8 +42,6 @@ const ROLE_PERMISSIONS: Record<Role, ReadonlySet<Permission>> = {
     "documents.approve",
     "reports.viewPortfolio",
     "reports.export",
-    "ai.view",
-    "ai.act",
   ]),
   manager: new Set([
     "projects.viewAll",
@@ -55,7 +51,6 @@ const ROLE_PERMISSIONS: Record<Role, ReadonlySet<Permission>> = {
     "documents.approve",
     "reports.viewPortfolio",
     "reports.export",
-    "ai.view",
   ]),
   pm: new Set([
     "projects.viewAssigned",
@@ -67,7 +62,6 @@ const ROLE_PERMISSIONS: Record<Role, ReadonlySet<Permission>> = {
     "documents.deleteOwnDraft",
     "reports.viewAssigned",
     "reports.export",
-    "ai.view",
   ]),
   capacity: new Set(["workshops.manage"]),
   employee: new Set(["workshops.respond"]),

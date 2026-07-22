@@ -294,13 +294,15 @@ function CompaniesList() {
                   {c.email}
                 </span>
                 <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => window.location.assign(`/companies/${c.id}`)}
-                    className="h-9 px-3 rounded-lg bg-primary/10 hover:bg-primary hover:text-white text-primary font-semibold inline-flex items-center gap-1.5 transition-colors"
-                  >
-                    عرض التفاصيل <ArrowLeft className="h-3.5 w-3.5" />
-                  </button>
+                  {user.role !== "manager" && (
+                    <button
+                      type="button"
+                      onClick={() => window.location.assign(`/companies/${c.id}`)}
+                      className="h-9 px-3 rounded-lg bg-primary/10 hover:bg-primary hover:text-white text-primary font-semibold inline-flex items-center gap-1.5 transition-colors"
+                    >
+                      عرض التفاصيل <ArrowLeft className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                   {canManage && (
                     <button
                       onClick={() => openForm(c)}

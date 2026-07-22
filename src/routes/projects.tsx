@@ -510,48 +510,7 @@ function ProjectsPage() {
                 <LayoutGrid className="h-3.5 w-3.5" /> بطاقات
               </button>
             </div>
-            <button
-              onClick={() =>
-                downloadExcel("agency-projects.xls", [
-                  [
-                    "اسم المشروع",
-                    "القطاع",
-                    "مدير المشروع",
-                    "الحالة",
-                    "الأولوية",
-                    "الإنجاز",
-                    "الصحة",
-                    "البداية",
-                    "النهاية",
-                  ],
-                  ...filtered.map((p) => [
-                    p.name,
-                    p.sector,
-                    p.manager,
-                    p.status,
-                    p.priority,
-                    `${p.progress}%`,
-                    `${p.health}%`,
-                    p.start,
-                    p.end,
-                  ]),
-                ])
-              }
-              className="h-9 px-3 rounded-lg border border-border bg-background text-sm inline-flex items-center gap-2 text-muted-foreground hover:bg-accent"
-            >
-              <FileSpreadsheet className="h-4 w-4" /> Excel
-            </button>
-            <button
-              onClick={() =>
-                printPdf("تقرير مشاريع الوكالة", [
-                  ["المشروع", "القطاع", "المدير", "الحالة", "الإنجاز"],
-                  ...filtered.map((p) => [p.name, p.sector, p.manager, p.status, `${p.progress}%`]),
-                ])
-              }
-              className="h-9 px-3 rounded-lg border border-border bg-background text-sm inline-flex items-center gap-2 text-muted-foreground hover:bg-accent"
-            >
-              <FileDown className="h-4 w-4" /> PDF
-            </button>
+
             {canAdd && (
               <button
                 onClick={() => openForm()}
@@ -564,7 +523,7 @@ function ProjectsPage() {
         </div>
       </Card>
 
-      <PortfolioIntelligence projects={scoped} />
+
 
       {archiveView === "history" ? (
         <Card>

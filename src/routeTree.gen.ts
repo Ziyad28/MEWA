@@ -22,7 +22,6 @@ import { Route as DocumentsRouteImport } from './routes/documents'
 import { Route as CompaniesRouteImport } from './routes/companies'
 import { Route as CapacityBuildingRouteImport } from './routes/capacity-building'
 import { Route as AuditLogRouteImport } from './routes/audit-log'
-import { Route as AiInsightsRouteImport } from './routes/ai-insights'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIdRouteImport } from './routes/projects.$id'
 import { Route as CompaniesIdRouteImport } from './routes/companies.$id'
@@ -93,11 +92,6 @@ const AuditLogRoute = AuditLogRouteImport.update({
   path: '/audit-log',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AiInsightsRoute = AiInsightsRouteImport.update({
-  id: '/ai-insights',
-  path: '/ai-insights',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -121,7 +115,6 @@ const CapacityBuildingIdRoute = CapacityBuildingIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/ai-insights': typeof AiInsightsRoute
   '/audit-log': typeof AuditLogRoute
   '/capacity-building': typeof CapacityBuildingRouteWithChildren
   '/companies': typeof CompaniesRouteWithChildren
@@ -141,7 +134,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/ai-insights': typeof AiInsightsRoute
   '/audit-log': typeof AuditLogRoute
   '/capacity-building': typeof CapacityBuildingRouteWithChildren
   '/companies': typeof CompaniesRouteWithChildren
@@ -162,7 +154,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/ai-insights': typeof AiInsightsRoute
   '/audit-log': typeof AuditLogRoute
   '/capacity-building': typeof CapacityBuildingRouteWithChildren
   '/companies': typeof CompaniesRouteWithChildren
@@ -184,7 +175,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/ai-insights'
     | '/audit-log'
     | '/capacity-building'
     | '/companies'
@@ -204,7 +194,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/ai-insights'
     | '/audit-log'
     | '/capacity-building'
     | '/companies'
@@ -224,7 +213,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/ai-insights'
     | '/audit-log'
     | '/capacity-building'
     | '/companies'
@@ -245,7 +233,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AiInsightsRoute: typeof AiInsightsRoute
   AuditLogRoute: typeof AuditLogRoute
   CapacityBuildingRoute: typeof CapacityBuildingRouteWithChildren
   CompaniesRoute: typeof CompaniesRouteWithChildren
@@ -354,13 +341,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuditLogRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/ai-insights': {
-      id: '/ai-insights'
-      path: '/ai-insights'
-      fullPath: '/ai-insights'
-      preLoaderRoute: typeof AiInsightsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -429,7 +409,6 @@ const ProjectsRouteWithChildren = ProjectsRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AiInsightsRoute: AiInsightsRoute,
   AuditLogRoute: AuditLogRoute,
   CapacityBuildingRoute: CapacityBuildingRouteWithChildren,
   CompaniesRoute: CompaniesRouteWithChildren,
