@@ -1,14 +1,5 @@
 import { useState } from "react";
-import {
-  AlertTriangle,
-  CheckCircle2,
-  Circle,
-  MessageSquare,
-  Plus,
-  Send,
-  ShieldCheck,
-  Target,
-} from "lucide-react";
+import { Plus, ShieldCheck, Trash2, Users } from "lucide-react";
 import { Badge, Card, CardHeader, ProgressBar } from "@/components/ui-bits";
 import {
   addNotification,
@@ -24,31 +15,28 @@ import { canApproveProject, canManageProject } from "@/lib/access-control";
 export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: number; user: User }) {
   const { projects } = usePortalData();
   const project = projects.find((item) => item.id === projectId);
-  const [task, setTask] = useState("");
-  const [comment, setComment] = useState("");
-  const [chat, setChat] = useState("");
+  
   const [executionReason, setExecutionReason] = useState("");
+  const [newMemberEmail, setNewMemberEmail] = useState("");
+
   if (!project) return null;
-  const current = project;
-  const userName = user.name;
+
   const canManage = canManageProject(user, project);
   const canApprove = canApproveProject(user, project);
 
   const update = (
     next: PrototypeProject,
     notice?: string,
-    action: "manage" | "approve" | "comment" = "manage",
+    action: "manage" | "approve" = "manage",
   ) => {
     if (project.archived) return;
     if (action === "manage" && !canManage) return;
     if (action === "approve" && !canApprove) return;
+    
     saveProjects(getProjects().map((item) => (item.id === next.id ? next : item)));
+    
     recordAudit(
-      action === "approve"
-        ? "اعتماد مشروع"
-        : action === "comment"
-          ? "تواصل مشروع"
-          : "تحديث تنفيذ المشروع",
+      action === "approve" ? "اعتماد فريق المشروع" : "تحديث إدارة المشروع",
       "مشروع",
       notice ?? `تحديث مشروع ${next.name}.`,
       next.id,
@@ -56,184 +44,92 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
     if (notice) addNotification("تحديث المشروع", notice, `/projects/${next.id}`);
   };
 
-  const activeStage = project.stages.find((stage) => stage.status === "جارية") ?? project.stages[0];
+  function addTeamMember() {
+    const email = newMemberEmail.trim().toLowerCase();
+    if (!email || !email.includes("@")) {
+      window.alert("يرجى إدخال بريد إلكتروني صحيح.");
+      return;
+    }
+    if (project?.teamMembers?.includes(email)) {
+      window.alert("هذا العضو موجود بالفعل في الفريق.");
+      return;
+    }
 
-  function addTask() {
-    if (!task.trim() || !activeStage) return;
-    const stages = current.stages.map((stage) =>
-      stage.id === activeStage.id
-        ? {
-            ...stage,
-            tasks: [
-              ...stage.tasks,
-              {
-                id: Date.now(),
-                title: task.trim(),
-                owner: userName,
-                due: current.end,
-                done: false,
-              },
-            ],
-          }
-        : stage,
+    const updatedMembers = [...(project?.teamMembers || []), email];
+    update(
+      { ...project!, teamMembers: updatedMembers },
+      `تمت إضافة ${email} إلى فريق المشروع.`
     );
-    update({ ...current, stages }, `أضيفت مهمة جديدة إلى ${current.name}.`);
-    setTask("");
+    setNewMemberEmail("");
   }
 
-  function toggleTask(stageId: number, taskId: number) {
-    const stages = current.stages.map((stage) => {
-      if (stage.id !== stageId) return stage;
-      const tasks = stage.tasks.map((item) =>
-        item.id === taskId ? { ...item, done: !item.done } : item,
-      );
-      const progress = tasks.length
-        ? Math.round((tasks.filter((item) => item.done).length / tasks.length) * 100)
-        : 0;
-      return {
-        ...stage,
-        tasks,
-        progress,
-        status: progress === 100 ? ("مكتملة" as const) : ("جارية" as const),
-      };
-    });
-    const progress = Math.round(
-      stages.reduce((sum, stage) => sum + stage.progress, 0) / Math.max(1, stages.length),
-    );
+  function removeTeamMember(emailToRemove: string) {
+    if (!window.confirm(`هل أنت متأكد من إزالة ${emailToRemove} من الفريق؟`)) return;
+    const updatedMembers = (project?.teamMembers || []).filter(email => email !== emailToRemove);
     update(
-      { ...current, stages, progress, updated: new Date().toLocaleDateString("en-CA") },
-      `تغير إنجاز ${current.name} إلى ${progress}%.`,
+      { ...project!, teamMembers: updatedMembers },
+      `تمت إزالة ${emailToRemove} من فريق المشروع.`
     );
   }
 
   return (
-    <div className="space-y-4">
-      {project.delayRisk >= 50 && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-red-800 flex items-start gap-3">
-          <AlertTriangle className="h-5 w-5 shrink-0" />
-          <div>
-            <div className="font-bold">تنبيه تلقائي يحتاج إجراء</div>
-            <div className="text-xs mt-1">
-              مؤشر التأخير {project.delayRisk}%. يوصى بمراجعة الجدول والمهام المتأخرة وخطة المعالجة
-              قبل الاعتماد القادم.
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Status Update Box */}
+        <Card>
+          <CardHeader title="حالة التنفيذ والنسبة العامة" />
+          <div className="px-5 pb-5 space-y-4">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">نسبة الإنجاز الحالية:</span>
+              <strong className="text-lg">{project.progress}%</strong>
             </div>
-          </div>
-        </div>
-      )}
-
-      {project.archived && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
-          المشروع مؤرشف ومتاح للقراءة فقط حتى يستعيده مسؤول المنصة.
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="lg:col-span-2">
-          <CardHeader
-            title="المراحل والمهام"
-            action={
-              <span className="text-xs text-muted-foreground">{project.stages.length} مراحل</span>
-            }
-          />
-          <div className="px-5 pb-5 space-y-3">
-            {project.stages.map((stage) => (
-              <div key={stage.id} className="rounded-xl border border-border p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
-                    <Target className="h-4 w-4 text-primary" />
-                    <span className="font-semibold text-sm">{stage.title}</span>
-                    <Badge
-                      tone={
-                        stage.status === "مكتملة"
-                          ? "success"
-                          : stage.status === "جارية"
-                            ? "warning"
-                            : "muted"
-                      }
-                    >
-                      {stage.status}
-                    </Badge>
-                  </div>
-                  <span className="text-xs font-bold">{stage.progress}%</span>
-                </div>
-                <div className="mt-3">
-                  <ProgressBar
-                    value={stage.progress}
-                    tone={stage.progress === 100 ? "success" : "primary"}
-                  />
-                </div>
-                <div className="mt-3 space-y-2">
-                  {stage.tasks.map((item) => (
-                    <button
-                      key={item.id}
-                      disabled={!canManage}
-                      onClick={() => toggleTask(stage.id, item.id)}
-                      className="w-full flex items-center gap-2 text-right text-xs rounded-lg hover:bg-accent p-2 disabled:cursor-default disabled:hover:bg-transparent"
-                    >
-                      {item.done ? (
-                        <CheckCircle2 className="h-4 w-4 text-green-600" />
-                      ) : (
-                        <Circle className="h-4 w-4 text-muted-foreground" />
-                      )}
-                      <span className={item.done ? "line-through text-muted-foreground" : ""}>
-                        {item.title}
-                      </span>
-                      <span className="mr-auto text-[10px] text-muted-foreground">
-                        {item.owner} · {item.due}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
+            <ProgressBar value={project.progress} tone="primary" />
+            
             {canManage && (
-              <div className="flex gap-2">
-                <input
-                  value={task}
-                  onChange={(e) => setTask(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && addTask()}
-                  placeholder="أضف مهمة للمرحلة الجارية"
-                  className="h-10 flex-1 rounded-lg border border-border px-3 text-sm"
-                />
-                <button
-                  onClick={addTask}
-                  className="h-10 px-4 rounded-lg bg-primary text-white inline-flex items-center gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  إضافة
-                </button>
-              </div>
-            )}
-          </div>
-        </Card>
-
-        <div className="space-y-4">
-          <Card>
-            <CardHeader title="حالة التنفيذ" />
-            <div className="px-5 pb-5 space-y-3">
-              <div className="flex justify-between text-xs">
-                <span>نسبة الإنجاز</span>
-                <strong>{project.progress}%</strong>
-              </div>
-              <ProgressBar value={project.progress} tone="primary" />
-              {canManage && (
-                <>
-                  <label className="block text-xs text-muted-foreground">
-                    سبب التحديث
+              <div className="space-y-4 mt-6 bg-accent/30 p-4 rounded-xl border border-border">
+                <h3 className="font-semibold text-sm">تحديث الحالة</h3>
+                <label className="block text-xs font-medium text-foreground">
+                  سبب التحديث (إلزامي)
+                  <input
+                    value={executionReason}
+                    onChange={(event) => setExecutionReason(event.target.value)}
+                    placeholder="اكتب مبرر تغيير النسبة أو الحالة لتوضيحه للإدارة العليا"
+                    className="mt-1 h-10 w-full rounded-lg border border-border px-3 font-normal"
+                  />
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <label className="block text-xs font-medium text-foreground">
+                    تحديث النسبة المئوية
                     <input
-                      value={executionReason}
-                      onChange={(event) => setExecutionReason(event.target.value)}
-                      placeholder="اكتب سبب تغيير الحالة أو نسبة الإنجاز"
-                      className="mt-1 h-10 w-full rounded-lg border border-border px-3 text-foreground"
+                      type="number"
+                      min="0"
+                      max="100"
+                      defaultValue={project.progress}
+                      onBlur={(event) => {
+                        const nextProgress = Math.min(100, Math.max(0, Number(event.target.value)));
+                        if (nextProgress === project.progress) return;
+                        if (!executionReason.trim()) {
+                          window.alert("يجب كتابة سبب التحديث أولاً للرجوع إليه عند الحاجة.");
+                          event.currentTarget.value = String(project.progress);
+                          return;
+                        }
+                        update({
+                          ...project,
+                          progress: nextProgress,
+                          updated: new Date().toLocaleDateString("en-CA"),
+                        }, `تغير إنجاز ${project.name} من ${project.progress}% إلى ${nextProgress}%. السبب: ${executionReason.trim()}`);
+                        setExecutionReason("");
+                      }}
+                      className="mt-1 h-10 w-full rounded-lg border border-border px-3 font-normal"
                     />
                   </label>
-                  <label className="block text-xs text-muted-foreground">
-                    حالة المشروع
+                  <label className="block text-xs font-medium text-foreground">
+                    تغيير حالة المشروع
                     <select
                       value={project.status}
                       onChange={(event) => {
                         if (!executionReason.trim()) {
-                          window.alert("اكتب سبب التحديث أولًا.");
+                          window.alert("يجب كتابة سبب التحديث أولاً للرجوع إليه عند الحاجة.");
                           return;
                         }
                         update(
@@ -246,7 +142,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                         );
                         setExecutionReason("");
                       }}
-                      className="mt-1 h-10 w-full rounded-lg border border-border px-3 bg-background text-foreground"
+                      className="mt-1 h-10 w-full rounded-lg border border-border px-3 bg-background font-normal"
                     >
                       <option value="مخططة">مخططة</option>
                       <option value="قيد التنفيذ">قيد التنفيذ</option>
@@ -256,93 +152,97 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                       <option value="مكتملة">مكتملة</option>
                     </select>
                   </label>
-                  <label className="block text-xs text-muted-foreground">
-                    نسبة الإنجاز
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      defaultValue={project.progress}
-                      onBlur={(event) => {
-                        const nextProgress = Math.min(100, Math.max(0, Number(event.target.value)));
-                        if (nextProgress === project.progress) return;
-                        if (!executionReason.trim()) {
-                          window.alert("اكتب سبب التحديث أولًا.");
-                          event.currentTarget.value = String(project.progress);
-                          return;
-                        }
-                        update({
-                          ...project,
-                          progress: nextProgress,
-                          updated: new Date().toLocaleDateString("en-CA"),
-                        }, `تغير إنجاز ${project.name} من ${project.progress}% إلى ${nextProgress}%. السبب: ${executionReason.trim()}`);
-                        setExecutionReason("");
-                      }}
-                      className="mt-1 h-10 w-full rounded-lg border border-border px-3 text-foreground"
-                    />
-                  </label>
-                </>
-              )}
-            </div>
-          </Card>
-        </div>
-      </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Team Management Box */}
         <Card>
-          <CardHeader title="التحديثات والتعليقات" />
+          <CardHeader title="إدارة فريق المشروع" action={<Users className="h-4 w-4 text-muted-foreground" />} />
           <div className="px-5 pb-5">
-            <div className="space-y-3 max-h-48 overflow-y-auto">
-              {project.comments.map((item) => (
-                <div key={item.id} className="rounded-lg bg-accent/50 p-3">
-                  <div className="flex justify-between text-xs">
-                    <strong>{item.author}</strong>
-                    <span className="text-muted-foreground">{item.date}</span>
+            <p className="text-xs text-muted-foreground mb-4">
+              يمكنك إضافة أعضاء لفريقك عبر البريد الإلكتروني. الأعضاء المضافون سيتمكنون من رفع الوثائق والتحديثات، ولكنها ستظهر كـ "بانتظار الاعتماد" حتى توافق عليها.
+            </p>
+            
+            <div className="space-y-3">
+              {(project.teamMembers || []).map((email) => (
+                <div key={email} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card">
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                      {email.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="text-sm font-medium">{email}</span>
                   </div>
-                  <p className="text-sm mt-1">{item.text}</p>
+                  {canManage && (
+                    <button 
+                      onClick={() => removeTeamMember(email)}
+                      className="text-muted-foreground hover:text-danger p-1 rounded-md hover:bg-danger/10"
+                      title="إزالة من الفريق"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
               ))}
+              
+              {(!project.teamMembers || project.teamMembers.length === 0) && (
+                <div className="text-center py-6 text-sm text-muted-foreground border border-dashed border-border rounded-xl">
+                  لا يوجد أعضاء في الفريق حالياً.
+                </div>
+              )}
             </div>
-            {!project.archived && (
-              <div className="mt-3 flex gap-2">
+
+            {canManage && (
+              <div className="mt-4 flex gap-2">
                 <input
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  placeholder="اكتب تحديثًا أو تعليقًا"
+                  type="email"
+                  value={newMemberEmail}
+                  onChange={(e) => setNewMemberEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && addTeamMember()}
+                  placeholder="البريد الإلكتروني للعضو..."
                   className="h-10 flex-1 rounded-lg border border-border px-3 text-sm"
                 />
                 <button
-                  onClick={() => {
-                    if (!comment.trim()) return;
-                    update(
-                      {
-                        ...project,
-                        comments: [
-                          { id: Date.now(), author: userName, text: comment.trim(), date: "الآن" },
-                          ...project.comments,
-                        ],
-                      },
-                      `أضاف ${userName} تحديثًا إلى ${project.name}.`,
-                      "comment",
-                    );
-                    setComment("");
-                  }}
-                  className="h-10 px-4 rounded-lg bg-primary text-white"
+                  onClick={addTeamMember}
+                  className="h-10 px-4 rounded-lg bg-primary text-white inline-flex items-center gap-2 text-sm font-semibold hover:bg-primary-dark"
                 >
-                  نشر
+                  <Plus className="h-4 w-4" />
+                  إضافة عضو
                 </button>
               </div>
             )}
           </div>
         </Card>
-        <Card>
-          <CardHeader title="الاعتمادات" />
-          <div className="px-5 pb-5 space-y-3">
+      </div>
+
+      {/* Approvals Box */}
+      <Card>
+        <CardHeader title="التحديثات والملفات (بانتظار الاعتماد)" />
+        <div className="px-5 pb-5">
+          <p className="text-xs text-muted-foreground mb-4">
+            هنا تظهر الإنجازات والملفات التي يرفعها أعضاء الفريق. بصفتك مدير المشروع، يجب أن تعتمدها قبل أن تظهر للمدير العام.
+          </p>
+          <div className="space-y-3">
+            {project.approvals.length === 0 && (
+              <div className="text-center py-6 text-sm text-muted-foreground border border-dashed border-border rounded-xl">
+                لا توجد طلبات معلقة بانتظار الاعتماد.
+              </div>
+            )}
             {project.approvals.map((approval) => (
-              <div key={approval.id} className="rounded-xl border border-border p-3">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 text-primary" />
-                  <span className="font-semibold text-sm">{approval.title}</span>
+              <div key={approval.id} className="rounded-xl border border-border p-4 flex items-center justify-between flex-wrap gap-4 bg-card">
+                <div className="flex items-center gap-3">
+                  <div className={`h-10 w-10 rounded-full flex items-center justify-center ${approval.status === 'معتمد' ? 'bg-green-100 text-green-700' : approval.status === 'مرفوض' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                    <ShieldCheck className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-sm">{approval.title}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">مرفوعة بواسطة: {approval.owner}</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4">
                   <Badge
                     tone={
                       approval.status === "معتمد"
@@ -354,112 +254,51 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                   >
                     {approval.status}
                   </Badge>
+                  
+                  {canApprove && approval.status === "بانتظار الاعتماد" && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() =>
+                          update(
+                            {
+                              ...project,
+                              approvals: project.approvals.map((item) =>
+                                item.id === approval.id ? { ...item, status: "معتمد" } : item,
+                              ),
+                            },
+                            `تم اعتماد ${approval.title}.`,
+                            "approve",
+                          )
+                        }
+                        className="h-8 px-4 rounded-lg bg-green-600 text-white text-xs font-semibold hover:bg-green-700"
+                      >
+                        اعتماد ونشر
+                      </button>
+                      <button
+                        onClick={() => {
+                          const reason = window.prompt("اكتب سبب الرفض:");
+                          if (reason === null) return;
+                          update(
+                            {
+                              ...project,
+                              approvals: project.approvals.map((item) =>
+                                item.id === approval.id ? { ...item, status: "مرفوض" } : item,
+                              ),
+                            },
+                            `تمت إعادة ${approval.title} للمراجعة. السبب: ${reason || "لم يذكر"}`,
+                            "approve",
+                          );
+                        }}
+                        className="h-8 px-4 rounded-lg bg-red-50 text-red-700 text-xs font-semibold hover:bg-red-100 border border-red-200"
+                      >
+                        إعادة للفريق
+                      </button>
+                    </div>
+                  )}
                 </div>
-                {canApprove && (
-                  <div className="mt-2 flex gap-2">
-                    <button
-                      onClick={() =>
-                        update(
-                          {
-                            ...project,
-                            approvals: project.approvals.map((item) =>
-                              item.id === approval.id ? { ...item, status: "معتمد" } : item,
-                            ),
-                          },
-                          `تم اعتماد ${approval.title}.`,
-                          "approve",
-                        )
-                      }
-                      className="h-8 px-3 rounded-lg bg-green-50 text-green-700 text-xs"
-                    >
-                      اعتماد
-                    </button>
-                    <button
-                      onClick={() =>
-                        update(
-                          {
-                            ...project,
-                            approvals: project.approvals.map((item) =>
-                              item.id === approval.id ? { ...item, status: "مرفوض" } : item,
-                            ),
-                          },
-                          `تمت إعادة ${approval.title} للمراجعة.`,
-                          "approve",
-                        )
-                      }
-                      className="h-8 px-3 rounded-lg bg-red-50 text-red-700 text-xs"
-                    >
-                      إعادة للمراجعة
-                    </button>
-                  </div>
-                )}
               </div>
             ))}
           </div>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader
-          title="محادثة المشروع"
-          action={
-            <span className="inline-flex items-center gap-1 text-xs text-primary">
-              <MessageSquare className="h-3.5 w-3.5" />
-              مرتبطة بالمشروع
-            </span>
-          }
-        />
-        <div className="px-5 pb-5">
-          <div className="h-48 overflow-y-auto rounded-xl bg-accent/30 p-4 space-y-3">
-            {project.chat.map((message) => (
-              <div
-                key={message.id}
-                className={`max-w-[75%] rounded-xl p-3 text-sm ${message.sender === userName ? "mr-auto bg-primary text-white" : "bg-card border border-border"}`}
-              >
-                <div className="text-[10px] opacity-70">
-                  {message.sender} · {message.time}
-                </div>
-                <div className="mt-1">{message.text}</div>
-              </div>
-            ))}
-          </div>
-          {!project.archived && (
-            <div className="mt-3 flex gap-2">
-              <input
-                value={chat}
-                onChange={(e) => setChat(e.target.value)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" &&
-                  !e.shiftKey &&
-                  (e.preventDefault(), document.getElementById("send-project-chat")?.click())
-                }
-                placeholder="اكتب رسالة لفريق المشروع"
-                className="h-11 flex-1 rounded-lg border border-border px-3"
-              />
-              <button
-                id="send-project-chat"
-                onClick={() => {
-                  if (!chat.trim()) return;
-                  update(
-                    {
-                      ...project,
-                      chat: [
-                        ...project.chat,
-                        { id: Date.now(), sender: userName, text: chat.trim(), time: "الآن" },
-                      ],
-                    },
-                    undefined,
-                    "comment",
-                  );
-                  setChat("");
-                }}
-                className="h-11 px-5 rounded-lg bg-primary text-white inline-flex items-center gap-2"
-              >
-                <Send className="h-4 w-4" />
-                إرسال
-              </button>
-            </div>
-          )}
         </div>
       </Card>
     </div>

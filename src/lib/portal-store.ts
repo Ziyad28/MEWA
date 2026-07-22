@@ -53,15 +53,13 @@ export interface PrototypeProject extends Project {
     actorRole: string;
     date: string;
   }>;
-  stages: ProjectStage[];
-  comments: Array<{ id: number; author: string; text: string; date: string }>;
   approvals: Array<{
     id: number;
     title: string;
     status: "معتمد" | "بانتظار الاعتماد" | "مرفوض";
     owner: string;
   }>;
-  chat: Array<{ id: number; sender: string; text: string; time: string }>;
+  teamMembers: string[];
 }
 
 export interface PrototypeCompany extends Company {
@@ -123,84 +121,15 @@ const KEYS = {
 
 const INITIAL_PROJECTS: PrototypeProject[] = PROJECTS.map((project) => ({
   ...project,
-  stages: [
-    {
-      id: project.id * 10 + 1,
-      title: "التحليل والتخطيط",
-      progress: 100,
-      status: "مكتملة",
-      tasks: [
-        {
-          id: 1,
-          title: "اعتماد نطاق العمل",
-          owner: project.manager,
-          due: project.start,
-          done: true,
-        },
-      ],
-    },
-    {
-      id: project.id * 10 + 2,
-      title: "التنفيذ والتكامل",
-      progress: Math.min(100, Math.max(10, project.progress)),
-      status: project.progress >= 90 ? "مكتملة" : "جارية",
-      tasks: [
-        {
-          id: 2,
-          title: "تطوير المكونات الرئيسية",
-          owner: project.manager,
-          due: project.end,
-          done: project.progress >= 80,
-        },
-        {
-          id: 3,
-          title: "اختبارات التكامل",
-          owner: "فريق الجودة",
-          due: project.end,
-          done: project.progress >= 90,
-        },
-      ],
-    },
-    {
-      id: project.id * 10 + 3,
-      title: "الإطلاق والتسليم",
-      progress: project.progress >= 90 ? project.progress : 0,
-      status: project.progress >= 90 ? "جارية" : "قادمة",
-      tasks: [
-        {
-          id: 4,
-          title: "التدريب والتسليم التشغيلي",
-          owner: "فريق المشروع",
-          due: project.end,
-          done: project.progress === 100,
-        },
-      ],
-    },
-  ],
-  comments: [
-    {
-      id: 1,
-      author: "مكتب إدارة المشاريع",
-      text: "يرجى تحديث الإنجاز والمخاطر قبل اجتماع المتابعة.",
-      date: "اليوم",
-    },
-  ],
   approvals: [
     {
       id: 1,
-      title: "اعتماد المرحلة الحالية",
+      title: "اعتماد التقرير المبدئي",
       status: project.progress > 70 ? "معتمد" : "بانتظار الاعتماد",
-      owner: "مدير الإدارة",
+      owner: "مدير المشروع",
     },
   ],
-  chat: [
-    {
-      id: 1,
-      sender: "مكتب إدارة المشاريع",
-      text: "مرحبًا بفريق المشروع، هذه المحادثة مخصصة للمتابعة.",
-      time: "09:00",
-    },
-  ],
+  teamMembers: [],
 }));
 
 const INITIAL_COMPANIES: PrototypeCompany[] = COMPANIES.map((company) => ({
@@ -324,10 +253,8 @@ export const getProjects = () =>
     return {
       ...seed,
       ...item,
-      stages: item.stages ?? seed?.stages ?? [],
-      comments: item.comments ?? seed?.comments ?? [],
+      teamMembers: item.teamMembers ?? seed?.teamMembers ?? [],
       approvals: item.approvals ?? seed?.approvals ?? [],
-      chat: item.chat ?? seed?.chat ?? [],
       activityLog: item.activityLog ?? seed?.activityLog ?? [],
     } as PrototypeProject;
   });
