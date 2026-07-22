@@ -60,7 +60,7 @@ const TABS = [
   { id: "overview", label: "نظرة عامة" },
   { id: "updates", label: "التحديثات" },
   { id: "documents", label: "الوثائق" },
-  { id: "risks", label: "المخاطر" },
+  { id: "risks", label: "التحديات والملاحظات" },
   { id: "activity", label: "سجل النشاط" },
   { id: "workspace", label: "إدارة المشروع" },
 ];
@@ -178,17 +178,11 @@ function ProjectDetail() {
             </div>
           </div>
           <div className="space-y-3 lg:min-w-[430px]">
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <MiniStat
-                icon={<TrendingUp className="h-4 w-4" />}
-                label="صحة المشروع"
-                value={`${project.health}%`}
-              />
-              <MiniStat
-                icon={<AlertTriangle className="h-4 w-4" />}
-                label="مخاطر التأخر"
-                value={`${project.delayRisk}%`}
-                tone={project.delayRisk >= 50 ? "danger" : "primary"}
+                icon={<Calendar className="h-4 w-4" />}
+                label="تاريخ البداية"
+                value={project.start}
               />
               <MiniStat
                 icon={<Calendar className="h-4 w-4" />}
@@ -545,76 +539,22 @@ function RisksTab({ risks }: { risks: typeof RISKS }) {
     return (
       <EmptyState
         icon={<AlertTriangle className="h-6 w-6" />}
-        title="لا توجد مخاطر مسجّلة"
-        description="لم يتم تسجيل أي مخاطر لهذا المشروع بعد."
+        title="لا توجد ملاحظات أو تحديات"
+        description="لم يتم تسجيل أي تحديات لهذا المشروع بعد."
       />
     );
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm min-w-[820px]">
-        <thead>
-          <tr className="text-xs text-muted-foreground">
-            <th className="text-right px-3 py-2 font-medium">المخاطرة</th>
-            <th className="text-right px-3 py-2 font-medium">الأثر</th>
-            <th className="text-right px-3 py-2 font-medium">الاحتمالية</th>
-            <th className="text-right px-3 py-2 font-medium">المسؤول</th>
-            <th className="text-right px-3 py-2 font-medium">إجراء التخفيف</th>
-            <th className="text-right px-3 py-2 font-medium">الحالة</th>
-            <th className="text-right px-3 py-2 font-medium">درجة المخاطرة</th>
-          </tr>
-        </thead>
-        <tbody>
-          {risks.map((r) => (
-            <tr key={r.id} className="border-t border-border">
-              <td className="px-3 py-3 font-medium">{r.risk}</td>
-              <td className="px-3 py-3">
-                <Badge
-                  tone={r.impact === "عالي" ? "danger" : r.impact === "متوسط" ? "warning" : "muted"}
-                >
-                  {r.impact}
-                </Badge>
-              </td>
-              <td className="px-3 py-3">
-                <Badge
-                  tone={
-                    r.probability === "عالي"
-                      ? "danger"
-                      : r.probability === "متوسط"
-                        ? "warning"
-                        : "muted"
-                  }
-                >
-                  {r.probability}
-                </Badge>
-              </td>
-              <td className="px-3 py-3">{r.owner}</td>
-              <td className="px-3 py-3 text-muted-foreground max-w-xs">{r.mitigation}</td>
-              <td className="px-3 py-3">
-                <Badge
-                  tone={
-                    r.status === "مغلق"
-                      ? "success"
-                      : r.status === "قيد المعالجة"
-                        ? "warning"
-                        : "danger"
-                  }
-                >
-                  {r.status}
-                </Badge>
-              </td>
-              <td className="px-3 py-3 w-40">
-                <div className="flex items-center gap-2">
-                  <ProgressBar
-                    value={r.score}
-                    tone={r.score >= 70 ? "danger" : r.score >= 40 ? "warning" : "success"}
-                  />
-                  <span className="text-xs text-muted-foreground w-9">{r.score}</span>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="divide-y divide-border px-5">
+      {risks.map((r) => (
+        <div key={r.id} className="py-4">
+          <div className="font-semibold text-sm">{r.risk}</div>
+          {r.mitigation && <div className="text-sm text-muted-foreground mt-1">{r.mitigation}</div>}
+          <div className="flex items-center gap-3 mt-3">
+            <Badge tone={r.status === "مغلق" ? "success" : "warning"}>{r.status}</Badge>
+            <span className="text-xs text-muted-foreground">بواسطة: {r.owner}</span>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
