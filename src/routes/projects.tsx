@@ -227,9 +227,7 @@ function ProjectsPage() {
         budget: "—",
         description: form.description || "مشروع جديد ضمن محفظة الوكالة.",
         spark: [0, 0, 0, 0, 0, 0],
-        stages: [
-          { id: Date.now(), title: "التخطيط والتحليل", progress: 0, status: "جارية", tasks: [] },
-        ],
+        
         comments: [],
         approvals: [
           {
@@ -239,7 +237,7 @@ function ProjectsPage() {
             owner: "مدير الإدارة",
           },
         ],
-        chat: [],
+        
       };
       saveProjects([project, ...list]);
       recordAudit("إنشاء مشروع", "مشروع", project.name, project.id);

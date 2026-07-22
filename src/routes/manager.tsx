@@ -78,8 +78,8 @@ function ManagerDashboard() {
       description: "",
       departmentId: user?.departmentId,
       subDepartmentId: form.subDepartmentId !== "direct" ? form.subDepartmentId : undefined,
-      stages: [],
-      comments: [],
+      
+      
       approvals: [],
       activityLog: [
         {

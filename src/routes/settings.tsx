@@ -18,7 +18,7 @@ function SettingsPage() {
     recordAudit("تحديث إعدادات المنصة", "نظام", `التنبيهات: ${notifications ? "مفعلة" : "معطلة"}، مسار الاعتماد: ${approval ? "مفعل" : "معطل"}`);
     window.alert("تم حفظ الإعدادات.");
   };
-  return <AppShell role={user.role} userName={user.name} roleLabel={user.roleLabel} pageTitle="إعدادات المنصة" pageSubtitle="إعدادات التشغيل العامة التي يديرها مسؤول المنصة فقط"><Card><CardHeader title="إعدادات التشغيل" /><div className="space-y-4 px-5 pb-5"><Setting label="التنبيهات التلقائية" description="إرسال تنبيه عند تأخر المشروع أو تحديثه أو رفع وثيقة." value={notifications} onChange={setNotifications} /><Setting label="مسار الاعتماد" description="إلزام المراحل والوثائق بالمرور على جهة الاعتماد." value={approval} onChange={setApproval} /><button onClick={save} className="h-11 rounded-lg bg-primary px-5 font-semibold text-white">حفظ الإعدادات</button></div></Card></AppShell>;
+  return <AppShell role={user.role} userName={user.name} roleLabel={user.roleLabel} pageTitle="إعدادات المنصة" pageSubtitle="إعدادات التشغيل العامة التي يديرها مسؤول المنصة فقط"><Card><CardHeader title="إعدادات التشغيل" /><div className="space-y-4 px-5 pb-5"><Setting label="التنبيهات التلقائية" description="إرسال تنبيه عند تأخر المشروع أو تحديثه أو رفع وثيقة." value={notifications} onChange={setNotifications} /><Setting label="اعتماد الوثائق" description="إلزام الوثائق المرفوعة بالمرور على جهة الاعتماد المختصة." value={approval} onChange={setApproval} /><button onClick={save} className="h-11 rounded-lg bg-primary px-5 font-semibold text-white">حفظ الإعدادات</button></div></Card></AppShell>;
 }
 
 function Setting({ label, description, value, onChange }: { label: string; description: string; value: boolean; onChange: (value: boolean) => void }) {

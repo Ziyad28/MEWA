@@ -27,20 +27,8 @@ export interface StoredDocument extends DocItem {
   }>;
 }
 
-export interface ProjectTask {
-  id: number;
-  title: string;
-  owner: string;
-  due: string;
-  done: boolean;
-}
-export interface ProjectStage {
-  id: number;
-  title: string;
-  progress: number;
-  status: "مكتملة" | "جارية" | "قادمة";
-  tasks: ProjectTask[];
-}
+
+
 export interface PrototypeProject extends Project {
   archived?: boolean;
   archivedBy?: string;
