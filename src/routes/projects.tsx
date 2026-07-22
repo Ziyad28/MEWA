@@ -328,18 +328,20 @@ function ProjectsPage() {
                 className="w-full h-11 pr-10 pl-3 rounded-lg border border-border bg-background text-sm"
               />
             </div>
-            <select
-              value={sector}
-              onChange={(e) => setSector(e.target.value)}
-              className="h-11 px-3 rounded-lg border border-border bg-background text-sm"
-            >
-              <option value="all">القطاعات</option>
-              {SECTORS.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
+            {(user.role === "admin" || user.role === "pmo") && (
+              <select
+                value={sector}
+                onChange={(e) => setSector(e.target.value)}
+                className="h-11 px-3 rounded-lg border border-border bg-background text-sm"
+              >
+                <option value="all">القطاعات</option>
+                {SECTORS.map((s) => (
+                  <option key={s} value={s}>
+                    {s}
+                  </option>
+                ))}
+              </select>
+            )}
             {(user.role === "admin" || user.role === "pmo") && (
               <select
                 value={generalAdministration}
@@ -359,7 +361,7 @@ function ProjectsPage() {
               </select>
             )}
             
-            {((user.role === "admin" || user.role === "pmo") ? generalAdministration !== "all" : (user.role === "manager" && user.isGeneralManager)) && (
+            {(user.role === "admin" || user.role === "pmo") && generalAdministration !== "all" && (
               <select
                 value={subDepartment}
                 onChange={(e) => setSubDepartment(e.target.value)}
@@ -367,10 +369,7 @@ function ProjectsPage() {
                 className="h-11 px-3 rounded-lg border border-border bg-background text-sm"
               >
                 <option value="all">الإدارات الفرعية</option>
-                {((user.role === "admin" || user.role === "pmo") && ORG_STRUCTURE[generalAdministration as keyof typeof ORG_STRUCTURE]
-                  ? ORG_STRUCTURE[generalAdministration as keyof typeof ORG_STRUCTURE].subDepartments
-                  : (user.departmentId && ORG_STRUCTURE[user.departmentId as keyof typeof ORG_STRUCTURE] ? ORG_STRUCTURE[user.departmentId as keyof typeof ORG_STRUCTURE].subDepartments : [])
-                ).map((dept) => (
+                {(ORG_STRUCTURE[generalAdministration as keyof typeof ORG_STRUCTURE]?.subDepartments ?? []).map((dept) => (
                   <option key={dept.id} value={dept.id}>
                     {dept.name}
                   </option>
