@@ -278,21 +278,31 @@ function CompaniesList() {
                   <div className="text-sm font-bold text-foreground">{total}</div>
                 </div>
                 <div>
-                  <div className="text-[10px] text-muted-foreground">الأداء</div>
+                  <div className="text-[10px] text-muted-foreground">متوسط الإنجاز</div>
                   <div
-                    className={`text-sm font-bold flex items-center justify-center gap-1 ${c.performance >= 80 ? "text-green-600" : c.performance >= 65 ? "text-amber-600" : "text-red-600"}`}
+                    className={`text-sm font-bold flex items-center justify-center gap-1 text-primary`}
                   >
                     <TrendingUp className="h-3 w-3" />
-                    {c.performance}%
+                    {total > 0
+                      ? Math.round(
+                          projects.filter((p) => p.companyId === c.id).reduce((acc, p) => acc + p.progress, 0) /
+                            total
+                        )
+                      : 0}
+                    %
                   </div>
                 </div>
               </div>
 
               <div className="mt-4 flex items-center justify-between text-[11px] text-muted-foreground">
-                <span className="inline-flex items-center gap-1.5">
-                  <Mail className="h-3 w-3" />
-                  {c.email}
-                </span>
+                {user.role !== "manager" ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    <Mail className="h-3 w-3" />
+                    {c.email}
+                  </span>
+                ) : (
+                  <span />
+                )}
                 <div className="flex items-center gap-1">
                   {user.role !== "manager" && (
                     <button

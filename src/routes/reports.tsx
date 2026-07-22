@@ -164,20 +164,24 @@ function ReportsPage() {
                     "اسم الشركة",
                     "القطاع",
                     "حالة الشركة",
-                    "الأداء",
+                    "متوسط الإنجاز",
                     "بداية العقد",
                     "نهاية العقد",
                     "البريد الإلكتروني",
                   ],
-                  ...scopedCompanies.map((c) => [
-                    c.name,
-                    c.sector,
-                    c.status,
-                    `${c.performance}%`,
-                    c.contractStart,
-                    c.contractEnd,
-                    c.email,
-                  ]),
+                  ...scopedCompanies.map((c) => {
+                    const companyProjects = projects.filter((p) => p.companyId === c.id);
+                    const avgProgress = companyProjects.length > 0 ? Math.round(companyProjects.reduce((acc, p) => acc + p.progress, 0) / companyProjects.length) : 0;
+                    return [
+                      c.name,
+                      c.sector,
+                      c.status,
+                      `${avgProgress}%`,
+                      c.contractStart,
+                      c.contractEnd,
+                      c.email,
+                    ];
+                  }),
                 ])
               }
               className="flex-1 h-10 rounded-lg bg-green-600/10 text-green-700 hover:bg-green-600 hover:text-white transition-colors font-semibold inline-flex items-center justify-center gap-2"
@@ -187,8 +191,12 @@ function ReportsPage() {
             <button
               onClick={() =>
                 printPdf("تقرير الشركات التقنية", [
-                  ["الشركة", "القطاع", "الحالة", "الأداء", "نهاية العقد"],
-                  ...scopedCompanies.map((c) => [c.name, c.sector, c.status, `${c.performance}%`, c.contractEnd]),
+                  ["الشركة", "القطاع", "الحالة", "متوسط الإنجاز", "نهاية العقد"],
+                  ...scopedCompanies.map((c) => {
+                    const companyProjects = projects.filter((p) => p.companyId === c.id);
+                    const avgProgress = companyProjects.length > 0 ? Math.round(companyProjects.reduce((acc, p) => acc + p.progress, 0) / companyProjects.length) : 0;
+                    return [c.name, c.sector, c.status, `${avgProgress}%`, c.contractEnd];
+                  }),
                 ])
               }
               className="flex-1 h-10 rounded-lg bg-red-600/10 text-red-700 hover:bg-red-600 hover:text-white transition-colors font-semibold inline-flex items-center justify-center gap-2"

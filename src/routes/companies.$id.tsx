@@ -161,7 +161,7 @@ function CompanyDetail() {
       </Card>
 
       {/* Performance KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-5">
           <div className="text-sm text-muted-foreground">مشاريع الوكالة الحالية</div>
           <div className="mt-2 text-3xl font-bold">
@@ -181,13 +181,6 @@ function CompanyDetail() {
               ? Math.round(related.reduce((a, p) => a + p.progress, 0) / related.length)
               : 0}
             %
-          </div>
-        </Card>
-        <Card className="p-5">
-          <div className="text-sm text-muted-foreground">تقييم الأداء</div>
-          <div className="mt-2 text-3xl font-bold">{company.performance}%</div>
-          <div className="text-xs text-muted-foreground mt-1">
-            التزام بالوقت: {company.commitment}%
           </div>
         </Card>
       </div>
@@ -296,34 +289,9 @@ function CompanyDetail() {
             ))}
           </div>
         </Card>
-
-        {/* Performance chart */}
-        <Card className="overflow-hidden">
-          <CardHeader
-            title="تحليل الأداء عبر المشاريع"
-            subtitle="مقارنة الأداء الحالي لمشاريع الشركة"
-          />
-          <div className="px-4 pb-5 h-[300px]">
-            <PerformanceBarChart data={perf} label="مؤشر الأداء" />
-          </div>
-        </Card>
       </div>
 
-      {/* Performance trend */}
-      <Card className="overflow-hidden">
-        <CardHeader
-          title="مؤشر أداء الشركة"
-          subtitle="اتجاه الأداء خلال آخر 6 أشهر"
-          action={
-            <span className="rounded-full bg-[#C8A24A]/10 px-3 py-1 text-[11px] font-semibold text-[#9A7518]">
-              اتجاه تصاعدي
-            </span>
-          }
-        />
-        <div className="px-4 pb-5 h-[280px]">
-          <ProgressAreaChart data={company.perfHistory} color="#C8A24A" label="مؤشر الأداء" />
-        </div>
-      </Card>
+
 
       {can(user.role, "companies.manage") && <CompanyPrototypeWorkspace companyId={company.id} />}
 
