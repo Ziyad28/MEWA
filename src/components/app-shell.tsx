@@ -479,10 +479,6 @@ export function AppShell({
               <h1 className="text-xl font-bold text-foreground">{pageTitle}</h1>
               {pageSubtitle && <p className="text-sm text-muted-foreground mt-1">{pageSubtitle}</p>}
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Calendar className="h-4 w-4" />
-              <span>آخر 30 يوم</span>
-            </div>
           </div>
           {children}
         </main>

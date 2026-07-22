@@ -38,52 +38,7 @@ function ManagerDashboard() {
             <PerformanceBarChart data={barData} label="نسبة التقدم" />
           </div>
         </Card>
-
-        <Card>
-          <CardHeader title="أحدث المشاريع" action={<Link to="/projects" className="text-xs text-primary hover:underline">عرض الكل</Link>} />
-          <div className="px-2 pb-3 overflow-x-auto">
-            <table className="w-full text-sm min-w-[520px]">
-              <thead>
-                <tr className="text-xs text-muted-foreground">
-                  <th className="text-right px-3 py-2 font-medium">المشروع</th>
-                  <th className="text-right px-3 py-2 font-medium">نسبة التقدم</th>
-                  <th className="text-right px-3 py-2 font-medium">الحالة</th>
-                  <th className="text-right px-3 py-2 font-medium">التحديث</th>
-                </tr>
-              </thead>
-              <tbody>
-                {PROJECTS.slice(0, 5).map((p) => (
-                  <tr key={p.id} className="border-t border-border hover:bg-accent/40">
-                    <td className="px-3 py-3 font-medium">
-                      <Link to="/projects/$id" params={{ id: String(p.id) }} className="hover:text-primary">{p.name}</Link>
-                    </td>
-                    <td className="px-3 py-3 w-32">
-                      <div className="flex items-center gap-2">
-                        <ProgressBar value={p.progress} tone={p.status === "متأخرة" ? "danger" : p.status === "مكتملة" ? "success" : "primary"} />
-                        <span className="text-xs text-muted-foreground w-9">{p.progress}%</span>
-                      </div>
-                    </td>
-                    <td className="px-3 py-3"><StatusBadge status={p.status} /></td>
-                    <td className="px-3 py-3 text-muted-foreground">{p.updated}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
       </div>
-
-      <Card>
-        <CardHeader title="التقارير" action={<Link to="/reports" className="text-xs text-primary hover:underline">عرض جميع التقارير</Link>} />
-        <div className="px-5 pb-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {["تقرير الأداء الشهري", "تقرير المخاطر الاستراتيجية", "تقرير أداء الشركات"].map((r) => (
-            <button onClick={() => downloadDocument({ id: Date.now(), name: r, type: "تقرير", uploadedBy: "إدارة الوكالة", date: new Date().toLocaleDateString("en-CA"), size: "—" })} key={r} className="text-right flex items-center justify-between px-4 py-3 rounded-lg border border-border text-sm hover:bg-accent">
-              <span>{r}</span>
-              <span className="text-muted-foreground text-xs">تنزيل</span>
-            </button>
-          ))}
-        </div>
-      </Card>
     </AppShell>
   );
 }
