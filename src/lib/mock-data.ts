@@ -44,7 +44,7 @@ export interface Project {
   updated: string;
   start: string;
   end: string;
-  companyId: number;
+  companyId?: number;
   health: number;
   delayRisk: number;
   budget: string;
@@ -107,16 +107,16 @@ export const COMPANY_PROFILES: Record<number, { overview: string; history: strin
 };
 
 export const PROJECTS: Project[] = [
-  { id: 1, name: "مشروع التحول الرقمي", sector: "البيئة", manager: "فهد المطيري", status: "قيد التنفيذ", priority: "عالية", progress: 66, updated: "2025/06/15", start: "2025/01/01", end: "2025/12/31", companyId: 6, health: 78, delayRisk: 22, budget: "12.5M", description: "رقمنة الخدمات البيئية الداخلية وأتمتة سير العمل.", spark: [30,42,50,55,60,66], departmentId: "dt", subDepartmentId: "dt_eservices" },
+  { id: 1, name: "مشروع التحول الرقمي", sector: "البيئة", manager: "فهد المطيري", status: "قيد التنفيذ", priority: "عالية", progress: 66, updated: "2025/06/15", start: "2025/01/01", end: "2025/12/31", health: 78, delayRisk: 22, budget: "12.5M", description: "رقمنة الخدمات البيئية الداخلية وأتمتة سير العمل.", spark: [30,42,50,55,60,66], departmentId: "dt", subDepartmentId: "dt_eservices" },
   { id: 2, name: "مشروع الأمن السيبراني", sector: "البيئة", manager: "خالد الشهري", status: "قيد التنفيذ", priority: "عالية", progress: 45, updated: "2025/06/14", start: "2025/02/10", end: "2025/11/30", companyId: 5, health: 62, delayRisk: 41, budget: "8.2M", description: "تعزيز حماية الأنظمة الحساسة وبناء مركز عمليات الأمن.", spark: [10,18,25,32,38,45], departmentId: "dt", subDepartmentId: "dt_emerging" },
   { id: 3, name: "مشروع البنية التحتية", sector: "المياه", manager: "خالد الشهري", status: "قيد التنفيذ", priority: "متوسطة", progress: 80, updated: "2025/06/13", start: "2024/09/01", end: "2025/09/30", companyId: 4, health: 85, delayRisk: 15, budget: "24.0M", description: "تحديث مراكز البيانات الإقليمية وشبكات الاتصال.", spark: [40,50,58,68,74,80], departmentId: "infra", subDepartmentId: "infra_network" },
-  { id: 4, name: "مشروع الخدمات الذكية", sector: "الزراعة", manager: "خالد الشهري", status: "قيد التنفيذ", priority: "متوسطة", progress: 30, updated: "2025/06/12", start: "2025/03/01", end: "2026/02/28", companyId: 3, health: 55, delayRisk: 48, budget: "6.8M", description: "منصة خدمات ذاتية للمزارعين والمستفيدين.", spark: [5,10,14,20,25,30], departmentId: "dt", subDepartmentId: "dt_eservices" },
+  { id: 4, name: "مشروع الخدمات الذكية", sector: "الزراعة", manager: "خالد الشهري", status: "قيد التنفيذ", priority: "متوسطة", progress: 30, updated: "2025/06/12", start: "2025/03/01", end: "2026/02/28", health: 55, delayRisk: 48, budget: "6.8M", description: "منصة خدمات ذاتية للمزارعين والمستفيدين.", spark: [5,10,14,20,25,30], departmentId: "dt", subDepartmentId: "dt_eservices" },
   { id: 5, name: "منصة رصد المياه", sector: "المياه", manager: "سعد الغامدي", status: "مكتملة", priority: "عالية", progress: 100, updated: "2025/05/20", start: "2024/01/15", end: "2025/05/10", companyId: 1, health: 96, delayRisk: 4, budget: "9.4M", description: "منصة موحّدة لرصد جودة ومستوى المياه على مستوى المملكة.", spark: [60,70,80,90,96,100], departmentId: "app", subDepartmentId: "app_solutions" },
   { id: 6, name: "نظام الرصد البيئي", sector: "البيئة", manager: "نورة العتيبي", status: "قيد التنفيذ", priority: "متوسطة", progress: 58, updated: "2025/06/10", start: "2024/11/01", end: "2025/12/01", companyId: 2, health: 70, delayRisk: 30, budget: "5.6M", description: "أجهزة استشعار وذكاء اصطناعي لرصد جودة الهواء والتربة.", spark: [15,25,34,42,50,58], departmentId: "app", subDepartmentId: "app_bi" },
   { id: 7, name: "منصة الزراعة الذكية", sector: "الزراعة", manager: "فيصل القحطاني", status: "متأخرة", priority: "عالية", progress: 35, updated: "2025/06/08", start: "2024/06/01", end: "2025/06/30", companyId: 3, health: 40, delayRisk: 72, budget: "11.2M", description: "منظومة IoT لري ذكي وإدارة المحاصيل.", spark: [20,28,30,32,34,35], departmentId: "dt", subDepartmentId: "dt_enterprise" },
   { id: 8, name: "مشروع أتمتة التراخيص", sector: "الزراعة", manager: "فهد المطيري", status: "قيد التنفيذ", priority: "متوسطة", progress: 52, updated: "2025/06/09", start: "2025/01/20", end: "2025/12/15", companyId: 6, health: 74, delayRisk: 26, budget: "4.3M", description: "أتمتة إصدار وتجديد التراخيص الزراعية.", spark: [12,20,28,38,46,52], departmentId: "app", subDepartmentId: "app_products" },
   { id: 9, name: "مشروع الأرشفة الإلكترونية", sector: "البيئة", manager: "نورة العتيبي", status: "قيد التنفيذ", priority: "منخفضة", progress: 72, updated: "2025/06/07", start: "2024/08/01", end: "2025/10/30", companyId: 2, health: 82, delayRisk: 18, budget: "3.1M", description: "أرشفة موحّدة للوثائق التنظيمية والفنية.", spark: [30,42,55,62,68,72], departmentId: "infra", subDepartmentId: "infra_db" },
-  { id: 10, name: "منصة الشراكات الحكومية", sector: "المياه", manager: "سعد الغامدي", status: "مخططة", priority: "متوسطة", progress: 8, updated: "2025/06/05", start: "2025/08/01", end: "2026/07/30", companyId: 1, health: 60, delayRisk: 20, budget: "7.5M", description: "بوابة موحّدة للشراكات مع الجهات الحكومية.", spark: [0,2,4,5,7,8], departmentId: "dt" },
+  { id: 10, name: "منصة الشراكات الحكومية", sector: "المياه", manager: "سعد الغامدي", status: "مخططة", priority: "متوسطة", progress: 8, updated: "2025/06/05", start: "2025/08/01", end: "2026/07/30", health: 60, delayRisk: 20, budget: "7.5M", description: "بوابة موحّدة للشراكات مع الجهات الحكومية.", spark: [0,2,4,5,7,8], departmentId: "dt" },
 ];
 
 export const KPIS_PMO = { total: 128, completed: 45, inProgress: 67, delayed: 16 };

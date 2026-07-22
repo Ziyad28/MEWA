@@ -211,8 +211,9 @@ function ProjectsPage() {
         ? {
             name: project.name,
             sector: project.sector,
+            status: project.status,
+            companyId: project.companyId ? String(project.companyId) : "",
             manager: project.manager,
-            companyId: String(project.companyId),
             start: project.start,
             end: project.end,
             description: project.description,
@@ -220,8 +221,9 @@ function ProjectsPage() {
         : {
             name: "",
             sector: "المياه",
+            status: "قيد التنفيذ",
+            companyId: "",
             manager: user?.name ?? "فهد المطيري",
-            companyId: "1",
             start: "2026-01-01",
             end: "2026-12-31",
             description: "",
@@ -245,7 +247,8 @@ function ProjectsPage() {
                 ...form,
                 manager: can(user.role, "projects.assignManager") ? form.manager : project.manager,
                 sector: form.sector as PrototypeProject["sector"],
-                companyId: Number(form.companyId),
+                companyId: form.companyId ? Number(form.companyId) : undefined,
+                status: form.status as any,
                 updated: new Date().toLocaleDateString("en-CA"),
               }
             : project,
@@ -265,14 +268,14 @@ function ProjectsPage() {
         name: form.name,
         sector: form.sector as PrototypeProject["sector"],
         manager: form.manager,
-        status: "قيد التنفيذ",
+        status: form.status as any,
         priority: "متوسطة",
         progress: 0,
         updated: new Date().toLocaleDateString("en-CA"),
         start: form.start,
         end: form.end,
-        companyId: Number(form.companyId),
-        health: 75,
+        companyId: form.companyId ? Number(form.companyId) : undefined,
+        health: 100,
         delayRisk: 10,
         budget: "—",
         description: form.description || "مشروع جديد ضمن محفظة الوكالة.",
@@ -624,7 +627,7 @@ function ProjectsPage() {
                         </button>
                       </td>
                       <td className="px-4 py-3">{p.sector}</td>
-                      <td className="px-4 py-3 text-muted-foreground">{c?.name}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{c?.name || "تنفيذ داخلي (من الوزارة)"}</td>
                       <td className="px-4 py-3">{p.manager}</td>
                       <td className="px-4 py-3">
                         <StatusBadge status={p.status} />
@@ -733,7 +736,7 @@ function ProjectsPage() {
                       </span>
                     </div>
                     <h3 className="font-semibold text-foreground truncate">{p.name}</h3>
-                    <div className="text-xs text-muted-foreground mt-1">{c?.name}</div>
+                    <div className="text-xs text-muted-foreground mt-1">{c?.name || "تنفيذ داخلي (من الوزارة)"}</div>
                   </div>
                   <HealthRing value={p.health} size={56} label="" />
                 </div>
@@ -840,10 +843,13 @@ function ProjectsPage() {
                 options={[...SECTORS]}
               />
               <SelectField
-                label="الشركة"
+                label="الشركة المنفذة"
                 value={form.companyId}
                 onChange={(value) => setForm({ ...form, companyId: value })}
-                options={COMPANIES.map((c) => ({ value: String(c.id), label: c.name }))}
+                options={[
+                  { value: "", label: "تنفيذ داخلي (من الوزارة)" },
+                  ...COMPANIES.map((c) => ({ value: String(c.id), label: c.name }))
+                ]}
               />
               <Field
                 label="تاريخ البداية"

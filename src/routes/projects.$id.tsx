@@ -353,8 +353,8 @@ function Overview({
         <div className="px-5 pb-5 space-y-2.5 text-sm">
           <InfoRow
             icon={<Building2 className="h-3.5 w-3.5" />}
-            label="الشركة المنفّذة"
-            value={company?.name ?? "-"}
+            label="الجهة المنفّذة"
+            value={company?.name ?? "تنفيذ داخلي (من الوزارة)"}
           />
           <InfoRow
             icon={<User className="h-3.5 w-3.5" />}
