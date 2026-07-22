@@ -5,6 +5,7 @@ import { AppShell, useRequireAnyPermission } from "@/components/app-shell";
 import { Card, EmptyState } from "@/components/ui-bits";
 import { downloadExcel, printPdf, usePortalData } from "@/lib/portal-store";
 import { scopeProjects, canAccessCompany } from "@/lib/access-control";
+import { ORG_STRUCTURE } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/reports")({
   component: ReportsPage,
@@ -15,6 +16,7 @@ function ReportsPage() {
   const user = useRequireAnyPermission(["reports.viewPortfolio", "reports.viewAssigned"]);
   const { projects, companies } = usePortalData();
   const [projectFilter, setProjectFilter] = useState("all");
+  const [deptFilter, setDeptFilter] = useState("all");
 
   const scopedProjects = useMemo(() => {
     if (!user) return [];
@@ -32,25 +34,34 @@ function ReportsPage() {
   const filteredProjects = useMemo(() => {
     const now = new Date();
     return scopedProjects.filter((p) => {
+      // Department Filter
+      if (deptFilter !== "all") {
+        if (deptFilter === "direct" && p.subDepartmentId) return false;
+        if (deptFilter !== "direct" && p.subDepartmentId !== deptFilter) return false;
+      }
+
+      // Status/Date Filter
       const pStart = new Date(p.start);
       if (projectFilter === "last_month") {
         const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
         const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        return pStart >= lastMonth && pStart < thisMonth;
+        if (pStart < lastMonth || pStart >= thisMonth) return false;
       }
       if (projectFilter === "next_month") {
         const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
         const monthAfterNext = new Date(now.getFullYear(), now.getMonth() + 2, 1);
-        return pStart >= nextMonth && pStart < monthAfterNext;
+        if (pStart < nextMonth || pStart >= monthAfterNext) return false;
       }
       if (projectFilter === "active") {
-        return p.status === "قيد التنفيذ";
+        if (p.status !== "قيد التنفيذ") return false;
       }
       return true;
     });
-  }, [scopedProjects, projectFilter]);
+  }, [scopedProjects, projectFilter, deptFilter]);
 
   if (!user) return null;
+
+  const org = user.departmentId ? ORG_STRUCTURE[user.departmentId as keyof typeof ORG_STRUCTURE] : null;
 
   return (
     <AppShell
@@ -75,18 +86,37 @@ function ReportsPage() {
             </div>
           </div>
 
-          <div className="mb-6 space-y-2">
-            <label className="text-xs font-medium text-foreground">تصفية المشاريع</label>
-            <select
-              value={projectFilter}
-              onChange={(e) => setProjectFilter(e.target.value)}
-              className="w-full h-11 px-3 rounded-lg border border-border bg-background text-sm"
-            >
-              <option value="all">الكل ({scopedProjects.length})</option>
-              <option value="active">قيد التنفيذ فقط</option>
-              <option value="last_month">بدأت الشهر الماضي</option>
-              <option value="next_month">تبدأ الشهر القادم</option>
-            </select>
+          <div className="mb-6 space-y-3">
+            {user.isGeneralManager && org && (
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-foreground">تصفية حسب الإدارة</label>
+                <select
+                  value={deptFilter}
+                  onChange={(e) => setDeptFilter(e.target.value)}
+                  className="w-full h-11 px-3 rounded-lg border border-border bg-background text-sm"
+                >
+                  <option value="all">جميع مشاريع الإدارة العامة</option>
+                  <option value="direct">{org.name} (مباشر)</option>
+                  {org.subDepartments.map(sub => (
+                    <option key={sub.id} value={sub.id}>{sub.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            
+            <div className="space-y-1">
+              <label className="text-xs font-medium text-foreground">تصفية حسب الحالة</label>
+              <select
+                value={projectFilter}
+                onChange={(e) => setProjectFilter(e.target.value)}
+                className="w-full h-11 px-3 rounded-lg border border-border bg-background text-sm"
+              >
+                <option value="all">الكل ({filteredProjects.length})</option>
+                <option value="active">قيد التنفيذ فقط</option>
+                <option value="last_month">بدأت الشهر الماضي</option>
+                <option value="next_month">تبدأ الشهر القادم</option>
+              </select>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
