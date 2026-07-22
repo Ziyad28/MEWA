@@ -21,7 +21,7 @@ function ManagerDashboard() {
       role="manager"
       userName={user.name}
       roleLabel={user.roleLabel}
-      pageTitle="لوحة تحكم مدير الإدارة"
+      pageTitle="متابعة معايير الإنجاز"
       pageSubtitle="نظرة عامة على مشاريع الإدارة"
     >
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

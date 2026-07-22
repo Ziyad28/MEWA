@@ -26,6 +26,127 @@ export const Route = createFileRoute("/select")({
   }),
 });
 
+function PortalCard({
+  title,
+  description,
+  icon,
+  onClick,
+  compact = false,
+}: {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  compact?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`group relative flex w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-right shadow-2xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-white/20 hover:bg-white/[0.08] hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E2C46F] ${
+        compact ? "md:items-center md:text-center" : "items-start"
+      }`}
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div
+        className={`inline-flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#D5B254] to-[#947327] p-3 text-white shadow-lg ${
+          compact ? "mb-4" : "mb-5"
+        }`}
+      >
+        {icon}
+      </div>
+      <h2 className="mb-2 text-xl font-bold tracking-tight text-white/95 md:text-2xl">{title}</h2>
+      <p className="text-sm font-medium leading-relaxed text-white/60 md:text-base">{description}</p>
+    </button>
+  );
+}
+
+const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; description: string; path: string; icon: any }[] }> = {
+  admin: {
+    header: "إدارة المستخدمين والأدوار",
+    cards: [
+      {
+        title: "إدارة الحسابات وصلاحيات الوصول",
+        description: "إنشاء الحسابات، تعيين الأدوار والمستويات، وإدارة حالة الوصول للنظام.",
+        path: "/users",
+        icon: Users,
+      }
+    ]
+  },
+  capacity: {
+    header: "الشركات وبناء القدرات",
+    cards: [
+      {
+        title: "إدارة ورش العمل",
+        description: "تسجيل الورش المعتمدة، متابعة الدعوات، وتوثيق التقييم والتقرير النهائي.",
+        path: "/capacity-building",
+        icon: GraduationCap,
+      }
+    ]
+  },
+  employee: {
+    header: "منصة ورش العمل للزوار",
+    cards: [
+      {
+        title: "استعراض الورش والتقييم",
+        description: "متابعة الورش المتاحة، تأكيد الحضور، وتعبئة نماذج التقييم بعد الانتهاء.",
+        path: "/workshop-invitations",
+        icon: GraduationCap,
+      }
+    ]
+  },
+  manager: {
+    header: "متابعة معايير الإنجاز",
+    cards: [
+      {
+        title: "مشاريع الوكالة",
+        description: "إدارة ومتابعة المشاريع التقنية التابعة للوكالة.",
+        path: roleHome("manager"),
+        icon: FolderKanban,
+      },
+      {
+        title: "الشركات المتعاونة",
+        description: "استعراض الشركات المرتبطة بمشاريع الوكالة.",
+        path: "/companies",
+        icon: Building2,
+      }
+    ]
+  },
+  pmo: {
+    header: "ضبط الجودة والحوكمة",
+    cards: [
+      {
+        title: "مشاريع الوكالة",
+        description: "إدارة ومتابعة المشاريع التقنية التابعة للوكالة.",
+        path: roleHome("pmo"),
+        icon: FolderKanban,
+      },
+      {
+        title: "الشركات المتعاونة",
+        description: "استعراض الشركات المرتبطة بمشاريع الوكالة.",
+        path: "/companies",
+        icon: Building2,
+      }
+    ]
+  },
+  pm: {
+    header: "إدارة خطة التنفيذ",
+    cards: [
+      {
+        title: "مشاريع الوكالة",
+        description: "إدارة ومتابعة المشاريع التقنية التابعة للوكالة.",
+        path: roleHome("pm"),
+        icon: FolderKanban,
+      },
+      {
+        title: "الشركات المتعاونة",
+        description: "استعراض الشركات المرتبطة بمشاريع الوكالة.",
+        path: "/companies",
+        icon: Building2,
+      }
+    ]
+  }
+};
+
 function SelectUnit() {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
@@ -40,6 +161,8 @@ function SelectUnit() {
   }, [navigate]);
 
   if (!user) return null;
+
+  const config = ROLE_CONFIG[user.role] || ROLE_CONFIG.employee;
 
   return (
     <div dir="rtl" className="relative h-[100dvh] w-full overflow-hidden bg-[#022f23] text-white">
@@ -94,7 +217,7 @@ function SelectUnit() {
         {/* Center */}
         <main className="flex min-h-0 flex-1 -translate-y-2 flex-col items-center justify-center px-6 py-2">
           <h1 className="text-center text-[42px] font-bold leading-none tracking-tight text-white sm:text-5xl lg:text-[52px] [text-shadow:0_3px_18px_rgba(0,0,0,0.52)]">
-            المنصة الذكية لإدارة الشركات والمشاريع
+            {config.header}
           </h1>
           <div className="mt-4 flex items-center gap-2">
             <span className="h-1 w-1 rounded-full bg-[#E2C46F]" />
@@ -107,52 +230,6 @@ function SelectUnit() {
           </div>
 
           <div className="mt-6 grid w-full max-w-5xl grid-cols-1 gap-5 md:grid-cols-2">
-            {(can(user.role, "projects.viewAll") || can(user.role, "projects.viewAssigned")) && (
-              <PortalCard
-                title="مشاريع الوكالة"
-                description="إدارة ومتابعة المشاريع التقنية التابعة للوكالة."
-                icon={<FolderKanban className="h-8 w-8" />}
-                onClick={() => navigate({ to: roleHome(user.role) })}
-              />
-            )}
-            {can(user.role, "companies.view") && (
-              <PortalCard
-                title="الشركات المتعاونة"
-                description="استعراض الشركات المرتبطة بمشاريع الوكالة."
-                icon={<Building2 className="h-8 w-8" />}
-                onClick={() => navigate({ to: "/companies" })}
-              />
-            )}
-            {can(user.role, "workshops.manage") && (
-              <div className="md:col-span-2 md:mx-auto md:w-[calc(50%-0.625rem)]">
-                <PortalCard
-                  title="الشركات وبناء القدرات"
-                  description="تسجيل الورش المعتمدة ومتابعة الدعوات والتقييم والتقرير النهائي."
-                  icon={<GraduationCap className="h-7 w-7" />}
-                  onClick={() => navigate({ to: "/capacity-building" })}
-                  compact
-                />
-              </div>
-            )}
-            {can(user.role, "workshops.respond") && (
-              <div className="md:col-span-2 md:mx-auto md:w-[calc(50%-0.625rem)]">
-                <PortalCard
-                  title="دعوات ورش العمل"
-                  description="استعراض دعواتك، تأكيد الحضور، وتعبئة نماذج التقييم داخل المنصة."
-                  icon={<GraduationCap className="h-7 w-7" />}
-                  onClick={() => navigate({ to: "/workshop-invitations" })}
-                  compact
-                />
-              </div>
-            )}
-            {can(user.role, "users.manage") && (
-              <div className="md:col-span-2 md:mx-auto md:w-[calc(50%-0.625rem)]">
-                <PortalCard
-                  title="إدارة المستخدمين والأدوار"
-                  description="إنشاء الحسابات وتعيين الأدوار وإدارة حالة الوصول."
-                  icon={<Users className="h-7 w-7" />}
-                  onClick={() => navigate({ to: "/users" })}
-                  compact
                 />
               </div>
             )}

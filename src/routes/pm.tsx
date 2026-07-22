@@ -23,7 +23,7 @@ function PmDashboard() {
       role="pm"
       userName={user.name}
       roleLabel={user.roleLabel}
-      pageTitle="لوحة تحكم مدير المشروع"
+      pageTitle="إدارة خطة التنفيذ"
       pageSubtitle="نظرة عامة على مشاريعك"
     >
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

@@ -26,7 +26,7 @@ function PmoDashboard() {
       role="pmo"
       userName={user.name}
       roleLabel={user.roleLabel}
-      pageTitle="لوحة تحكم مكتب إدارة المشاريع (PMO)"
+      pageTitle="ضبط الجودة والحوكمة"
       pageSubtitle="نظرة عامة على المشاريع التقنية"
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

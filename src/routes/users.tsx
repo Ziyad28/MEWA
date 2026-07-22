@@ -72,8 +72,8 @@ function UsersPage() {
       role={currentUser.role}
       userName={currentUser.name}
       roleLabel={currentUser.roleLabel}
-      pageTitle="المستخدمون والأدوار"
-      pageSubtitle="إدارة الحسابات وتعيين الصلاحيات من مكان واحد"
+      pageTitle="إدارة المستخدمين والأدوار"
+      pageSubtitle="إدارة الحسابات وصلاحيات الوصول للنظام."
     >
       <Card>
         <CardHeader
