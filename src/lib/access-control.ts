@@ -45,6 +45,7 @@ const ROLE_PERMISSIONS: Record<Role, ReadonlySet<Permission>> = {
   ]),
   manager: new Set([
     "projects.viewAll",
+    "projects.create",
     "projects.approve",
     "companies.view",
     "documents.view",
