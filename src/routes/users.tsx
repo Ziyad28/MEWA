@@ -13,6 +13,7 @@ import {
   type User,
 } from "@/lib/auth";
 import { recordAudit } from "@/lib/portal-store";
+import { ORG_STRUCTURE } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/users")({
   component: UsersPage,
