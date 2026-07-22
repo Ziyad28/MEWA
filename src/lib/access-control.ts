@@ -71,11 +71,23 @@ export function can(role: Role, permission: Permission): boolean {
   return ROLE_PERMISSIONS[role].has(permission);
 }
 
-export function canAccessProject(user: User, project: Pick<Project, "manager">): boolean {
-  return can(user.role, "projects.viewAll") || project.manager === user.name;
+export function canAccessProject(user: User, project: Partial<Project> & { manager: string }): boolean {
+  if (user.role === "admin" || user.role === "pmo") {
+    return true;
+  }
+  
+  if (user.role === "manager") {
+    if (user.isGeneralManager) {
+      return project.departmentId === user.departmentId;
+    } else {
+      return project.subDepartmentId === user.subDepartmentId;
+    }
+  }
+
+  return project.manager === user.name;
 }
 
-export function scopeProjects<T extends Pick<Project, "manager">>(
+export function scopeProjects<T extends Partial<Project> & { manager: string }>(
   user: User | null,
   projects: T[],
 ): T[] {
