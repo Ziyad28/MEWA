@@ -262,7 +262,7 @@ function CompaniesList() {
                 </div>
               </div>
 
-              <p className="mt-4 text-xs text-muted-foreground leading-relaxed line-clamp-2">
+              <p className="mt-4 text-xs text-muted-foreground leading-relaxed line-clamp-2 flex-1">
                 {c.description}
               </p>
               {total > 0 ? (
@@ -291,14 +291,9 @@ function CompaniesList() {
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="mt-4 pt-4 border-t border-border flex items-center justify-center text-sm font-medium text-muted-foreground gap-2">
-                  <Badge tone="muted">شراكة استراتيجية</Badge>
-                  <span className="text-[10px] text-muted-foreground">غير مرتبطة بمشاريع تقنية حالياً</span>
-                </div>
               )}
 
-              <div className="mt-4 flex items-center justify-between text-[11px] text-muted-foreground">
+              <div className="mt-auto pt-4 flex items-center justify-between text-[11px] text-muted-foreground border-t border-border">
                 {user.role !== "manager" ? (
                   <span className="inline-flex items-center gap-1.5">
                     <Mail className="h-3 w-3" />
