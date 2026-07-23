@@ -50,7 +50,7 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
     ]
   },
   employee: {
-    header: "منصة ورش العمل للزوار",
+    header: "ورش العمل للزوار",
     cards: [
       {
         title: "استعراض الورش والتقييم",
