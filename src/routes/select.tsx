@@ -108,6 +108,16 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
         description: "استعراض الشركات المرتبطة بمشاريع الوكالة.",
         path: "/companies",
         icon: Building2,
+    ]
+  },
+  team: {
+    header: "تنفيذ مهام المشروع",
+    cards: [
+      {
+        title: "مشاريع الوكالة",
+        description: "استعراض المهام المسندة ورفع التقارير والوثائق.",
+        path: roleHome("team"),
+        icon: FolderKanban,
       }
     ]
   }

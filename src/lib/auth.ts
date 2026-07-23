@@ -126,6 +126,7 @@ export function roleHome(role: Role): string {
   if (role === "pmo") return "/pmo";
   if (role === "manager") return "/manager";
   if (role === "pm") return "/pm";
+  if (role === "team") return "/projects";
   if (role === "employee") return "/workshop-invitations";
   return "/capacity-building";
 }
