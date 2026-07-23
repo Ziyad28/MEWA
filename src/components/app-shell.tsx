@@ -63,6 +63,10 @@ const NAV: Record<Role, NavItem[]> = {
     { to: "/documents", label: "الوثائق", icon: FileText },
     { to: "/reports", label: "تقارير مشاريعي", icon: BarChart3 },
   ],
+  team: [
+    { to: "/projects", label: "مشاريعي", icon: FolderKanban },
+    { to: "/documents", label: "الوثائق", icon: FileText },
+  ],
   capacity: [{ to: "/capacity-building", label: "إدارة ورش العمل", icon: Layers }],
   employee: [{ to: "/workshop-invitations", label: "دعوات ورش العمل", icon: Mail }],
 };
