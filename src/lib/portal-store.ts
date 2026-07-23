@@ -47,7 +47,7 @@ export interface PrototypeProject extends Project {
     status: "معتمد" | "بانتظار الاعتماد" | "مرفوض";
     owner: string;
   }>;
-  teamMembers: string[];
+  teamMembers: Array<{ name: string; email: string }>;
   tasks?: Array<{
     id: number;
     title: string;

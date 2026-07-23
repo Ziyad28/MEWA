@@ -18,6 +18,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
   
   const [executionReason, setExecutionReason] = useState("");
   const [newMemberEmail, setNewMemberEmail] = useState("");
+  const [newMemberName, setNewMemberName] = useState("");
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [newTaskWeight, setNewTaskWeight] = useState("");
   const [newTaskAssignee, setNewTaskAssignee] = useState("");
@@ -49,29 +50,37 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
 
   function addTeamMember() {
     const email = newMemberEmail.trim().toLowerCase();
+    const name = newMemberName.trim();
+    
     if (!email || !email.includes("@")) {
       window.alert("يرجى إدخال بريد إلكتروني صحيح.");
       return;
     }
-    if (project?.teamMembers?.includes(email)) {
+    if (!name) {
+      window.alert("يرجى إدخال اسم العضو.");
+      return;
+    }
+    if (project?.teamMembers?.some(m => m.email === email)) {
       window.alert("هذا العضو موجود بالفعل في الفريق.");
       return;
     }
 
-    const updatedMembers = [...(project?.teamMembers || []), email];
+    const updatedMembers = [...(project?.teamMembers || []), { name, email }];
     update(
       { ...project!, teamMembers: updatedMembers },
-      `تمت إضافة ${email} إلى فريق المشروع.`
+      `تمت إضافة ${name} (${email}) إلى فريق المشروع.`
     );
     setNewMemberEmail("");
+    setNewMemberName("");
   }
 
   function removeTeamMember(emailToRemove: string) {
-    if (!window.confirm(`هل أنت متأكد من إزالة ${emailToRemove} من الفريق؟`)) return;
-    const updatedMembers = (project?.teamMembers || []).filter(email => email !== emailToRemove);
+    const member = project?.teamMembers?.find(m => m.email === emailToRemove);
+    if (!window.confirm(`هل أنت متأكد من إزالة ${member?.name || emailToRemove} من الفريق؟`)) return;
+    const updatedMembers = (project?.teamMembers || []).filter(m => m.email !== emailToRemove);
     update(
       { ...project!, teamMembers: updatedMembers },
-      `تمت إزالة ${emailToRemove} من فريق المشروع.`
+      `تمت إزالة ${member?.name || emailToRemove} من فريق المشروع.`
     );
   }
 
@@ -221,21 +230,24 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
             </p>
             
             <div className="space-y-3">
-              {(project.teamMembers || []).map((email) => (
-                <div key={email} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card">
-                  <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
-                      {email.charAt(0).toUpperCase()}
+              {(project.teamMembers || []).map((member) => (
+                <div key={member.email} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+                      {member.name.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-sm font-medium">{email}</span>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-foreground">{member.name}</span>
+                      <span className="text-xs text-muted-foreground">{member.email}</span>
+                    </div>
                   </div>
                   {canManage && (
                     <button 
-                      onClick={() => removeTeamMember(email)}
-                      className="text-muted-foreground hover:text-danger p-1 rounded-md hover:bg-danger/10"
+                      onClick={() => removeTeamMember(member.email)}
+                      className="text-muted-foreground hover:text-danger p-2 rounded-md hover:bg-danger/10 transition-colors"
                       title="إزالة من الفريق"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-5 w-5" />
                     </button>
                   )}
                 </div>
@@ -251,18 +263,26 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
             {canManage && (
               <div className="mt-4 flex gap-2">
                 <input
+                  type="text"
+                  value={newMemberName}
+                  onChange={(e) => setNewMemberName(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && addTeamMember()}
+                  placeholder="اسم العضو..."
+                  className="h-11 flex-1 rounded-lg border border-border px-3 text-sm"
+                />
+                <input
                   type="email"
                   value={newMemberEmail}
                   onChange={(e) => setNewMemberEmail(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && addTeamMember()}
                   placeholder="البريد الإلكتروني للعضو..."
-                  className="h-10 flex-1 rounded-lg border border-border px-3 text-sm"
+                  className="h-11 flex-1 rounded-lg border border-border px-3 text-sm"
                 />
                 <button
                   onClick={addTeamMember}
-                  className="h-10 px-4 rounded-lg bg-primary text-white inline-flex items-center gap-2 text-sm font-semibold hover:bg-primary-dark"
+                  className="h-11 px-6 rounded-lg bg-primary text-white inline-flex items-center gap-2 text-sm font-semibold hover:bg-primary-dark shrink-0 transition-colors"
                 >
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-5 w-5" />
                   إضافة عضو
                 </button>
               </div>
@@ -285,7 +305,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                   <div className="flex flex-col gap-1">
                     <span className={`text-sm font-medium ${task.completed ? "line-through text-muted-foreground" : ""}`}>{task.title}</span>
                     <span className="text-xs text-muted-foreground">
-                      مسندة إلى: {task.assignee} | وزنها: {task.weight}% | الحالة: {task.completed ? "مكتملة" : "قيد التنفيذ"}
+                      مسندة إلى: {project.teamMembers?.find(m => m.email === task.assignee)?.name || task.assignee} | وزنها: {task.weight}% | الحالة: {task.completed ? "مكتملة" : "قيد التنفيذ"}
                     </span>
                   </div>
                   <button 
@@ -335,11 +355,13 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                   <select
                     value={newTaskAssignee}
                     onChange={(e) => setNewTaskAssignee(e.target.value)}
-                    className="h-10 w-full rounded-lg border border-border px-3 text-sm bg-background"
+                    className="h-11 rounded-lg border border-border px-3 text-sm bg-background flex-1"
                   >
-                    <option value="" disabled>الموظف المسؤول</option>
-                    {(project.teamMembers || []).map(m => (
-                      <option key={m} value={m}>{m}</option>
+                    <option value="">اختر العضو المنفذ...</option>
+                    {(project.teamMembers || []).map((m) => (
+                      <option key={m.email} value={m.email}>
+                        {m.name} ({m.email})
+                      </option>
                     ))}
                     {project.manager && <option value={project.manager}>{project.manager}</option>}
                   </select>

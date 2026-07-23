@@ -53,6 +53,7 @@ export interface Project {
   spark: number[];
   departmentId?: string;
   subDepartmentId?: string;
+  teamMembers?: Array<{ name: string; email: string }>;
 }
 
 export interface Company {

@@ -626,7 +626,7 @@ function TasksTab({ tasks, onToggle, user }: { tasks: NonNullable<import('@/lib/
                 <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                   <span className="inline-flex items-center gap-1">
                     <User className="h-3 w-3" />
-                    {task.assignee}
+                    {project.teamMembers?.find(m => m.email === task.assignee)?.name || task.assignee}
                   </span>
                   {isAssignedToMe && <Badge tone="success" className="text-[10px] px-1.5 py-0">مهمتك</Badge>}
                 </div>
