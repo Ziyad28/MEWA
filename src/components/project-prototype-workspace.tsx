@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, ShieldCheck, Trash2, Users } from "lucide-react";
+import { Plus, ShieldCheck, Trash2, Users, CheckSquare } from "lucide-react";
 import { Badge, Card, CardHeader, ProgressBar } from "@/components/ui-bits";
 import {
   addNotification,
@@ -18,6 +18,9 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
   
   const [executionReason, setExecutionReason] = useState("");
   const [newMemberEmail, setNewMemberEmail] = useState("");
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskWeight, setNewTaskWeight] = useState("");
+  const [newTaskAssignee, setNewTaskAssignee] = useState("");
 
   if (!project) return null;
 
@@ -69,6 +72,57 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
     update(
       { ...project!, teamMembers: updatedMembers },
       `تمت إزالة ${emailToRemove} من فريق المشروع.`
+    );
+  }
+
+  function addTask() {
+    if (!newTaskTitle.trim() || !newTaskWeight || !newTaskAssignee) {
+      window.alert("الرجاء تعبئة جميع بيانات المهمة (العنوان، النسبة المئوية، الموظف المسؤول).");
+      return;
+    }
+    const weightNum = Number(newTaskWeight);
+    if (weightNum <= 0 || weightNum > 100) {
+      window.alert("نسبة المهمة يجب أن تكون بين 1 و 100.");
+      return;
+    }
+    
+    const newTask = {
+      id: Date.now(),
+      title: newTaskTitle.trim(),
+      weight: weightNum,
+      assignee: newTaskAssignee,
+      completed: false
+    };
+
+    update(
+      { ...project!, tasks: [...(project!.tasks || []), newTask] },
+      `تمت إضافة مهمة جديدة: ${newTaskTitle.trim()}`
+    );
+    
+    setNewTaskTitle("");
+    setNewTaskWeight("");
+    setNewTaskAssignee("");
+  }
+
+  function removeTask(taskId: number) {
+    if (!window.confirm("هل أنت متأكد من حذف هذه المهمة؟")) return;
+    
+    const taskToRemove = project!.tasks?.find(t => t.id === taskId);
+    if (!taskToRemove) return;
+
+    let nextProgress = project!.progress;
+    if (taskToRemove.completed) {
+      // If it was completed, its weight was already added to progress. Removing it should drop the progress.
+      nextProgress = Math.max(0, nextProgress - taskToRemove.weight);
+    }
+
+    update(
+      { 
+        ...project!, 
+        tasks: project!.tasks!.filter(t => t.id !== taskId),
+        progress: nextProgress
+      },
+      `تم حذف المهمة: ${taskToRemove.title}`
     );
   }
 
@@ -216,6 +270,93 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
           </div>
         </Card>
       </div>
+
+      {canManage && (
+        <Card>
+          <CardHeader title="إدارة مهام المشروع" action={<CheckSquare className="h-4 w-4 text-muted-foreground" />} />
+          <div className="px-5 pb-5">
+            <p className="text-xs text-muted-foreground mb-4">
+              يمكنك تقسيم المشروع إلى مهام وتوزيعها على أعضاء الفريق. إنجاز المهمة سيرفع من نسبة إنجاز المشروع بمقدار وزنها المئوي.
+            </p>
+
+            <div className="space-y-3 mb-6">
+              {(project.tasks || []).map((task) => (
+                <div key={task.id} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card">
+                  <div className="flex flex-col gap-1">
+                    <span className={`text-sm font-medium ${task.completed ? "line-through text-muted-foreground" : ""}`}>{task.title}</span>
+                    <span className="text-xs text-muted-foreground">
+                      مسندة إلى: {task.assignee} | وزنها: {task.weight}% | الحالة: {task.completed ? "مكتملة" : "قيد التنفيذ"}
+                    </span>
+                  </div>
+                  <button 
+                    onClick={() => removeTask(task.id)}
+                    className="text-muted-foreground hover:text-danger p-1 rounded-md hover:bg-danger/10 shrink-0"
+                    title="حذف المهمة"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+              
+              {(!project.tasks || project.tasks.length === 0) && (
+                <div className="text-center py-6 text-sm text-muted-foreground border border-dashed border-border rounded-xl">
+                  لا توجد مهام مسجلة حالياً.
+                </div>
+              )}
+            </div>
+
+            <div className="bg-accent/30 p-4 rounded-xl border border-border space-y-3">
+              <h4 className="text-sm font-semibold mb-2">إضافة مهمة جديدة</h4>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div className="md:col-span-2">
+                  <input
+                    type="text"
+                    value={newTaskTitle}
+                    onChange={(e) => setNewTaskTitle(e.target.value)}
+                    placeholder="عنوان المهمة..."
+                    className="h-10 w-full rounded-lg border border-border px-3 text-sm"
+                  />
+                </div>
+                <div>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={newTaskWeight}
+                      onChange={(e) => setNewTaskWeight(e.target.value)}
+                      placeholder="النسبة (مثال: 15)"
+                      className="h-10 w-full rounded-lg border border-border px-3 text-sm pl-8"
+                    />
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">%</span>
+                  </div>
+                </div>
+                <div>
+                  <select
+                    value={newTaskAssignee}
+                    onChange={(e) => setNewTaskAssignee(e.target.value)}
+                    className="h-10 w-full rounded-lg border border-border px-3 text-sm bg-background"
+                  >
+                    <option value="" disabled>الموظف المسؤول</option>
+                    {(project.teamMembers || []).map(m => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
+                    {project.manager && <option value={project.manager}>{project.manager}</option>}
+                  </select>
+                </div>
+              </div>
+              <div className="flex justify-end pt-1">
+                <button
+                  onClick={addTask}
+                  className="h-10 px-6 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary-dark"
+                >
+                  إضافة المهمة
+                </button>
+              </div>
+            </div>
+          </div>
+        </Card>
+      )}
 
       {/* Approvals Box */}
       <Card>

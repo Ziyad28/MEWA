@@ -40,7 +40,7 @@ import {
   usePortalData,
   type StoredDocument,
 } from "@/lib/portal-store";
-import { canAccessProject, canManageProject } from "@/lib/access-control";
+import { can, canAccessProject, canManageProject } from "@/lib/access-control";
 
 export const Route = createFileRoute("/projects/$id")({
   component: ProjectDetail,
@@ -57,11 +57,12 @@ export const Route = createFileRoute("/projects/$id")({
 });
 
 const TABS = [
-  { id: "overview", label: "نظرة عامة" },
-  { id: "updates", label: "التحديثات" },
-  { id: "documents", label: "الوثائق" },
-  { id: "activity", label: "سجل النشاط" },
-  { id: "workspace", label: "إدارة المشروع" },
+  { id: "overview", label: "نظرة عامة", permission: null },
+  { id: "tasks", label: "المهام", permission: null },
+  { id: "updates", label: "التحديثات", permission: null },
+  { id: "documents", label: "الوثائق", permission: null },
+  { id: "activity", label: "سجل النشاط", permission: null },
+  { id: "workspace", label: "إدارة المشروع", permission: "projects.manageExecution" },
 ];
 
 function ProjectDetail() {
@@ -130,6 +131,50 @@ function ProjectDetail() {
     );
     setShowProgressEditor(false);
   }
+
+  function handleTaskToggle(taskId: number, currentCompleted: boolean) {
+    if (!can(user.role, "projects.executeTask") && !can(user.role, "projects.manageExecution")) return;
+    
+    const tasks = project.tasks || [];
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    const newCompletedState = !currentCompleted;
+    const progressDelta = newCompletedState ? task.weight : -task.weight;
+    const nextProgress = Math.min(100, Math.max(0, project.progress + progressDelta));
+    const updated = new Date().toLocaleDateString("en-CA");
+
+    const newTasks = tasks.map(t => t.id === taskId ? { 
+      ...t, 
+      completed: newCompletedState, 
+      completedAt: newCompletedState ? updated : undefined 
+    } : t);
+
+    saveProjects(
+      getProjects().map((item) =>
+        item.id === currentProject.id
+          ? {
+              ...item,
+              tasks: newTasks,
+              progress: nextProgress,
+              updated,
+              spark: [...item.spark.slice(-5), nextProgress],
+            }
+          : item,
+      ),
+    );
+
+    recordAudit(
+      "تحديث مهمة",
+      "مشروع",
+      `تحديث حالة المهمة "${task.title}" إلى ${newCompletedState ? "مكتملة" : "غير مكتملة"}`,
+      currentProject.id,
+    );
+  }
+
+  const visibleTabs = TABS.filter(t => !t.permission || can(user.role, t.permission as any))
+    .map(t => t.id === "documents" ? { ...t, count: docs.length } : t)
+    .map(t => t.id === "tasks" ? { ...t, count: (project.tasks || []).filter(task => !task.completed).length } : t);
 
   return (
     <AppShell
@@ -203,17 +248,14 @@ function ProjectDetail() {
 
       <Card>
         <Tabs
-          tabs={[
-            ...TABS.slice(0, 2),
-            { ...TABS[2]!, count: docs.length },
-            ...TABS.slice(3),
-          ]}
+          tabs={visibleTabs}
           active={tab}
           onChange={setTab}
         />
 
         <div className="p-5">
           {tab === "overview" && <Overview project={project} company={company} />}
+          {tab === "tasks" && <TasksTab tasks={project.tasks || []} onToggle={handleTaskToggle} user={user} />}
           {tab === "updates" && <UpdatesTab updates={updates} />}
           {tab === "documents" && <DocsTab docs={docs} />}
           {tab === "activity" && <ActivityTab activity={activity} />}
@@ -543,6 +585,64 @@ function ActivityTab({ activity }: { activity: typeof ACTIVITY }) {
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+function TasksTab({ tasks, onToggle, user }: { tasks: NonNullable<import('@/lib/portal-store').PrototypeProject['tasks']>, onToggle: (id: number, state: boolean) => void, user: any }) {
+  if (tasks.length === 0)
+    return (
+      <EmptyState
+        icon={<CheckCircle2 className="h-6 w-6" />}
+        title="لا توجد مهام"
+        description="لم يتم إضافة مهام لهذا المشروع بعد."
+      />
+    );
+  
+  return (
+    <div className="space-y-3">
+      {tasks.map(task => {
+        const canExecute = can(user.role, "projects.executeTask") || can(user.role, "projects.manageExecution");
+        const isAssignedToMe = task.assignee === user.name;
+        
+        return (
+          <div key={task.id} className={`flex items-center justify-between p-4 rounded-xl border ${task.completed ? "border-green-500/20 bg-green-50/50" : "border-border bg-card"} transition-all`}>
+            <div className="flex items-center gap-4">
+              <button
+                disabled={!canExecute}
+                onClick={() => onToggle(task.id, task.completed)}
+                className={`h-6 w-6 rounded-md border flex items-center justify-center transition-all ${
+                  task.completed 
+                    ? "bg-green-500 border-green-500 text-white" 
+                    : "border-border hover:border-primary text-transparent hover:text-primary/20"
+                } ${!canExecute && "opacity-50 cursor-not-allowed"}`}
+              >
+                <CheckCircle2 className="h-4 w-4" />
+              </button>
+              <div>
+                <div className={`font-semibold text-sm ${task.completed ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                  {task.title}
+                </div>
+                <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                  <span className="inline-flex items-center gap-1">
+                    <User className="h-3 w-3" />
+                    {task.assignee}
+                  </span>
+                  {isAssignedToMe && <Badge tone="success" className="text-[10px] px-1.5 py-0">مهمتك</Badge>}
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col items-end gap-1">
+              <Badge tone="primary" className="text-xs font-bold shrink-0">
+                +{task.weight}%
+              </Badge>
+              {task.completed && task.completedAt && (
+                <span className="text-[10px] text-muted-foreground">أنجزت في {task.completedAt}</span>
+              )}
+            </div>
+          </div>
+        )
+      })}
     </div>
   );
 }

@@ -48,6 +48,14 @@ export interface PrototypeProject extends Project {
     owner: string;
   }>;
   teamMembers: string[];
+  tasks?: Array<{
+    id: number;
+    title: string;
+    weight: number;
+    assignee: string;
+    completed: boolean;
+    completedAt?: string;
+  }>;
 }
 
 export interface PrototypeCompany extends Company {
@@ -109,7 +117,11 @@ const INITIAL_PROJECTS: PrototypeProject[] = PROJECTS.map((project) => ({
       owner: "مدير المشروع",
     },
   ],
-  teamMembers: [],
+  teamMembers: ["سعد بن محمد"],
+  tasks: [
+    { id: 1, title: "تحليل المتطلبات الأولية", weight: 10, assignee: "سعد بن محمد", completed: true, completedAt: "2026-06-15" },
+    { id: 2, title: "تصميم البنية التحتية", weight: 20, assignee: "سعد بن محمد", completed: false },
+  ],
 }));
 
 const INITIAL_COMPANIES: PrototypeCompany[] = COMPANIES.map((company) => ({

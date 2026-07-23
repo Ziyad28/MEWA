@@ -1,4 +1,4 @@
-export type Role = "admin" | "pmo" | "manager" | "pm" | "capacity" | "employee";
+export type Role = "admin" | "pmo" | "manager" | "pm" | "team" | "capacity" | "employee";
 
 export interface User {
   name: string;
@@ -43,6 +43,7 @@ const DEMO_USERS: Record<string, User> = {
 
   "manager@mewa.gov.sa": { name: "عبدالله الحربي", email: "manager@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "dt", isGeneralManager: true },
   "pm@mewa.gov.sa": { name: "خالد الشهري", email: "pm@mewa.gov.sa", role: "pm", roleLabel: "مدير المشروع" },
+  "team@mewa.gov.sa": { name: "سعد بن محمد", email: "team@mewa.gov.sa", role: "team", roleLabel: "عضو فريق المشروع" },
   "capacity@mewa.gov.sa": { name: "نورة العتيبي", email: "capacity@mewa.gov.sa", role: "capacity", roleLabel: "مسؤول الشركات وبناء القدرات" },
   "guest@mewa.gov.sa": { name: "منال الشهري", email: "guest@mewa.gov.sa", role: "employee", roleLabel: "مدعو لورشة عمل" },
 };

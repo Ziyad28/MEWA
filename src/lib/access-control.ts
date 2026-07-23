@@ -9,6 +9,7 @@ export type Permission =
   | "projects.editCore"
   | "projects.assignManager"
   | "projects.manageExecution"
+  | "projects.executeTask"
   | "projects.approve"
   | "projects.archive"
   | "companies.view"
@@ -64,6 +65,12 @@ const ROLE_PERMISSIONS: Record<Role, ReadonlySet<Permission>> = {
     "reports.viewAssigned",
     "reports.export",
   ]),
+  team: new Set([
+    "projects.viewAssigned",
+    "projects.executeTask",
+    "documents.view",
+    "documents.upload",
+  ]),
   capacity: new Set(["workshops.manage"]),
   employee: new Set(["workshops.respond"]),
 };
@@ -72,7 +79,7 @@ export function can(role: Role, permission: Permission): boolean {
   return ROLE_PERMISSIONS[role].has(permission);
 }
 
-export function canAccessProject(user: User, project: Partial<Project> & { manager: string }): boolean {
+export function canAccessProject(user: User, project: Partial<Project> & { manager: string; teamMembers?: string[] }): boolean {
   if (user.role === "admin" || user.role === "pmo") {
     return true;
   }
@@ -87,10 +94,14 @@ export function canAccessProject(user: User, project: Partial<Project> & { manag
     }
   }
 
+  if (user.role === "team") {
+    return project.teamMembers?.includes(user.name) ?? false;
+  }
+
   return project.manager === user.name;
 }
 
-export function scopeProjects<T extends Partial<Project> & { manager: string }>(
+export function scopeProjects<T extends Partial<Project> & { manager: string; teamMembers?: string[] }>(
   user: User | null,
   projects: T[],
 ): T[] {
