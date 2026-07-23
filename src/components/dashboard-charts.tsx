@@ -48,8 +48,21 @@ export function ProgressAreaChart({
           </linearGradient>
         </defs>
         <CartesianGrid vertical={false} strokeDasharray="4 5" stroke="#E7ECE9" />
-        <XAxis dataKey={xKey} axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#667085" }} dy={10} />
-        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#667085" }} tickFormatter={(value) => `${value}%`} domain={[0, 100]} width={42} />
+        <XAxis
+          dataKey={xKey}
+          axisLine={false}
+          tickLine={false}
+          tick={{ fontSize: 12, fill: "#667085" }}
+          dy={10}
+        />
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+          tick={{ fontSize: 12, fill: "#667085" }}
+          tickFormatter={(value) => `${value}%`}
+          domain={[0, 100]}
+          width={42}
+        />
         <Tooltip
           cursor={{ stroke: color, strokeWidth: 1, strokeDasharray: "4 4", strokeOpacity: 0.35 }}
           contentStyle={tooltipStyle}
@@ -92,7 +105,13 @@ export function PerformanceBarChart({
         barCategoryGap="28%"
       >
         <defs>
-          <linearGradient id={gradientId} x1="0" y1="0" x2={layout === "vertical" ? "1" : "0"} y2={layout === "vertical" ? "0" : "1"}>
+          <linearGradient
+            id={gradientId}
+            x1="0"
+            y1="0"
+            x2={layout === "vertical" ? "1" : "0"}
+            y2={layout === "vertical" ? "0" : "1"}
+          >
             <stop offset="0%" stopColor={color} stopOpacity={1} />
             <stop offset="100%" stopColor={color} stopOpacity={0.68} />
           </linearGradient>
@@ -104,14 +123,43 @@ export function PerformanceBarChart({
           stroke="#E7ECE9"
         />
         {layout === "vertical" ? (
-          <XAxis type="number" reversed={true} axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#667085" }} tickFormatter={(value) => `${value}%`} domain={[0, 100]} />
+          <XAxis
+            type="number"
+            reversed={true}
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 11, fill: "#667085" }}
+            tickFormatter={(value) => `${value}%`}
+            domain={[0, 100]}
+          />
         ) : (
-          <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: "#667085" }} dy={10} />
+          <XAxis
+            dataKey="name"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 11, fill: "#667085" }}
+            dy={10}
+          />
         )}
         {layout === "vertical" ? (
-          <YAxis orientation="right" type="category" dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#344054", fontWeight: 500, textAnchor: "end", dx: 70 }} width={220} />
+          <YAxis
+            orientation="right"
+            type="category"
+            dataKey="name"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 12, fill: "#344054", fontWeight: 500, textAnchor: "end", dx: 70 }}
+            width={220}
+          />
         ) : (
-          <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#667085" }} tickFormatter={(value) => `${value}%`} domain={[0, 100]} width={42} />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fontSize: 12, fill: "#667085" }}
+            tickFormatter={(value) => `${value}%`}
+            domain={[0, 100]}
+            width={42}
+          />
         )}
         <Tooltip
           cursor={{ fill: `${color}0A` }}
@@ -119,7 +167,13 @@ export function PerformanceBarChart({
           labelStyle={{ color: "#344054", fontWeight: 600, marginBottom: 4 }}
           formatter={(value) => [`${value}%`, label]}
         />
-        <Bar dataKey="value" fill={`url(#${gradientId})`} radius={layout === "vertical" ? [0, 4, 4, 0] : [4, 4, 0, 0]} maxBarSize={32} barSize={layout === "vertical" ? 16 : undefined} />
+        <Bar
+          dataKey="value"
+          fill={`url(#${gradientId})`}
+          radius={layout === "vertical" ? [0, 4, 4, 0] : [4, 4, 0, 0]}
+          maxBarSize={32}
+          barSize={layout === "vertical" ? 16 : undefined}
+        />
       </BarChart>
     </ResponsiveContainer>
   );

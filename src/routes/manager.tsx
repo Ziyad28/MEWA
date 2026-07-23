@@ -5,7 +5,13 @@ import { AppShell, useRequireAuth } from "@/components/app-shell";
 import { PerformanceBarChart } from "@/components/dashboard-charts";
 import { Card, CardHeader, StatCard, EmptyState, Badge } from "@/components/ui-bits";
 import { ORG_STRUCTURE, COMPANIES } from "@/lib/mock-data";
-import { usePortalData, saveProjects, saveDocuments, type PrototypeProject, type StoredDocument } from "@/lib/portal-store";
+import {
+  usePortalData,
+  saveProjects,
+  saveDocuments,
+  type PrototypeProject,
+  type StoredDocument,
+} from "@/lib/portal-store";
 import { getManagedUsers } from "@/lib/auth";
 import { Link } from "@tanstack/react-router";
 
@@ -46,15 +52,19 @@ function ManagerDashboard() {
   }, [user, activeTab, projects]);
 
   const pendingApprovals = useMemo(() => {
-    const projectIds = new Set(filteredProjects.map(p => p.id));
-    return documents.filter(doc => doc.projectId && projectIds.has(doc.projectId) && doc.approval === "بانتظار الاعتماد");
+    const projectIds = new Set(filteredProjects.map((p) => p.id));
+    return documents.filter(
+      (doc) =>
+        doc.projectId && projectIds.has(doc.projectId) && doc.approval === "بانتظار الاعتماد",
+    );
   }, [documents, filteredProjects]);
 
   const stats = useMemo(() => {
     const total = filteredProjects.length;
-    const completed = filteredProjects.filter(p => p.status === "مكتملة").length;
-    const inProgress = filteredProjects.filter(p => p.status === "قيد التنفيذ").length;
-    const avgProgress = total > 0 ? Math.round(filteredProjects.reduce((acc, p) => acc + p.progress, 0) / total) : 0;
+    const completed = filteredProjects.filter((p) => p.status === "مكتملة").length;
+    const inProgress = filteredProjects.filter((p) => p.status === "قيد التنفيذ").length;
+    const avgProgress =
+      total > 0 ? Math.round(filteredProjects.reduce((acc, p) => acc + p.progress, 0) / total) : 0;
     return { total, completed, inProgress, overall: avgProgress };
   }, [filteredProjects]);
 
@@ -67,8 +77,7 @@ function ManagerDashboard() {
     const newProject: PrototypeProject = {
       id: Date.now(),
       name: form.name,
-      manager: usersList.find(u => u.email === form.pmEmail)?.name ?? "غير محدد",
-      sector: "التقنية",
+      manager: usersList.find((u) => u.email === form.pmEmail)?.name ?? "غير محدد",
       companyId: form.companyId === "internal" ? undefined : Number(form.companyId),
       progress: 0,
       status: "مخططة",
@@ -78,8 +87,10 @@ function ManagerDashboard() {
       description: "",
       departmentId: user?.departmentId,
       subDepartmentId: form.subDepartmentId !== "direct" ? form.subDepartmentId : undefined,
-      
-      
+      plannedProgress: 0,
+      updated: new Date().toLocaleDateString("en-CA"),
+      spark: [],
+      teamMembers: [],
       approvals: [],
       activityLog: [
         {
@@ -97,9 +108,7 @@ function ManagerDashboard() {
   };
 
   const handleApproveDocument = (doc: StoredDocument) => {
-    saveDocuments(
-      documents.map(d => d.id === doc.id ? { ...d, approval: "معتمد" } : d)
-    );
+    saveDocuments(documents.map((d) => (d.id === doc.id ? { ...d, approval: "معتمد" } : d)));
   };
 
   if (!user) return null;
@@ -125,8 +134,10 @@ function ManagerDashboard() {
                 <option value="all">جميع مشاريع الإدارة العامة</option>
                 <option value="direct">مشاريع الإدارة العامة (مباشرة)</option>
                 <optgroup label="مشاريع الإدارات الفرعية">
-                  {org.subDepartments.map(sub => (
-                    <option key={sub.id} value={sub.id}>{sub.name}</option>
+                  {org.subDepartments.map((sub) => (
+                    <option key={sub.id} value={sub.id}>
+                      {sub.name}
+                    </option>
                   ))}
                 </optgroup>
               </select>
@@ -144,20 +155,54 @@ function ManagerDashboard() {
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard label="نسبة التقدم العامة" value={`${stats.overall}%`} icon={<TrendingUp className="h-4 w-4" />} tone="primary" />
-          <StatCard label="إجمالي المشاريع" value={stats.total} unit="مشروع" icon={<Briefcase className="h-4 w-4" />} tone="primary" />
-          <StatCard label="قيد التنفيذ" value={stats.inProgress} unit="مشروع" icon={<Hourglass className="h-4 w-4" />} tone="warning" />
-          <StatCard label="مكتملة" value={stats.completed} unit="مشروع" icon={<CheckCircle2 className="h-4 w-4" />} tone="success" />
+          <StatCard
+            label="نسبة التقدم العامة"
+            value={`${stats.overall}%`}
+            icon={<TrendingUp className="h-4 w-4" />}
+            tone="primary"
+          />
+          <StatCard
+            label="إجمالي المشاريع"
+            value={stats.total}
+            unit="مشروع"
+            icon={<Briefcase className="h-4 w-4" />}
+            tone="primary"
+          />
+          <StatCard
+            label="قيد التنفيذ"
+            value={stats.inProgress}
+            unit="مشروع"
+            icon={<Hourglass className="h-4 w-4" />}
+            tone="warning"
+          />
+          <StatCard
+            label="مكتملة"
+            value={stats.completed}
+            unit="مشروع"
+            icon={<CheckCircle2 className="h-4 w-4" />}
+            tone="success"
+          />
         </div>
 
         <div className="grid grid-cols-1 gap-5">
           <Card className="overflow-hidden">
-            <CardHeader title="نسبة تقدم المشاريع" subtitle="مقارنة مستوى الإنجاز لأبرز المشاريع" action={<span className="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">{filteredProjects.length} مشاريع</span>} />
+            <CardHeader
+              title="نسبة تقدم المشاريع"
+              subtitle="مقارنة مستوى الإنجاز لأبرز المشاريع"
+              action={
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">
+                  {filteredProjects.length} مشاريع
+                </span>
+              }
+            />
             <div className="px-4 pb-5 h-[350px]">
               {barData.length > 0 ? (
                 <PerformanceBarChart layout="vertical" data={barData} label="نسبة التقدم" />
               ) : (
-                <EmptyState title="لا توجد مشاريع" description="لم يتم العثور على مشاريع لهذه الإدارة." />
+                <EmptyState
+                  title="لا توجد مشاريع"
+                  description="لم يتم العثور على مشاريع لهذه الإدارة."
+                />
               )}
             </div>
           </Card>
@@ -169,19 +214,24 @@ function ManagerDashboard() {
           <div className="bg-white rounded-xl shadow-lg border border-border w-full max-w-lg overflow-hidden flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-border bg-muted/30">
               <h2 className="text-lg font-bold text-foreground">إضافة مشروع جديد</h2>
-              <button onClick={() => setShowAddProject(false)} className="h-8 w-8 rounded-full hover:bg-muted inline-flex items-center justify-center text-muted-foreground transition-colors">
+              <button
+                onClick={() => setShowAddProject(false)}
+                className="h-8 w-8 rounded-full hover:bg-muted inline-flex items-center justify-center text-muted-foreground transition-colors"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
-            
+
             <form onSubmit={handleAddProject} className="p-5 flex flex-col gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">اسم المشروع <span className="text-destructive">*</span></label>
+                <label className="text-sm font-medium text-foreground">
+                  اسم المشروع <span className="text-destructive">*</span>
+                </label>
                 <input
                   type="text"
                   required
                   value={form.name}
-                  onChange={e => setForm({...form, name: e.target.value})}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="w-full h-10 px-3 rounded-md border border-input bg-transparent text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary"
                   placeholder="أدخل اسم المشروع"
                 />
@@ -189,59 +239,82 @@ function ManagerDashboard() {
 
               {user.isGeneralManager && org ? (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">الإدارة الفرعية التابع لها المشروع <span className="text-destructive">*</span></label>
+                  <label className="text-sm font-medium text-foreground">
+                    الإدارة الفرعية التابع لها المشروع <span className="text-destructive">*</span>
+                  </label>
                   <select
                     value={form.subDepartmentId}
-                    onChange={e => setForm({...form, subDepartmentId: e.target.value})}
+                    onChange={(e) => setForm({ ...form, subDepartmentId: e.target.value })}
                     className="w-full h-10 px-3 rounded-md border border-input bg-transparent text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary"
                   >
                     <option value="direct">{org.name} (مباشر)</option>
-                    {org.subDepartments.map(sub => (
-                      <option key={sub.id} value={sub.id}>{sub.name}</option>
+                    {org.subDepartments.map((sub) => (
+                      <option key={sub.id} value={sub.id}>
+                        {sub.name}
+                      </option>
                     ))}
                   </select>
-                  <p className="text-xs text-muted-foreground">اختر "مباشر" إذا كان المشروع يتبع للإدارة العامة ولا يندرج تحت إدارة فرعية.</p>
+                  <p className="text-xs text-muted-foreground">
+                    اختر "مباشر" إذا كان المشروع يتبع للإدارة العامة ولا يندرج تحت إدارة فرعية.
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">الإدارة التابع لها المشروع</label>
+                  <label className="text-sm font-medium text-foreground">
+                    الإدارة التابع لها المشروع
+                  </label>
                   <input
                     type="text"
                     disabled
-                    value={org?.subDepartments.find(s => s.id === user.subDepartmentId)?.name ?? "إدارة غير محددة"}
+                    value={
+                      org?.subDepartments.find((s) => s.id === user.subDepartmentId)?.name ??
+                      "إدارة غير محددة"
+                    }
                     className="w-full h-10 px-3 rounded-md border border-input bg-muted/50 text-muted-foreground text-sm shadow-sm cursor-not-allowed"
                   />
-                  <p className="text-xs text-muted-foreground">يتم إسناد المشروع إلى إدارتك بشكل تلقائي.</p>
+                  <p className="text-xs text-muted-foreground">
+                    يتم إسناد المشروع إلى إدارتك بشكل تلقائي.
+                  </p>
                 </div>
               )}
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">إسناد لمدير مشروع <span className="text-destructive">*</span></label>
+                <label className="text-sm font-medium text-foreground">
+                  إسناد لمدير مشروع <span className="text-destructive">*</span>
+                </label>
                 <select
                   required
                   value={form.pmEmail}
-                  onChange={e => setForm({...form, pmEmail: e.target.value})}
+                  onChange={(e) => setForm({ ...form, pmEmail: e.target.value })}
                   className="w-full h-10 px-3 rounded-md border border-input bg-transparent text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 >
-                  <option value="" disabled>اختر مدير المشروع...</option>
-                  {pmUsers.map(pm => (
-                    <option key={pm.email} value={pm.email}>{pm.name}</option>
+                  <option value="" disabled>
+                    اختر مدير المشروع...
+                  </option>
+                  {pmUsers.map((pm) => (
+                    <option key={pm.email} value={pm.email}>
+                      {pm.name}
+                    </option>
                   ))}
                 </select>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">الجهة المنفذة <span className="text-destructive">*</span></label>
+                <label className="text-sm font-medium text-foreground">
+                  الجهة المنفذة <span className="text-destructive">*</span>
+                </label>
                 <select
                   required
                   value={form.companyId}
-                  onChange={e => setForm({...form, companyId: e.target.value})}
+                  onChange={(e) => setForm({ ...form, companyId: e.target.value })}
                   className="w-full h-10 px-3 rounded-md border border-input bg-transparent text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 >
                   <option value="internal">تنفيذ داخلي (موظفي الوزارة)</option>
                   <optgroup label="الشركات المنفذة">
-                    {COMPANIES.map(c => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
+                    {COMPANIES.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
                     ))}
                   </optgroup>
                 </select>

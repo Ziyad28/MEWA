@@ -61,7 +61,9 @@ function ReportsPage() {
 
   if (!user) return null;
 
-  const org = user.departmentId ? ORG_STRUCTURE[user.departmentId as keyof typeof ORG_STRUCTURE] : null;
+  const org = user.departmentId
+    ? ORG_STRUCTURE[user.departmentId as keyof typeof ORG_STRUCTURE]
+    : null;
 
   return (
     <AppShell
@@ -97,13 +99,15 @@ function ReportsPage() {
                 >
                   <option value="all">جميع مشاريع الإدارة العامة</option>
                   <option value="direct">{org.name} (مباشر)</option>
-                  {org.subDepartments.map(sub => (
-                    <option key={sub.id} value={sub.id}>{sub.name}</option>
+                  {org.subDepartments.map((sub) => (
+                    <option key={sub.id} value={sub.id}>
+                      {sub.name}
+                    </option>
                   ))}
                 </select>
               </div>
             )}
-            
+
             <div className="space-y-1">
               <label className="text-xs font-medium text-foreground">تصفية حسب الحالة</label>
               <select
@@ -125,23 +129,19 @@ function ReportsPage() {
                 downloadExcel(`مشاريع_${projectFilter}.xls`, [
                   [
                     "اسم المشروع",
-                    "القطاع",
                     "مدير المشروع",
                     "الحالة",
                     "الأولوية",
                     "الإنجاز",
-                    "الصحة",
                     "البداية",
                     "النهاية",
                   ],
                   ...filteredProjects.map((p) => [
                     p.name,
-                    p.sector,
                     p.manager,
                     p.status,
                     p.priority,
                     `${p.progress}%`,
-                    `${p.health}%`,
                     p.start,
                     p.end,
                   ]),
@@ -154,8 +154,8 @@ function ReportsPage() {
             <button
               onClick={() =>
                 printPdf("تقرير مشاريع الوكالة", [
-                  ["المشروع", "القطاع", "المدير", "الحالة", "الإنجاز"],
-                  ...filteredProjects.map((p) => [p.name, p.sector, p.manager, p.status, `${p.progress}%`]),
+                  ["المشروع", "المدير", "الحالة", "الإنجاز"],
+                  ...filteredProjects.map((p) => [p.name, p.manager, p.status, `${p.progress}%`]),
                 ])
               }
               className="flex-1 h-10 rounded-lg bg-red-600/10 text-red-700 hover:bg-red-600 hover:text-white transition-colors font-semibold inline-flex items-center justify-center gap-2"
@@ -180,10 +180,10 @@ function ReportsPage() {
           </div>
 
           <div className="mb-6 space-y-2">
-             <label className="text-xs font-medium text-foreground">إجمالي الشركات</label>
-             <div className="w-full h-11 px-3 rounded-lg border border-border bg-accent text-sm flex items-center text-muted-foreground">
-               سيتم تصدير {scopedCompanies.length} شركة
-             </div>
+            <label className="text-xs font-medium text-foreground">إجمالي الشركات</label>
+            <div className="w-full h-11 px-3 rounded-lg border border-border bg-accent text-sm flex items-center text-muted-foreground">
+              سيتم تصدير {scopedCompanies.length} شركة
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -192,7 +192,6 @@ function ReportsPage() {
                 downloadExcel("الشركات_التقنية.xls", [
                   [
                     "اسم الشركة",
-                    "القطاع",
                     "حالة الشركة",
                     "متوسط الإنجاز",
                     "بداية العقد",
@@ -201,10 +200,15 @@ function ReportsPage() {
                   ],
                   ...scopedCompanies.map((c) => {
                     const companyProjects = projects.filter((p) => p.companyId === c.id);
-                    const avgProgress = companyProjects.length > 0 ? Math.round(companyProjects.reduce((acc, p) => acc + p.progress, 0) / companyProjects.length) : 0;
+                    const avgProgress =
+                      companyProjects.length > 0
+                        ? Math.round(
+                            companyProjects.reduce((acc, p) => acc + p.progress, 0) /
+                              companyProjects.length,
+                          )
+                        : 0;
                     return [
                       c.name,
-                      c.sector,
                       c.status,
                       `${avgProgress}%`,
                       c.contractStart,
@@ -221,11 +225,17 @@ function ReportsPage() {
             <button
               onClick={() =>
                 printPdf("تقرير الشركات التقنية", [
-                  ["الشركة", "القطاع", "الحالة", "متوسط الإنجاز", "نهاية العقد"],
+                  ["الشركة", "الحالة", "متوسط الإنجاز", "نهاية العقد"],
                   ...scopedCompanies.map((c) => {
                     const companyProjects = projects.filter((p) => p.companyId === c.id);
-                    const avgProgress = companyProjects.length > 0 ? Math.round(companyProjects.reduce((acc, p) => acc + p.progress, 0) / companyProjects.length) : 0;
-                    return [c.name, c.sector, c.status, `${avgProgress}%`, c.contractEnd];
+                    const avgProgress =
+                      companyProjects.length > 0
+                        ? Math.round(
+                            companyProjects.reduce((acc, p) => acc + p.progress, 0) /
+                              companyProjects.length,
+                          )
+                        : 0;
+                    return [c.name, c.status, `${avgProgress}%`, c.contractEnd];
                   }),
                 ])
               }

@@ -1,1 +1,13 @@
-export function PageSkeleton() { return <div dir="rtl" className="min-h-screen bg-background p-6 animate-pulse"><div className="h-16 rounded-xl bg-muted" /><div className="mt-6 h-24 rounded-xl bg-muted" /><div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">{[1,2,3,4,5,6].map((item) => <div key={item} className="h-48 rounded-xl bg-muted" />)}</div></div>; }
+export function PageSkeleton() {
+  return (
+    <div dir="rtl" className="min-h-screen bg-background p-6 animate-pulse">
+      <div className="h-16 rounded-xl bg-muted" />
+      <div className="mt-6 h-24 rounded-xl bg-muted" />
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[1, 2, 3, 4, 5, 6].map((item) => (
+          <div key={item} className="h-48 rounded-xl bg-muted" />
+        ))}
+      </div>
+    </div>
+  );
+}

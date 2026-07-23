@@ -20,7 +20,7 @@ import { CompanyLogo } from "@/components/company-logo";
 import { CompanyPrototypeWorkspace } from "@/components/company-prototype-workspace";
 import { PerformanceBarChart, ProgressAreaChart } from "@/components/dashboard-charts";
 import { Card, CardHeader, Badge, ProgressBar } from "@/components/ui-bits";
-import { COMPANY_PROFILES } from "@/lib/mock-data";
+import { COMPANY_PROFILES, ORG_STRUCTURE } from "@/lib/mock-data";
 import { downloadDocument, usePortalData } from "@/lib/portal-store";
 import { can, canAccessCompany } from "@/lib/access-control";
 
@@ -45,7 +45,7 @@ function CompanyDetail() {
   const company = companies.find((c) => String(c.id) === id);
   if (!company) throw notFound();
   if (!user) return null;
-  if (user.role === "manager") throw notFound();
+
   if (!canAccessCompany(user, company.id, projects)) throw notFound();
 
   const related = projects.filter((p) => p.companyId === company.id);
@@ -81,7 +81,6 @@ function CompanyDetail() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge tone="primary">{company.sector}</Badge>
               <Badge
                 tone={
                   company.status === "نشط"
@@ -106,7 +105,25 @@ function CompanyDetail() {
             </p>
             <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-sm">
               <InfoRow label="رقم السجل التجاري" value={company.regNo} />
-              <InfoRow label="مجال العمل" value={company.sector} />
+              <InfoRow
+                label="الإدارة المرتبطة"
+                value={
+                  company.departmentId
+                    ? (() => {
+                        const dept =
+                          ORG_STRUCTURE[company.departmentId as keyof typeof ORG_STRUCTURE];
+                        const subDept = dept?.subDepartments.find(
+                          (s) => s.id === company.subDepartmentId,
+                        );
+                        return dept
+                          ? subDept
+                            ? `${dept.name} - ${subDept.name}`
+                            : dept.name
+                          : "غير محدد";
+                      })()
+                    : "غير محدد"
+                }
+              />
               <InfoRow
                 label="مسؤول التواصل"
                 value={company.contactPerson}
@@ -192,7 +209,6 @@ function CompanyDetail() {
             <thead>
               <tr className="text-xs text-muted-foreground">
                 <th className="text-right px-3 py-2 font-medium">اسم المشروع</th>
-                <th className="text-right px-3 py-2 font-medium">القطاع</th>
                 <th className="text-right px-3 py-2 font-medium">مدير المشروع</th>
                 <th className="text-right px-3 py-2 font-medium">الحالة</th>
                 <th className="text-right px-3 py-2 font-medium">نسبة الإنجاز</th>
@@ -208,7 +224,6 @@ function CompanyDetail() {
                       {p.name}
                     </a>
                   </td>
-                  <td className="px-3 py-3">{p.sector}</td>
                   <td className="px-3 py-3">{p.manager}</td>
                   <td className="px-3 py-3">
                     <Badge
@@ -289,8 +304,6 @@ function CompanyDetail() {
           </div>
         </Card>
       </div>
-
-
 
       {can(user.role, "companies.manage") && <CompanyPrototypeWorkspace companyId={company.id} />}
 

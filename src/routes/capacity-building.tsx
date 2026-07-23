@@ -62,6 +62,16 @@ function newEvaluationQuestion(): EvaluationQuestion {
   };
 }
 
+/** Convert "14:30" → "2:30م" */
+function formatTime12(time24: string): string {
+  const [hStr, mStr] = time24.split(":");
+  let h = parseInt(hStr, 10);
+  const period = h >= 12 ? "م" : "ص";
+  if (h === 0) h = 12;
+  else if (h > 12) h -= 12;
+  return `${h}:${mStr}${period}`;
+}
+
 const EMPTY_FORM = {
   title: "",
   company: "",
@@ -73,6 +83,7 @@ const EMPTY_FORM = {
   endTime: "",
   organizer: "وكالة الوزارة لتقنية المعلومات والتحول الرقمي",
   notes: "",
+  presentationFileName: "",
   targetType: "all" as TargetType,
   targetLabel: "جميع موظفي الوكالة",
   manualRecipients: "",
@@ -86,9 +97,9 @@ function resolveParticipants(form: typeof EMPTY_FORM): WorkshopParticipant[] {
     form.targetType === "all"
       ? users.filter((account) => account.role !== "admin" && account.role !== "capacity")
       : form.targetType === "management"
-        ? users.filter((account) => account.department?.trim() === form.targetLabel.trim())
+        ? users.filter((account) => account.departmentId?.trim() === form.targetLabel.trim())
         : form.targetType === "section"
-          ? users.filter((account) => account.section?.trim() === form.targetLabel.trim())
+          ? users.filter((account) => account.subDepartmentId?.trim() === form.targetLabel.trim())
           : form.manualRecipients
               .split(/[,،\n]/)
               .map((email) => email.trim().toLowerCase())
@@ -176,6 +187,7 @@ function CapacityBuildingPage() {
             endTime: workshop.endTime,
             organizer: workshop.organizer,
             notes: workshop.notes,
+            presentationFileName: workshop.presentationFile || "",
             targetType: workshop.targetType,
             targetLabel: workshop.targetLabel,
             manualRecipients:
@@ -230,6 +242,9 @@ function CapacityBuildingPage() {
       endTime: form.endTime,
       organizer: form.organizer.trim(),
       notes: form.notes.trim(),
+      presentationFile: form.presentationFileName
+        ? form.presentationFileName
+        : editing?.presentationFile,
       targetType: form.targetType,
       targetLabel,
       audienceCount: participants.length,
@@ -436,7 +451,7 @@ function CapacityBuildingPage() {
                         <div className="mt-1 font-medium">
                           {workshop.date}{" "}
                           <span className="text-xs font-normal text-muted-foreground">
-                            ({workshop.startTime} - {workshop.endTime})
+                            ({formatTime12(workshop.startTime)} - {formatTime12(workshop.endTime)})
                           </span>
                         </div>
                       </div>
@@ -572,7 +587,7 @@ function CapacityBuildingPage() {
                 value={form.date}
                 onChange={(value) => setForm({ ...form, date: value })}
                 required
-                min={new Date().toLocaleDateString("en-CA")}
+                min={new Date().toISOString().split("T")[0]}
               />
               <Field
                 label="وقت البداية"
@@ -581,7 +596,7 @@ function CapacityBuildingPage() {
                 onChange={(value) => setForm({ ...form, startTime: value })}
                 required
                 min={
-                  form.date === new Date().toLocaleDateString("en-CA")
+                  form.date === new Date().toISOString().split("T")[0]
                     ? new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
                     : undefined
                 }
@@ -610,6 +625,20 @@ function CapacityBuildingPage() {
                 value={form.notes}
                 onChange={(value) => setForm({ ...form, notes: value })}
               />
+              <label className="space-y-1.5 text-xs font-medium md:col-span-2">
+                <span>عرض تقديمي (الشركة مقدمة الورشة)</span>
+                <div className="flex h-11 w-full items-center rounded-lg border border-border bg-background px-3">
+                  <input
+                    type="file"
+                    accept=".pdf,.ppt,.pptx"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) setForm({ ...form, presentationFileName: file.name });
+                    }}
+                    className="w-full text-xs file:mr-4 file:rounded-full file:border-0 file:bg-primary/10 file:px-4 file:py-1 file:text-xs file:font-semibold file:text-primary hover:file:bg-primary/20"
+                  />
+                </div>
+              </label>
             </div>
             <div className="mt-5 rounded-xl border border-border p-4">
               <h3 className="font-bold">الفئة المستهدفة</h3>
@@ -642,7 +671,9 @@ function CapacityBuildingPage() {
                       className="h-11 w-full rounded-lg border border-border bg-background px-3"
                       required
                     >
-                      <option value="" disabled hidden>اختر الإدارة العامة</option>
+                      <option value="" disabled hidden>
+                        اختر الإدارة العامة
+                      </option>
                       {GENERAL_ADMINISTRATIONS.map((admin) => (
                         <option key={admin} value={admin}>
                           {admin}
@@ -660,7 +691,9 @@ function CapacityBuildingPage() {
                       className="h-11 w-full rounded-lg border border-border bg-background px-3"
                       required
                     >
-                      <option value="" disabled hidden>اختر القسم</option>
+                      <option value="" disabled hidden>
+                        اختر القسم
+                      </option>
                       {ALL_SUB_DEPARTMENTS.map((dept) => (
                         <option key={dept} value={dept}>
                           {dept}

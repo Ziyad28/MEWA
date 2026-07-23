@@ -1,12 +1,6 @@
 import type { ReactNode } from "react";
 
-export function Card({
-  children,
-  className = "",
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <div
       className={`bg-card border border-border rounded-xl shadow-[0_1px_3px_rgba(16,24,40,0.08)] ${className}`}
@@ -16,7 +10,15 @@ export function Card({
   );
 }
 
-export function CardHeader({ title, action, subtitle }: { title: string; action?: ReactNode; subtitle?: string }) {
+export function CardHeader({
+  title,
+  action,
+  subtitle,
+}: {
+  title: string;
+  action?: ReactNode;
+  subtitle?: string;
+}) {
   return (
     <div className="flex items-center justify-between gap-4 px-6 pt-5 pb-4">
       <div>
@@ -62,7 +64,14 @@ export function Sparkline({
         </linearGradient>
       </defs>
       <path d={areaPath} fill={`url(#${gid})`} />
-      <path d={linePath} fill="none" stroke={color} strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d={linePath}
+        fill="none"
+        stroke={color}
+        strokeWidth={1.6}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -89,10 +98,34 @@ export function StatCard({
   updated?: string;
 }) {
   const toneMap = {
-    primary: { bg: "bg-[#ecfdf3]", fg: "text-[#166a45]", border: "border-[#abefc6]", bar: "bg-primary", spark: "#1B8354" },
-    warning: { bg: "bg-amber-50", fg: "text-amber-600", border: "border-amber-100", bar: "bg-amber-500", spark: "#F59E0B" },
-    danger: { bg: "bg-red-50", fg: "text-red-600", border: "border-red-100", bar: "bg-red-500", spark: "#DC2626" },
-    success: { bg: "bg-green-50", fg: "text-green-600", border: "border-green-100", bar: "bg-green-600", spark: "#16A34A" },
+    primary: {
+      bg: "bg-[#ecfdf3]",
+      fg: "text-[#166a45]",
+      border: "border-[#abefc6]",
+      bar: "bg-primary",
+      spark: "#1B8354",
+    },
+    warning: {
+      bg: "bg-amber-50",
+      fg: "text-amber-600",
+      border: "border-amber-100",
+      bar: "bg-amber-500",
+      spark: "#F59E0B",
+    },
+    danger: {
+      bg: "bg-red-50",
+      fg: "text-red-600",
+      border: "border-red-100",
+      bar: "bg-red-500",
+      spark: "#DC2626",
+    },
+    success: {
+      bg: "bg-green-50",
+      fg: "text-green-600",
+      border: "border-green-100",
+      bar: "bg-green-600",
+      spark: "#16A34A",
+    },
   } as const;
   const t = toneMap[tone];
   return (
@@ -102,12 +135,16 @@ export function StatCard({
         <div className="min-w-0">
           <div className="text-sm text-muted-foreground">{label}</div>
           <div className="mt-2.5 flex items-baseline gap-2">
-            <div className="text-[34px] font-extrabold tracking-tight text-foreground leading-none">{value}</div>
+            <div className="text-[34px] font-extrabold tracking-tight text-foreground leading-none">
+              {value}
+            </div>
             {unit && <div className="text-xs text-muted-foreground">{unit}</div>}
           </div>
         </div>
         {icon && (
-          <div className={`h-11 w-11 rounded-xl border flex items-center justify-center ${t.bg} ${t.fg} ${t.border} shrink-0`}>
+          <div
+            className={`h-11 w-11 rounded-xl border flex items-center justify-center ${t.bg} ${t.fg} ${t.border} shrink-0`}
+          >
             {icon}
           </div>
         )}
@@ -123,9 +160,13 @@ export function StatCard({
               {deltaType === "up" ? "▲" : "▼"} {delta} عن الشهر الماضي
             </div>
           )}
-          {updated && <div className="text-[11px] text-muted-foreground mt-1">آخر تحديث: {updated}</div>}
+          {updated && (
+            <div className="text-[11px] text-muted-foreground mt-1">آخر تحديث: {updated}</div>
+          )}
         </div>
-        {spark && spark.length > 0 && <Sparkline data={spark} color={t.spark} width={96} height={32} />}
+        {spark && spark.length > 0 && (
+          <Sparkline data={spark} color={t.spark} width={96} height={32} />
+        )}
       </div>
     </div>
   );
@@ -156,14 +197,25 @@ export function Badge({
 
 export function StatusBadge({ status }: { status: string }) {
   const tone: "success" | "warning" | "danger" | "muted" | "primary" =
-    status === "مكتملة" ? "success" :
-    status === "متأخرة" ? "danger" :
-    status === "قيد التنفيذ" ? "warning" :
-    status === "مخططة" ? "primary" : "muted";
+    status === "مكتملة"
+      ? "success"
+      : status === "متأخرة"
+        ? "danger"
+        : status === "قيد التنفيذ"
+          ? "warning"
+          : status === "مخططة"
+            ? "primary"
+            : "muted";
   return <Badge tone={tone}>{status}</Badge>;
 }
 
-export function ProgressBar({ value, tone = "primary" }: { value: number; tone?: "primary" | "warning" | "danger" | "success" }) {
+export function ProgressBar({
+  value,
+  tone = "primary",
+}: {
+  value: number;
+  tone?: "primary" | "warning" | "danger" | "success";
+}) {
   const colorMap = {
     primary: "bg-primary",
     warning: "bg-amber-500",
@@ -181,7 +233,15 @@ export function ProgressBar({ value, tone = "primary" }: { value: number; tone?:
 }
 
 /** Circular health-score ring */
-export function HealthRing({ value, size = 72, label = "الصحة" }: { value: number; size?: number; label?: string }) {
+export function HealthRing({
+  value,
+  size = 72,
+  label = "الصحة",
+}: {
+  value: number;
+  size?: number;
+  label?: string;
+}) {
   const stroke = 6;
   const radius = (size - stroke) / 2;
   const circ = 2 * Math.PI * radius;
@@ -191,10 +251,22 @@ export function HealthRing({ value, size = 72, label = "الصحة" }: { value: 
     <div className="inline-flex flex-col items-center gap-1">
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} className="-rotate-90">
-          <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#eef2f0" strokeWidth={stroke} />
           <circle
-            cx={size / 2} cy={size / 2} r={radius} fill="none"
-            stroke={color} strokeWidth={stroke} strokeLinecap="round"
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="#eef2f0"
+            strokeWidth={stroke}
+          />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth={stroke}
+            strokeLinecap="round"
             strokeDasharray={`${dash} ${circ}`}
           />
         </svg>
@@ -229,14 +301,22 @@ export function Tabs({
               key={t.id}
               onClick={() => onChange(t.id)}
               className={`relative px-4 py-3 text-sm whitespace-nowrap transition-colors ${
-                isActive ? "text-primary font-semibold" : "text-muted-foreground hover:text-foreground"
+                isActive
+                  ? "text-primary font-semibold"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
               {t.label}
               {typeof t.count === "number" && (
-                <span className={`inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full text-[11px] mr-1.5 ${isActive ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>{t.count}</span>
+                <span
+                  className={`inline-flex items-center justify-center h-5 min-w-5 px-1.5 rounded-full text-[11px] mr-1.5 ${isActive ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}
+                >
+                  {t.count}
+                </span>
               )}
-              {isActive && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-primary rounded-full" />}
+              {isActive && (
+                <span className="absolute inset-x-0 -bottom-px h-0.5 bg-primary rounded-full" />
+              )}
             </button>
           );
         })}
@@ -245,14 +325,26 @@ export function Tabs({
   );
 }
 
-export function EmptyState({ icon, title, description, action }: { icon?: ReactNode; title: string; description?: string; action?: ReactNode }) {
+export function EmptyState({
+  icon,
+  title,
+  description,
+  action,
+}: {
+  icon?: ReactNode;
+  title: string;
+  description?: string;
+  action?: ReactNode;
+}) {
   return (
     <div className="text-center py-16 px-6">
       <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-[#ecfdf3] text-primary">
         {icon}
       </div>
       <h3 className="mt-4 text-base font-semibold text-foreground">{title}</h3>
-      {description && <p className="mt-1 text-sm text-muted-foreground max-w-md mx-auto">{description}</p>}
+      {description && (
+        <p className="mt-1 text-sm text-muted-foreground max-w-md mx-auto">{description}</p>
+      )}
       {action && <div className="mt-5">{action}</div>}
     </div>
   );

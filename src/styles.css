@@ -5,7 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Lina Sans", "Lina Sans Arabic", "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
+  --font-sans:
+    "Lina Sans", "Lina Sans Arabic", "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

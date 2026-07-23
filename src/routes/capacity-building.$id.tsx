@@ -169,6 +169,22 @@ function WorkshopDetailsPage() {
               <Info label="ملاحظات" value={current.notes} />
             </div>
           )}
+          {current.presentationFile && (
+            <div className="md:col-span-3">
+              <div className="space-y-1 text-xs text-muted-foreground">العرض التقديمي للورشة</div>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.alert(`جاري تنزيل ملف: ${current.presentationFile}`);
+                }}
+                className="mt-1 inline-flex items-center gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-sm font-medium text-primary hover:bg-primary/10"
+              >
+                <Download className="h-4 w-4" />
+                {current.presentationFile}
+              </a>
+            </div>
+          )}
         </div>
       </Card>
 
@@ -373,10 +389,7 @@ function WorkshopDetailsPage() {
                                 {Object.entries(evaluation.ratings).map(([key, rating]) => (
                                   <tr key={key} className="border-t border-border">
                                     <td className="px-4 py-3">
-                                      {STANDARD_EVALUATION_QUESTIONS.find(
-                                        (question) => question.id === key,
-                                      )?.label ??
-                                      current.evaluationQuestions.find(
+                                      {current.evaluationQuestions.find(
                                         (question) => question.id === key,
                                       )?.label ??
                                         RATING_LABELS[key] ??
@@ -398,9 +411,6 @@ function WorkshopDetailsPage() {
                               <AnswerBox
                                 key={key}
                                 label={
-                                  STANDARD_EVALUATION_QUESTIONS.find(
-                                    (question) => question.id === key,
-                                  )?.label ??
                                   current.evaluationQuestions.find(
                                     (question) => question.id === key,
                                   )?.label ??

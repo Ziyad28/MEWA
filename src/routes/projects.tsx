@@ -22,9 +22,9 @@ import {
   HealthRing,
   EmptyState,
 } from "@/components/ui-bits";
-import { PortfolioIntelligence } from "@/components/portfolio-intelligence";
+
 import { PageSkeleton } from "@/components/page-skeleton";
-import { ORG_STRUCTURE, PROJECTS, SECTORS, COMPANIES } from "@/lib/mock-data";
+import { ORG_STRUCTURE, PROJECTS, COMPANIES } from "@/lib/mock-data";
 import {
   addNotification,
   downloadExcel,
@@ -52,14 +52,12 @@ export const Route = createFileRoute("/projects")({
   }),
 });
 
-
-
 function ProjectsPage() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const user = useRequireAnyPermission(["projects.viewAll", "projects.viewAssigned"]);
   const { projects } = usePortalData();
   const [q, setQ] = useState("");
-  const [sector, setSector] = useState<string>("all");
+
   const [generalAdministration, setGeneralAdministration] = useState<string>("all");
   const [subDepartment, setSubDepartment] = useState<string>("all");
   const [status, setStatus] = useState<string>("all");
@@ -73,7 +71,7 @@ function ProjectsPage() {
   const [editing, setEditing] = useState<PrototypeProject | null>(null);
   const [form, setForm] = useState({
     name: "",
-    sector: "المياه",
+    status: "مخططة",
     manager: "فهد المطيري",
     companyId: "1",
     start: "2026-01-01",
@@ -88,9 +86,10 @@ function ProjectsPage() {
   const filtered = useMemo(() => {
     return scoped.filter((p) => {
       if (q && !p.name.includes(q) && !p.manager.includes(q)) return false;
-      if (sector !== "all" && p.sector !== sector) return false;
       const showGenAdminFilter = user?.role === "admin";
-      const showSubDeptFilter = showGenAdminFilter ? generalAdministration !== "all" : (user?.role === "manager" && user?.isGeneralManager);
+      const showSubDeptFilter = showGenAdminFilter
+        ? generalAdministration !== "all"
+        : user?.role === "manager" && user?.isGeneralManager;
 
       if (
         showGenAdminFilter &&
@@ -98,11 +97,7 @@ function ProjectsPage() {
         p.departmentId !== generalAdministration
       )
         return false;
-      if (
-        showSubDeptFilter &&
-        subDepartment !== "all" &&
-        p.subDepartmentId !== subDepartment
-      )
+      if (showSubDeptFilter && subDepartment !== "all" && p.subDepartmentId !== subDepartment)
         return false;
       if (status !== "all" && status !== "مؤرشف" && p.status !== status) return false;
       if (priority !== "all" && p.priority !== priority) return false;
@@ -113,18 +108,7 @@ function ProjectsPage() {
       if (archiveView === "archived" && !p.archived) return false;
       return true;
     });
-  }, [
-    scoped,
-    q,
-    sector,
-    generalAdministration,
-    subDepartment,
-    status,
-    priority,
-    from,
-    to,
-    archiveView,
-  ]);
+  }, [scoped, q, generalAdministration, subDepartment, status, priority, from, to, archiveView]);
 
   const archiveHistory = useMemo(
     () =>
@@ -156,7 +140,6 @@ function ProjectsPage() {
       project
         ? {
             name: project.name,
-            sector: project.sector,
             status: project.status,
             companyId: project.companyId ? String(project.companyId) : "",
             manager: project.manager,
@@ -166,7 +149,6 @@ function ProjectsPage() {
           }
         : {
             name: "",
-            sector: "المياه",
             status: "قيد التنفيذ",
             companyId: "",
             manager: user?.name ?? "فهد المطيري",
@@ -192,7 +174,6 @@ function ProjectsPage() {
                 ...project,
                 ...form,
                 manager: can(user.role, "projects.assignManager") ? form.manager : project.manager,
-                sector: form.sector as PrototypeProject["sector"],
                 companyId: form.companyId ? Number(form.companyId) : undefined,
                 status: form.status as any,
                 updated: new Date().toLocaleDateString("en-CA"),
@@ -212,7 +193,6 @@ function ProjectsPage() {
       const project: PrototypeProject = {
         id,
         name: form.name,
-        sector: form.sector as PrototypeProject["sector"],
         manager: form.manager,
         status: form.status as any,
         priority: "متوسطة",
@@ -222,13 +202,8 @@ function ProjectsPage() {
         start: form.start,
         end: form.end,
         companyId: form.companyId ? Number(form.companyId) : undefined,
-        health: 100,
-        delayRisk: 10,
-        budget: "—",
         description: form.description || "مشروع جديد ضمن محفظة الوكالة.",
         spark: [0, 0, 0, 0, 0, 0],
-        
-        comments: [],
         approvals: [
           {
             id: Date.now(),
@@ -237,7 +212,7 @@ function ProjectsPage() {
             owner: "مدير الإدارة",
           },
         ],
-        
+        teamMembers: [],
       };
       saveProjects([project, ...list]);
       recordAudit("إنشاء مشروع", "مشروع", project.name, project.id);
@@ -282,15 +257,6 @@ function ProjectsPage() {
                 },
                 ...(item.activityLog ?? []),
               ],
-              comments: [
-                {
-                  id: Date.now(),
-                  author: `${actorName} — ${actorRole}`,
-                  text: `${restoring ? "استعاد" : "أرشف"} المشروع «${project.name}».`,
-                  date: timestamp,
-                },
-                ...item.comments,
-              ],
             }
           : item,
       ),
@@ -328,21 +294,8 @@ function ProjectsPage() {
                 className="w-full h-11 pr-10 pl-3 rounded-lg border border-border bg-background text-sm"
               />
             </div>
-            {(user.role === "admin") && (
-              <select
-                value={sector}
-                onChange={(e) => setSector(e.target.value)}
-                className="h-11 px-3 rounded-lg border border-border bg-background text-sm"
-              >
-                <option value="all">القطاعات</option>
-                {SECTORS.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            )}
-            {(user.role === "admin") && (
+
+            {user.role === "admin" && (
               <select
                 value={generalAdministration}
                 onChange={(e) => {
@@ -360,8 +313,8 @@ function ProjectsPage() {
                 ))}
               </select>
             )}
-            
-            {(user.role === "admin") && generalAdministration !== "all" && (
+
+            {user.role === "admin" && generalAdministration !== "all" && (
               <select
                 value={subDepartment}
                 onChange={(e) => setSubDepartment(e.target.value)}
@@ -369,7 +322,10 @@ function ProjectsPage() {
                 className="h-11 px-3 rounded-lg border border-border bg-background text-sm"
               >
                 <option value="all">الإدارات الفرعية</option>
-                {(ORG_STRUCTURE[generalAdministration as keyof typeof ORG_STRUCTURE]?.subDepartments ?? []).map((dept) => (
+                {(
+                  ORG_STRUCTURE[generalAdministration as keyof typeof ORG_STRUCTURE]
+                    ?.subDepartments ?? []
+                ).map((dept) => (
                   <option key={dept.id} value={dept.id}>
                     {dept.name}
                   </option>
@@ -476,8 +432,6 @@ function ProjectsPage() {
         </div>
       </Card>
 
-
-
       {archiveView === "history" ? (
         <Card>
           {archiveHistory.length === 0 ? (
@@ -574,7 +528,9 @@ function ProjectsPage() {
                           {p.name}
                         </button>
                       </td>
-                      <td className="px-4 py-3 text-muted-foreground">{c?.name || "تنفيذ داخلي (من الوزارة)"}</td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {c?.name || "تنفيذ داخلي (من الوزارة)"}
+                      </td>
                       <td className="px-4 py-3">{p.manager}</td>
                       <td className="px-4 py-3">
                         <StatusBadge status={p.status} />
@@ -672,17 +628,18 @@ function ProjectsPage() {
                       <StatusBadge status={p.status} />
                     </div>
                     <h3 className="font-semibold text-foreground truncate">{p.name}</h3>
-                    <div className="text-xs text-muted-foreground mt-1">{c?.name || "تنفيذ داخلي (من الوزارة)"}</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {c?.name || "تنفيذ داخلي (من الوزارة)"}
+                    </div>
                   </div>
                   <HealthRing value={p.progress} size={56} label="الفعلي" />
                 </div>
                 <div className="mt-4 space-y-2">
                   <div className="flex items-center gap-2">
-                    <ProgressBar
-                      value={p.plannedProgress ?? p.progress}
-                      tone="muted"
-                    />
-                    <span className="text-xs text-muted-foreground w-[75px]">المخطط: {p.plannedProgress ?? p.progress}%</span>
+                    <ProgressBar value={p.plannedProgress ?? p.progress} />
+                    <span className="text-xs text-muted-foreground w-[75px]">
+                      المخطط: {p.plannedProgress ?? p.progress}%
+                    </span>
                   </div>
                   <div className="grid grid-cols-2 gap-2 text-[11px] text-muted-foreground pt-2 border-t border-border">
                     <div>
@@ -756,19 +713,14 @@ function ProjectsPage() {
                   onChange={(value) => setForm({ ...form, manager: value })}
                 />
               )}
-              <SelectField
-                label="القطاع"
-                value={form.sector}
-                onChange={(value) => setForm({ ...form, sector: value })}
-                options={[...SECTORS]}
-              />
+
               <SelectField
                 label="الشركة المنفذة"
                 value={form.companyId}
                 onChange={(value) => setForm({ ...form, companyId: value })}
                 options={[
                   { value: "", label: "تنفيذ داخلي (من الوزارة)" },
-                  ...COMPANIES.map((c) => ({ value: String(c.id), label: c.name }))
+                  ...COMPANIES.map((c) => ({ value: String(c.id), label: c.name })),
                 ]}
               />
               <Field
@@ -776,12 +728,14 @@ function ProjectsPage() {
                 type="date"
                 value={form.start}
                 onChange={(value) => setForm({ ...form, start: value })}
+                min={new Date().toISOString().split("T")[0]}
               />
               <Field
                 label="تاريخ النهاية"
                 type="date"
                 value={form.end}
                 onChange={(value) => setForm({ ...form, end: value })}
+                min={form.start || new Date().toISOString().split("T")[0]}
               />
               <Field
                 label="وصف المشروع"
@@ -818,6 +772,7 @@ function Field({
   value: string;
   onChange: (value: string) => void;
   type?: string;
+  min?: string;
 }) {
   return (
     <label className="space-y-1.5 text-xs font-medium">
@@ -826,6 +781,7 @@ function Field({
         required={label === "اسم المشروع"}
         type={type}
         value={value}
+        min={min}
         onChange={(e) => onChange(e.target.value)}
         className="h-11 w-full rounded-lg border border-border px-3 bg-background"
       />

@@ -10,12 +10,12 @@ import {
   type PrototypeProject,
 } from "@/lib/portal-store";
 import type { User } from "@/lib/auth";
-import { canApproveProject, canManageProject } from "@/lib/access-control";
+import { canApproveProject, canManageProject, can } from "@/lib/access-control";
 
 export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: number; user: User }) {
   const { projects } = usePortalData();
   const project = projects.find((item) => item.id === projectId);
-  
+
   const [executionReason, setExecutionReason] = useState("");
   const [newMemberEmail, setNewMemberEmail] = useState("");
   const [newMemberName, setNewMemberName] = useState("");
@@ -38,9 +38,9 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
     if (action === "manage" && !canManage) return;
     if (action === "approve" && !canApprove) return;
     if (action === "progress" && !canUpdateProgress) return;
-    
+
     saveProjects(getProjects().map((item) => (item.id === next.id ? next : item)));
-    
+
     recordAudit(
       action === "approve" ? "اعتماد فريق المشروع" : "تحديث إدارة المشروع",
       "مشروع",
@@ -53,7 +53,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
   function addTeamMember() {
     const email = newMemberEmail.trim().toLowerCase();
     const name = newMemberName.trim();
-    
+
     if (!email || !email.includes("@")) {
       window.alert("يرجى إدخال بريد إلكتروني صحيح.");
       return;
@@ -62,7 +62,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
       window.alert("يرجى إدخال اسم العضو.");
       return;
     }
-    if (project?.teamMembers?.some(m => m.email === email)) {
+    if (project?.teamMembers?.some((m) => m.email === email)) {
       window.alert("هذا العضو موجود بالفعل في الفريق.");
       return;
     }
@@ -70,19 +70,20 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
     const updatedMembers = [...(project?.teamMembers || []), { name, email }];
     update(
       { ...project!, teamMembers: updatedMembers },
-      `تمت إضافة ${name} (${email}) إلى فريق المشروع.`
+      `تمت إضافة ${name} (${email}) إلى فريق المشروع.`,
     );
     setNewMemberEmail("");
     setNewMemberName("");
   }
 
   function removeTeamMember(emailToRemove: string) {
-    const member = project?.teamMembers?.find(m => m.email === emailToRemove);
-    if (!window.confirm(`هل أنت متأكد من إزالة ${member?.name || emailToRemove} من الفريق؟`)) return;
-    const updatedMembers = (project?.teamMembers || []).filter(m => m.email !== emailToRemove);
+    const member = project?.teamMembers?.find((m) => m.email === emailToRemove);
+    if (!window.confirm(`هل أنت متأكد من إزالة ${member?.name || emailToRemove} من الفريق؟`))
+      return;
+    const updatedMembers = (project?.teamMembers || []).filter((m) => m.email !== emailToRemove);
     update(
       { ...project!, teamMembers: updatedMembers },
-      `تمت إزالة ${member?.name || emailToRemove} من فريق المشروع.`
+      `تمت إزالة ${member?.name || emailToRemove} من فريق المشروع.`,
     );
   }
 
@@ -96,20 +97,20 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
       window.alert("نسبة المهمة يجب أن تكون بين 1 و 100.");
       return;
     }
-    
+
     const newTask = {
       id: Date.now(),
       title: newTaskTitle.trim(),
       weight: weightNum,
       assignee: newTaskAssignee,
-      completed: false
+      completed: false,
     };
 
     update(
       { ...project!, tasks: [...(project!.tasks || []), newTask] },
-      `تمت إضافة مهمة جديدة: ${newTaskTitle.trim()}`
+      `تمت إضافة مهمة جديدة: ${newTaskTitle.trim()}`,
     );
-    
+
     setNewTaskTitle("");
     setNewTaskWeight("");
     setNewTaskAssignee("");
@@ -117,8 +118,8 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
 
   function removeTask(taskId: number) {
     if (!window.confirm("هل أنت متأكد من حذف هذه المهمة؟")) return;
-    
-    const taskToRemove = project!.tasks?.find(t => t.id === taskId);
+
+    const taskToRemove = project!.tasks?.find((t) => t.id === taskId);
     if (!taskToRemove) return;
 
     let nextProgress = project!.progress;
@@ -128,12 +129,12 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
     }
 
     update(
-      { 
-        ...project!, 
-        tasks: project!.tasks!.filter(t => t.id !== taskId),
-        progress: nextProgress
+      {
+        ...project!,
+        tasks: project!.tasks!.filter((t) => t.id !== taskId),
+        progress: nextProgress,
       },
-      `تم حذف المهمة: ${taskToRemove.title}`
+      `تم حذف المهمة: ${taskToRemove.title}`,
     );
   }
 
@@ -149,7 +150,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
               <strong className="text-lg">{project.progress}%</strong>
             </div>
             <ProgressBar value={project.progress} tone="primary" />
-            
+
             {canUpdateProgress && (
               <div className="space-y-4 mt-6 bg-accent/30 p-4 rounded-xl border border-border">
                 <h3 className="font-semibold text-sm">تحديث الحالة</h3>
@@ -178,11 +179,15 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                           event.currentTarget.value = String(project.progress);
                           return;
                         }
-                        update({
-                          ...project,
-                          progress: nextProgress,
-                          updated: new Date().toLocaleDateString("en-CA"),
-                        }, `تغير إنجاز ${project.name} من ${project.progress}% إلى ${nextProgress}%. السبب: ${executionReason.trim()}`, "progress");
+                        update(
+                          {
+                            ...project,
+                            progress: nextProgress,
+                            updated: new Date().toLocaleDateString("en-CA"),
+                          },
+                          `تغير إنجاز ${project.name} من ${project.progress}% إلى ${nextProgress}%. السبب: ${executionReason.trim()}`,
+                          "progress",
+                        );
                         setExecutionReason("");
                       }}
                       className="mt-1 h-10 w-full rounded-lg border border-border px-3 font-normal"
@@ -203,7 +208,8 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                             status: event.target.value as PrototypeProject["status"],
                             updated: new Date().toLocaleDateString("en-CA"),
                           },
-                          `تغيرت حالة ${project.name} إلى ${event.target.value}. السبب: ${executionReason.trim()}`, "progress"
+                          `تغيرت حالة ${project.name} إلى ${event.target.value}. السبب: ${executionReason.trim()}`,
+                          "progress",
                         );
                         setExecutionReason("");
                       }}
@@ -225,15 +231,22 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
 
         {/* Team Management Box */}
         <Card>
-          <CardHeader title="إدارة فريق المشروع" action={<Users className="h-4 w-4 text-muted-foreground" />} />
+          <CardHeader
+            title="إدارة فريق المشروع"
+            action={<Users className="h-4 w-4 text-muted-foreground" />}
+          />
           <div className="px-5 pb-5">
             <p className="text-xs text-muted-foreground mb-4">
-              يمكنك إضافة أعضاء لفريقك عبر البريد الإلكتروني. الأعضاء المضافون سيتمكنون من رفع الوثائق والتحديثات، ولكنها ستظهر كـ "بانتظار الاعتماد" حتى توافق عليها.
+              يمكنك إضافة أعضاء لفريقك عبر البريد الإلكتروني. الأعضاء المضافون سيتمكنون من رفع
+              الوثائق والتحديثات، ولكنها ستظهر كـ "بانتظار الاعتماد" حتى توافق عليها.
             </p>
-            
+
             <div className="space-y-3">
               {(project.teamMembers || []).map((member) => (
-                <div key={member.email} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card">
+                <div
+                  key={member.email}
+                  className="flex items-center justify-between p-3 rounded-lg border border-border bg-card"
+                >
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
                       {member.name.charAt(0).toUpperCase()}
@@ -244,7 +257,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                     </div>
                   </div>
                   {canManage && (
-                    <button 
+                    <button
                       onClick={() => removeTeamMember(member.email)}
                       className="text-muted-foreground hover:text-danger p-2 rounded-md hover:bg-danger/10 transition-colors"
                       title="إزالة من الفريق"
@@ -254,7 +267,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                   )}
                 </div>
               ))}
-              
+
               {(!project.teamMembers || project.teamMembers.length === 0) && (
                 <div className="text-center py-6 text-sm text-muted-foreground border border-dashed border-border rounded-xl">
                   لا يوجد أعضاء في الفريق حالياً.
@@ -295,22 +308,38 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
 
       {canManage && (
         <Card>
-          <CardHeader title="إدارة مهام المشروع" action={<CheckSquare className="h-4 w-4 text-muted-foreground" />} />
+          <CardHeader
+            title="إدارة مهام المشروع"
+            action={<CheckSquare className="h-4 w-4 text-muted-foreground" />}
+          />
           <div className="px-5 pb-5">
             <p className="text-xs text-muted-foreground mb-4">
-              يمكنك تقسيم المشروع إلى مهام وتوزيعها على أعضاء الفريق. إنجاز المهمة سيرفع من نسبة إنجاز المشروع بمقدار وزنها المئوي.
+              يمكنك تقسيم المشروع إلى مهام وتوزيعها على أعضاء الفريق. إنجاز المهمة سيرفع من نسبة
+              إنجاز المشروع بمقدار وزنها المئوي.
             </p>
 
             <div className="space-y-3 mb-6">
               {(project.tasks || []).map((task) => (
-                <div key={task.id} className="flex items-center justify-between p-3 rounded-lg border border-border bg-card">
+                <div
+                  key={task.id}
+                  className="flex items-center justify-between p-3 rounded-lg border border-border bg-card"
+                >
                   <div className="flex flex-col gap-1">
-                    <span className={`text-sm font-medium ${task.completed ? "line-through text-muted-foreground" : ""}`}>{task.title}</span>
+                    <span
+                      className={`text-sm font-medium ${task.completed ? "line-through text-muted-foreground" : ""}`}
+                    >
+                      {task.title}
+                    </span>
                     <span className="text-xs text-muted-foreground">
-                      مسندة إلى: {task.assignee === "team" ? "فريق المشروع" : project.teamMembers?.find(m => m.email === task.assignee)?.name || task.assignee} | وزنها: {task.weight}% | الحالة: {task.completed ? "مكتملة" : "قيد التنفيذ"}
+                      مسندة إلى:{" "}
+                      {task.assignee === "team"
+                        ? "فريق المشروع"
+                        : project.teamMembers?.find((m) => m.email === task.assignee)?.name ||
+                          task.assignee}{" "}
+                      | وزنها: {task.weight}% | الحالة: {task.completed ? "مكتملة" : "قيد التنفيذ"}
                     </span>
                   </div>
-                  <button 
+                  <button
                     onClick={() => removeTask(task.id)}
                     className="text-muted-foreground hover:text-danger p-1 rounded-md hover:bg-danger/10 shrink-0"
                     title="حذف المهمة"
@@ -319,7 +348,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                   </button>
                 </div>
               ))}
-              
+
               {(!project.tasks || project.tasks.length === 0) && (
                 <div className="text-center py-6 text-sm text-muted-foreground border border-dashed border-border rounded-xl">
                   لا توجد مهام مسجلة حالياً.
@@ -350,7 +379,9 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                       placeholder="النسبة (مثال: 15)"
                       className="h-10 w-full rounded-lg border border-border px-3 text-sm pl-8"
                     />
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">%</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+                      %
+                    </span>
                   </div>
                 </div>
                 <div>
@@ -388,7 +419,8 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
         <CardHeader title="التحديثات والملفات (بانتظار الاعتماد)" />
         <div className="px-5 pb-5">
           <p className="text-xs text-muted-foreground mt-1">
-            هنا تظهر التحديثات والملفات المرفوعة. يتم مراجعتها واعتمادها من قبل مدير الإدارة أو إدارة المشاريع (PMO).
+            هنا تظهر التحديثات والملفات المرفوعة. يتم مراجعتها واعتمادها من قبل مدير الإدارة أو
+            إدارة المشاريع (PMO).
           </p>
           <div className="space-y-3">
             {project.approvals.length === 0 && (
@@ -397,17 +429,24 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
               </div>
             )}
             {project.approvals.map((approval) => (
-              <div key={approval.id} className="rounded-xl border border-border p-4 flex items-center justify-between flex-wrap gap-4 bg-card">
+              <div
+                key={approval.id}
+                className="rounded-xl border border-border p-4 flex items-center justify-between flex-wrap gap-4 bg-card"
+              >
                 <div className="flex items-center gap-3">
-                  <div className={`h-10 w-10 rounded-full flex items-center justify-center ${approval.status === 'معتمد' ? 'bg-green-100 text-green-700' : approval.status === 'مرفوض' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                  <div
+                    className={`h-10 w-10 rounded-full flex items-center justify-center ${approval.status === "معتمد" ? "bg-green-100 text-green-700" : approval.status === "مرفوض" ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-700"}`}
+                  >
                     <ShieldCheck className="h-5 w-5" />
                   </div>
                   <div>
                     <div className="font-semibold text-sm">{approval.title}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">مرفوعة بواسطة: {approval.owner}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      مرفوعة بواسطة: {approval.owner}
+                    </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-4">
                   <Badge
                     tone={
@@ -420,7 +459,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                   >
                     {approval.status}
                   </Badge>
-                  
+
                   {canApprove && approval.status === "بانتظار الاعتماد" && (
                     <div className="flex gap-2">
                       <button

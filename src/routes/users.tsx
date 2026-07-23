@@ -53,8 +53,8 @@ function UsersPage() {
       roleLabel: ROLE_LABELS[role],
       active: true,
       phone: phone.trim() || undefined,
-      department: department.trim() || undefined,
-      section: section.trim() || undefined,
+      departmentId: department.trim() || undefined,
+      subDepartmentId: section.trim() || undefined,
       jobTitle: jobTitle.trim() || undefined,
     };
     commit([...users, user], "إضافة مستخدم", `${user.name} — ${user.roleLabel}`);
@@ -209,7 +209,7 @@ function UsersPage() {
                                     : item,
                                 ),
                                 "تغيير مستوى الإدارة",
-                                user.name
+                                user.name,
                               );
                             }}
                             className="h-8 w-full text-xs rounded border border-border bg-background px-2"
@@ -225,44 +225,56 @@ function UsersPage() {
                               commit(
                                 users.map((item) =>
                                   item.email === user.email
-                                    ? { ...item, departmentId: e.target.value, subDepartmentId: undefined }
+                                    ? {
+                                        ...item,
+                                        departmentId: e.target.value,
+                                        subDepartmentId: undefined,
+                                      }
                                     : item,
                                 ),
                                 "تغيير الإدارة العامة",
-                                user.name
+                                user.name,
                               );
                             }}
                             className="h-8 w-full text-xs rounded border border-border bg-background px-2"
                           >
                             <option value="">اختر الإدارة العامة...</option>
                             {Object.entries(ORG_STRUCTURE).map(([key, org]) => (
-                              <option key={key} value={key}>{org.name}</option>
+                              <option key={key} value={key}>
+                                {org.name}
+                              </option>
                             ))}
                           </select>
 
-                          {!user.isGeneralManager && user.departmentId && ORG_STRUCTURE[user.departmentId as keyof typeof ORG_STRUCTURE] && (
-                            <select
-                              value={user.subDepartmentId || ""}
-                              disabled={user.email === currentUser.email}
-                              onChange={(e) => {
-                                commit(
-                                  users.map((item) =>
-                                    item.email === user.email
-                                      ? { ...item, subDepartmentId: e.target.value }
-                                      : item,
-                                  ),
-                                  "تغيير الإدارة الفرعية",
-                                  user.name
-                                );
-                              }}
-                              className="h-8 w-full text-xs rounded border border-border bg-background px-2"
-                            >
-                              <option value="">اختر الإدارة الفرعية...</option>
-                              {ORG_STRUCTURE[user.departmentId as keyof typeof ORG_STRUCTURE].subDepartments.map(sub => (
-                                <option key={sub.id} value={sub.id}>{sub.name}</option>
-                              ))}
-                            </select>
-                          )}
+                          {!user.isGeneralManager &&
+                            user.departmentId &&
+                            ORG_STRUCTURE[user.departmentId as keyof typeof ORG_STRUCTURE] && (
+                              <select
+                                value={user.subDepartmentId || ""}
+                                disabled={user.email === currentUser.email}
+                                onChange={(e) => {
+                                  commit(
+                                    users.map((item) =>
+                                      item.email === user.email
+                                        ? { ...item, subDepartmentId: e.target.value }
+                                        : item,
+                                    ),
+                                    "تغيير الإدارة الفرعية",
+                                    user.name,
+                                  );
+                                }}
+                                className="h-8 w-full text-xs rounded border border-border bg-background px-2"
+                              >
+                                <option value="">اختر الإدارة الفرعية...</option>
+                                {ORG_STRUCTURE[
+                                  user.departmentId as keyof typeof ORG_STRUCTURE
+                                ].subDepartments.map((sub) => (
+                                  <option key={sub.id} value={sub.id}>
+                                    {sub.name}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
                         </div>
                       )}
                     </div>
@@ -309,6 +321,21 @@ function UsersPage() {
                         className="h-9 rounded-lg border border-border px-3 text-xs"
                       >
                         إعادة تعيين كلمة المرور
+                      </button>
+                      <button
+                        disabled={user.email === currentUser.email}
+                        onClick={() => {
+                          if (confirm(`هل أنت متأكد من حذف المستخدم ${user.name}؟`)) {
+                            commit(
+                              users.filter((item) => item.email !== user.email),
+                              "حذف مستخدم",
+                              user.name,
+                            );
+                          }
+                        }}
+                        className="h-9 rounded-lg border border-red-500/30 text-red-600 hover:bg-red-50 px-3 text-xs disabled:opacity-40 disabled:hover:bg-transparent"
+                      >
+                        حذف
                       </button>
                     </div>
                   </td>

@@ -7,7 +7,7 @@ import {
   type DocItem,
   type Project,
 } from "@/lib/mock-data";
-import { getUser } from "@/lib/auth";
+import { getUser, type Role } from "@/lib/auth";
 
 export interface StoredDocument extends DocItem {
   content?: string;
@@ -26,8 +26,6 @@ export interface StoredDocument extends DocItem {
     date: string;
   }>;
 }
-
-
 
 export interface PrototypeProject extends Project {
   archived?: boolean;
@@ -118,9 +116,16 @@ const INITIAL_PROJECTS: PrototypeProject[] = PROJECTS.map((project) => ({
       owner: "مدير المشروع",
     },
   ],
-  teamMembers: ["سعد بن محمد"],
+  teamMembers: [{ name: "سعد بن محمد", email: "saad@mewa.gov.sa" }],
   tasks: [
-    { id: 1, title: "تحليل المتطلبات الأولية", weight: 10, assignee: "سعد بن محمد", completed: true, completedAt: "2026-06-15" },
+    {
+      id: 1,
+      title: "تحليل المتطلبات الأولية",
+      weight: 10,
+      assignee: "سعد بن محمد",
+      completed: true,
+      completedAt: "2026-06-15",
+    },
     { id: 2, title: "تصميم البنية التحتية", weight: 20, assignee: "سعد بن محمد", completed: false },
   ],
 }));
@@ -264,8 +269,6 @@ export const getCompanies = () =>
     return {
       ...seed,
       ...item,
-      ratings: item.ratings ?? seed?.ratings ?? [],
-      invoices: item.invoices ?? seed?.invoices ?? [],
       attachments: item.attachments ?? seed?.attachments ?? [],
       timeline: item.timeline ?? seed?.timeline ?? [],
     } as PrototypeCompany;

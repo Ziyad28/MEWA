@@ -18,33 +18,166 @@ export interface User {
 export const DEMO_PASSWORD = "Mewa@2026";
 
 const DEMO_USERS: Record<string, User> = {
-  "admin@mewa.gov.sa": { name: "مسؤول النظام", email: "admin@mewa.gov.sa", role: "admin", roleLabel: "مسؤول النظام" },
-  
+  "admin@mewa.gov.sa": {
+    name: "مسؤول النظام",
+    email: "admin@mewa.gov.sa",
+    role: "admin",
+    roleLabel: "مسؤول النظام",
+  },
+
   // 1. الإدارة العامة للتحول الرقمي
-  "dt_gm@mewa.gov.sa": { name: "مدير الإدارة", email: "dt_gm@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "dt", isGeneralManager: true },
-  "dt_sub1@mewa.gov.sa": { name: "مدير الإدارة", email: "dt_sub1@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "dt", subDepartmentId: "dt_emerging", isGeneralManager: false },
-  "dt_sub2@mewa.gov.sa": { name: "مدير الإدارة", email: "dt_sub2@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "dt", subDepartmentId: "dt_arch", isGeneralManager: false },
-  "dt_sub3@mewa.gov.sa": { name: "مدير الإدارة", email: "dt_sub3@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "dt", subDepartmentId: "dt_planning", isGeneralManager: false },
-  "dt_sub4@mewa.gov.sa": { name: "مدير الإدارة", email: "dt_sub4@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "dt", subDepartmentId: "dt_services", isGeneralManager: false },
+  "dt_gm@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "dt_gm@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "dt",
+    isGeneralManager: true,
+  },
+  "dt_sub1@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "dt_sub1@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "dt",
+    subDepartmentId: "dt_emerging",
+    isGeneralManager: false,
+  },
+  "dt_sub2@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "dt_sub2@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "dt",
+    subDepartmentId: "dt_arch",
+    isGeneralManager: false,
+  },
+  "dt_sub3@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "dt_sub3@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "dt",
+    subDepartmentId: "dt_planning",
+    isGeneralManager: false,
+  },
+  "dt_sub4@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "dt_sub4@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "dt",
+    subDepartmentId: "dt_services",
+    isGeneralManager: false,
+  },
 
   // 2. الإدارة العامة للحلول التطبيقية
-  "app_gm@mewa.gov.sa": { name: "مدير الإدارة", email: "app_gm@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "app", isGeneralManager: true },
-  "app_sub1@mewa.gov.sa": { name: "مدير الإدارة", email: "app_sub1@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "app", subDepartmentId: "app_solutions", isGeneralManager: false },
-  "app_sub2@mewa.gov.sa": { name: "مدير الإدارة", email: "app_sub2@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "app", subDepartmentId: "app_bi", isGeneralManager: false },
-  "app_sub3@mewa.gov.sa": { name: "مدير الإدارة", email: "app_sub3@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "app", subDepartmentId: "app_products", isGeneralManager: false },
+  "app_gm@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "app_gm@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "app",
+    isGeneralManager: true,
+  },
+  "app_sub1@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "app_sub1@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "app",
+    subDepartmentId: "app_solutions",
+    isGeneralManager: false,
+  },
+  "app_sub2@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "app_sub2@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "app",
+    subDepartmentId: "app_bi",
+    isGeneralManager: false,
+  },
+  "app_sub3@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "app_sub3@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "app",
+    subDepartmentId: "app_products",
+    isGeneralManager: false,
+  },
 
   // 3. الإدارة العامة للبنية التحتية وخدمات المستفيدين
-  "infra_gm@mewa.gov.sa": { name: "مدير الإدارة", email: "infra_gm@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "infra", isGeneralManager: true },
-  "infra_sub1@mewa.gov.sa": { name: "مدير الإدارة", email: "infra_sub1@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "infra", subDepartmentId: "infra_db", isGeneralManager: false },
-  "infra_sub2@mewa.gov.sa": { name: "مدير الإدارة", email: "infra_sub2@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "infra", subDepartmentId: "infra_network", isGeneralManager: false },
-  "infra_sub3@mewa.gov.sa": { name: "مدير الإدارة", email: "infra_sub3@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "infra", subDepartmentId: "infra_ops", isGeneralManager: false },
-  "infra_sub4@mewa.gov.sa": { name: "مدير الإدارة", email: "infra_sub4@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "infra", subDepartmentId: "infra_support", isGeneralManager: false },
+  "infra_gm@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "infra_gm@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "infra",
+    isGeneralManager: true,
+  },
+  "infra_sub1@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "infra_sub1@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "infra",
+    subDepartmentId: "infra_db",
+    isGeneralManager: false,
+  },
+  "infra_sub2@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "infra_sub2@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "infra",
+    subDepartmentId: "infra_network",
+    isGeneralManager: false,
+  },
+  "infra_sub3@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "infra_sub3@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "infra",
+    subDepartmentId: "infra_ops",
+    isGeneralManager: false,
+  },
+  "infra_sub4@mewa.gov.sa": {
+    name: "مدير الإدارة",
+    email: "infra_sub4@mewa.gov.sa",
+    role: "manager",
+    roleLabel: "مدير الإدارة",
+    departmentId: "infra",
+    subDepartmentId: "infra_support",
+    isGeneralManager: false,
+  },
 
-  "manager@mewa.gov.sa": { name: "عبدالله الحربي", email: "manager@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "dt", isGeneralManager: true },
-  "pm@mewa.gov.sa": { name: "خالد الشهري", email: "pm@mewa.gov.sa", role: "pm", roleLabel: "مدير المشروع" },
-  "team@mewa.gov.sa": { name: "سعد بن محمد", email: "team@mewa.gov.sa", role: "team", roleLabel: "عضو فريق المشروع" },
-  "capacity@mewa.gov.sa": { name: "نورة العتيبي", email: "capacity@mewa.gov.sa", role: "capacity", roleLabel: "مسؤول الشركات وبناء القدرات" },
-  "guest@mewa.gov.sa": { name: "منال الشهري", email: "guest@mewa.gov.sa", role: "employee", roleLabel: "مدعو لورشة عمل" },
+  "pm@mewa.gov.sa": {
+    name: "خالد الشهري",
+    email: "pm@mewa.gov.sa",
+    role: "pm",
+    roleLabel: "مدير المشروع",
+  },
+  "team@mewa.gov.sa": {
+    name: "سعد بن محمد",
+    email: "team@mewa.gov.sa",
+    role: "team",
+    roleLabel: "عضو فريق المشروع",
+  },
+  "capacity@mewa.gov.sa": {
+    name: "نورة العتيبي",
+    email: "capacity@mewa.gov.sa",
+    role: "capacity",
+    roleLabel: "مسؤول الشركات وبناء القدرات",
+  },
+  "guest@mewa.gov.sa": {
+    name: "منال الشهري",
+    email: "guest@mewa.gov.sa",
+    role: "employee",
+    roleLabel: "مدعو لورشة عمل",
+  },
 };
 
 const KEY = "mewa_user";
@@ -69,12 +202,12 @@ export function getManagedUsers(): User[] {
     const stored = (JSON.parse(raw) as User[])
       .filter((user) => user.email.toLowerCase() !== "pmo@mewa.gov.sa")
       .map((user) => {
-      const isManal =
-        user.email.toLowerCase() === "guest@mewa.gov.sa" || user.name.trim() === "منال الشهري";
-      return isManal
-        ? { ...user, role: "employee" as const, roleLabel: ROLE_LABELS.employee }
-        : user;
-    });
+        const isManal =
+          user.email.toLowerCase() === "guest@mewa.gov.sa" || user.name.trim() === "منال الشهري";
+        return isManal
+          ? { ...user, role: "employee" as const, roleLabel: ROLE_LABELS.employee }
+          : user;
+      });
     window.localStorage.setItem(USERS_KEY, JSON.stringify(stored));
     const knownEmails = new Set(stored.map((user) => user.email.toLowerCase()));
     return [

@@ -67,11 +67,17 @@ export function can(role: Role, permission: Permission): boolean {
   return ROLE_PERMISSIONS[role].has(permission);
 }
 
-export function canAccessProject(user: User, project: Partial<Project> & { manager: string; teamMembers?: Array<{ name: string; email: string }> }): boolean {
+export function canAccessProject(
+  user: User,
+  project: Partial<Project> & {
+    manager: string;
+    teamMembers?: Array<{ name: string; email: string }>;
+  },
+): boolean {
   if (user.role === "admin") {
     return true;
   }
-  
+
   if (user.role === "manager") {
     if (user.isGeneralManager) {
       if (!user.departmentId) return false;
@@ -83,16 +89,18 @@ export function canAccessProject(user: User, project: Partial<Project> & { manag
   }
 
   if (user.role === "team") {
-    return project.teamMembers?.some(m => m.email === user.email) ?? false;
+    return project.teamMembers?.some((m) => m.email === user.email) ?? false;
   }
 
   return project.manager === user.name;
 }
 
-export function scopeProjects<T extends Partial<Project> & { manager: string; teamMembers?: Array<{ name: string; email: string }> }>(
-  user: User | null,
-  projects: T[],
-): T[] {
+export function scopeProjects<
+  T extends Partial<Project> & {
+    manager: string;
+    teamMembers?: Array<{ name: string; email: string }>;
+  },
+>(user: User | null, projects: T[]): T[] {
   if (!user) return [];
   return projects.filter((project) => canAccessProject(user, project));
 }

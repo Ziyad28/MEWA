@@ -558,75 +558,73 @@ function EvaluationForm({
         <section className="rounded-xl border border-border p-4">
           <h3 className="font-bold text-primary-deep">أسئلة تقييم الورشة</h3>
           <div className="mt-4 space-y-5">
-            {STANDARD_EVALUATION_QUESTIONS.map((question, index) => (
+            {workshop.evaluationQuestions.map((question, index) => (
               <label key={question.id} className="block space-y-2 text-sm font-medium">
                 <span>
                   {index + 1}. {question.label}
                   {question.required && <span className="mr-1 text-red-600">*</span>}
                 </span>
-                  {question.type === "rating" ? (
-                    <div className="flex flex-wrap gap-2">
-                      {(["جيد", "متوسط", "ضعيف"] as EvaluationRating[]).map((rating) => (
-                        <label
-                          key={rating}
-                          className={`cursor-pointer rounded-lg border px-4 py-2 text-xs ${evaluation.ratings[question.id] === rating ? "border-primary bg-primary text-white" : "border-border"}`}
-                        >
-                          <input
-                            type="radio"
-                            name={question.id}
-                            value={rating}
-                            checked={evaluation.ratings[question.id] === rating}
-                            onChange={() =>
-                              setEvaluation((current) => ({
-                                ...current,
-                                ratings: { ...current.ratings, [question.id]: rating },
-                              }))
-                            }
-                            className="sr-only"
-                          />
-                          {rating}
-                        </label>
-                      ))}
-                    </div>
-                  ) : question.type === "long_text" ? (
-                    <textarea
-                      rows={4}
-                      value={evaluation.answers[question.id] ?? ""}
-                      onChange={(event) =>
-                        setEvaluation((current) => ({
-                          ...current,
-                          answers: {
-                            ...current.answers,
-                            [question.id]: event.target.value,
-                          },
-                        }))
-                      }
-                      className="w-full rounded-lg border border-border bg-background p-3 text-sm"
-                    />
-                  ) : (
-                    <input
-                      value={evaluation.answers[question.id] ?? ""}
-                      onChange={(event) =>
-                        setEvaluation((current) => ({
-                          ...current,
-                          answers: {
-                            ...current.answers,
-                            [question.id]: event.target.value,
-                          },
-                        }))
-                      }
-                      className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
-                    />
-                  )}
-                </label>
-              ))}
-            </div>
-          </section>
+                {question.type === "rating" ? (
+                  <div className="flex flex-wrap gap-2">
+                    {(["جيد", "متوسط", "ضعيف"] as EvaluationRating[]).map((rating) => (
+                      <label
+                        key={rating}
+                        className={`cursor-pointer rounded-lg border px-4 py-2 text-xs ${evaluation.ratings[question.id] === rating ? "border-primary bg-primary text-white" : "border-border"}`}
+                      >
+                        <input
+                          type="radio"
+                          name={question.id}
+                          value={rating}
+                          checked={evaluation.ratings[question.id] === rating}
+                          onChange={() =>
+                            setEvaluation((current) => ({
+                              ...current,
+                              ratings: { ...current.ratings, [question.id]: rating },
+                            }))
+                          }
+                          className="sr-only"
+                        />
+                        {rating}
+                      </label>
+                    ))}
+                  </div>
+                ) : question.type === "long_text" ? (
+                  <textarea
+                    rows={4}
+                    value={evaluation.answers[question.id] ?? ""}
+                    onChange={(event) =>
+                      setEvaluation((current) => ({
+                        ...current,
+                        answers: {
+                          ...current.answers,
+                          [question.id]: event.target.value,
+                        },
+                      }))
+                    }
+                    className="w-full rounded-lg border border-border bg-background p-3 text-sm"
+                  />
+                ) : (
+                  <input
+                    value={evaluation.answers[question.id] ?? ""}
+                    onChange={(event) =>
+                      setEvaluation((current) => ({
+                        ...current,
+                        answers: {
+                          ...current.answers,
+                          [question.id]: event.target.value,
+                        },
+                      }))
+                    }
+                    className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm"
+                  />
+                )}
+              </label>
+            ))}
+          </div>
+        </section>
 
         <div className="flex justify-end">
-          <button
-            className="h-11 rounded-lg bg-primary px-6 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
-          >
+          <button className="h-11 rounded-lg bg-primary px-6 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">
             إرسال التقييم
           </button>
         </div>

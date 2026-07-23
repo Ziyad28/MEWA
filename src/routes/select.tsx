@@ -26,7 +26,10 @@ export const Route = createFileRoute("/select")({
   }),
 });
 
-const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; description: string; path: string; icon: any }[] }> = {
+const ROLE_CONFIG: Record<
+  string,
+  { header: string; cards: { title: string; description: string; path: string; icon: any }[] }
+> = {
   admin: {
     header: "إدارة المستخدمين والأدوار",
     cards: [
@@ -35,8 +38,8 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
         description: "إنشاء الحسابات، تعيين الأدوار والمستويات، وإدارة حالة الوصول للنظام.",
         path: "/users",
         icon: Users,
-      }
-    ]
+      },
+    ],
   },
   capacity: {
     header: "الشركات وبناء القدرات",
@@ -46,8 +49,8 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
         description: "تسجيل الورش المعتمدة، متابعة الدعوات، وتوثيق التقييم والتقرير النهائي.",
         path: "/capacity-building",
         icon: GraduationCap,
-      }
-    ]
+      },
+    ],
   },
   employee: {
     header: "ورش العمل للزوار",
@@ -57,8 +60,8 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
         description: "متابعة الورش المتاحة، تأكيد الحضور، وتعبئة نماذج التقييم بعد الانتهاء.",
         path: "/workshop-invitations",
         icon: GraduationCap,
-      }
-    ]
+      },
+    ],
   },
   manager: {
     header: "متابعة معايير الإنجاز",
@@ -74,8 +77,8 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
         description: "إدارة دليل الشركات والشراكات الاستراتيجية مع الوكالة.",
         path: "/companies",
         icon: Building2,
-      }
-    ]
+      },
+    ],
   },
 
   pm: {
@@ -92,8 +95,8 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
         description: "إدارة دليل الشركات والشراكات الاستراتيجية مع الوكالة.",
         path: "/companies",
         icon: Building2,
-      }
-    ]
+      },
+    ],
   },
   team: {
     header: "تنفيذ مهام المشروع",
@@ -103,9 +106,9 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
         description: "استعراض المهام المسندة ورفع التقارير والوثائق.",
         path: roleHome("team"),
         icon: FolderKanban,
-      }
-    ]
-  }
+      },
+    ],
+  },
 };
 
 function SelectUnit() {
@@ -192,7 +195,14 @@ function SelectUnit() {
 
           <div className="mt-6 grid w-full max-w-5xl grid-cols-1 gap-5 md:grid-cols-2">
             {config.cards.map((card, idx) => (
-              <div key={idx} className={config.cards.length === 1 ? "md:col-span-2 md:mx-auto md:w-[calc(50%-0.625rem)]" : ""}>
+              <div
+                key={idx}
+                className={
+                  config.cards.length === 1
+                    ? "md:col-span-2 md:mx-auto md:w-[calc(50%-0.625rem)]"
+                    : ""
+                }
+              >
                 <PortalCard
                   title={card.title}
                   description={card.description}

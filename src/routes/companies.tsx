@@ -14,9 +14,9 @@ import {
 } from "lucide-react";
 import { AppShell, useRequirePermission } from "@/components/app-shell";
 import { Card, Badge } from "@/components/ui-bits";
+import { ORG_STRUCTURE } from "@/lib/mock-data";
 import { PageSkeleton } from "@/components/page-skeleton";
 import { CompanyLogo } from "@/components/company-logo";
-import { SECTORS } from "@/lib/mock-data";
 import {
   addNotification,
   getCompanies,
@@ -42,13 +42,14 @@ function CompaniesList() {
   const [form, setForm] = useState({
     name: "",
     nameEn: "",
-    sector: "المياه",
     email: "",
     phone: "",
     domain: "",
     contractStart: "2026-01-01",
     contractEnd: "2027-12-31",
     description: "",
+    departmentId: "all",
+    subDepartmentId: "all",
   });
   const isCompanyDetail = /^\/companies\/[^/]+$/.test(pathname);
 
@@ -68,7 +69,8 @@ function CompaniesList() {
 
   if (isCompanyDetail) return <Outlet />;
   if (!user) return <PageSkeleton />;
-  const canManage = can(user.role, "companies.manage");
+  const canManage =
+    can(user.role, "companies.manage") && (user.role === "admin" || !user.isGeneralManager);
 
   function openForm(company?: PrototypeCompany) {
     setEditing(company ?? null);
@@ -77,31 +79,38 @@ function CompaniesList() {
         ? {
             name: company.name,
             nameEn: company.nameEn,
-            sector: company.sector,
             email: company.email,
             phone: company.phone,
             domain: company.domain,
             contractStart: company.contractStart,
             contractEnd: company.contractEnd,
             description: company.description,
+            departmentId: company.departmentId ?? "all",
+            subDepartmentId: company.subDepartmentId ?? "all",
           }
         : {
             name: "",
             nameEn: "",
-            sector: "المياه",
             email: "",
             phone: "",
             domain: "",
             contractStart: "2026-01-01",
             contractEnd: "2027-12-31",
             description: "",
+            departmentId: "all",
+            subDepartmentId: "all",
           },
     );
     setShowForm(true);
   }
   function submit(event: React.FormEvent) {
     event.preventDefault();
-    if (!user || !form.name.trim() || !can(user.role, "companies.manage")) return;
+    if (
+      !user ||
+      !form.name.trim() ||
+      !(can(user.role, "companies.manage") && (user.role === "admin" || !user.isGeneralManager))
+    )
+      return;
     const list = getCompanies();
     if (editing) {
       saveCompanies(
@@ -110,7 +119,8 @@ function CompaniesList() {
             ? {
                 ...company,
                 ...form,
-                sector: form.sector as PrototypeCompany["sector"],
+                departmentId: form.departmentId !== "all" ? form.departmentId : undefined,
+                subDepartmentId: form.subDepartmentId !== "all" ? form.subDepartmentId : undefined,
                 website: form.domain,
                 lastUpdate: new Date().toLocaleDateString("en-CA"),
               }
@@ -134,7 +144,8 @@ function CompaniesList() {
         website: form.domain,
         contactPerson: "مسؤول الحساب",
         contactRole: "مدير الحساب",
-        sector: form.sector as PrototypeCompany["sector"],
+        departmentId: form.departmentId !== "all" ? form.departmentId : undefined,
+        subDepartmentId: form.subDepartmentId !== "all" ? form.subDepartmentId : undefined,
         status: "نشط",
         performance: 80,
         commitment: 80,
@@ -144,8 +155,6 @@ function CompaniesList() {
         contractEnd: form.contractEnd,
         lastUpdate: new Date().toLocaleDateString("en-CA"),
         perfHistory: [],
-        ratings: [],
-        invoices: [],
         attachments: [],
         timeline: [
           {
@@ -219,7 +228,6 @@ function CompaniesList() {
                   <h3 className="font-semibold text-foreground truncate">{c.name}</h3>
                   <div className="text-[11px] text-muted-foreground mt-0.5">{c.nameEn}</div>
                   <div className="mt-1.5 flex items-center gap-2 flex-wrap">
-                    <Badge tone="primary">{c.sector}</Badge>
                     <Badge
                       tone={
                         c.status === "نشط"
@@ -258,33 +266,29 @@ function CompaniesList() {
                     >
                       <TrendingUp className="h-3 w-3" />
                       {Math.round(
-                        projects.filter((p) => p.companyId === c.id).reduce((acc, p) => acc + p.progress, 0) /
-                          total
-                      )}%
+                        projects
+                          .filter((p) => p.companyId === c.id)
+                          .reduce((acc, p) => acc + p.progress, 0) / total,
+                      )}
+                      %
                     </div>
                   </div>
                 </div>
               )}
 
               <div className="mt-auto pt-4 flex items-center justify-between text-[11px] text-muted-foreground border-t border-border">
-                {user.role !== "manager" ? (
-                  <span className="inline-flex items-center gap-1.5">
-                    <Mail className="h-3 w-3" />
-                    {c.email}
-                  </span>
-                ) : (
-                  <span />
-                )}
+                <span className="inline-flex items-center gap-1.5">
+                  <Mail className="h-3 w-3" />
+                  {c.email}
+                </span>
                 <div className="flex items-center gap-1">
-                  {user.role !== "manager" && (
-                    <button
-                      type="button"
-                      onClick={() => window.location.assign(`/companies/${c.id}`)}
-                      className="h-9 px-3 rounded-lg bg-primary/10 hover:bg-primary hover:text-white text-primary font-semibold inline-flex items-center gap-1.5 transition-colors"
-                    >
-                      عرض التفاصيل <ArrowLeft className="h-3.5 w-3.5" />
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => window.location.assign(`/companies/${c.id}`)}
+                    className="h-9 px-3 rounded-lg bg-primary/10 hover:bg-primary hover:text-white text-primary font-semibold inline-flex items-center gap-1.5 transition-colors"
+                  >
+                    عرض التفاصيل <ArrowLeft className="h-3.5 w-3.5" />
+                  </button>
                   {canManage && (
                     <button
                       onClick={() => openForm(c)}
@@ -333,18 +337,6 @@ function CompaniesList() {
                 value={form.nameEn}
                 onChange={(value) => setForm({ ...form, nameEn: value })}
               />
-              <label className="space-y-1.5 text-xs font-medium">
-                <span>القطاع</span>
-                <select
-                  value={form.sector}
-                  onChange={(e) => setForm({ ...form, sector: e.target.value })}
-                  className="h-11 w-full rounded-lg border border-border px-3 bg-background"
-                >
-                  {SECTORS.map((item) => (
-                    <option key={item}>{item}</option>
-                  ))}
-                </select>
-              </label>
               <CompanyField
                 label="النطاق الإلكتروني"
                 value={form.domain}
@@ -378,6 +370,42 @@ function CompaniesList() {
                 value={form.description}
                 onChange={(value) => setForm({ ...form, description: value })}
               />
+              <label className="space-y-1.5 text-xs font-medium">
+                <span>الإدارة العامة المرتبطة</span>
+                <select
+                  value={form.departmentId}
+                  onChange={(e) =>
+                    setForm({ ...form, departmentId: e.target.value, subDepartmentId: "all" })
+                  }
+                  className="h-11 w-full rounded-lg border border-border px-3 bg-background"
+                >
+                  <option value="all">غير محدد</option>
+                  {Object.entries(ORG_STRUCTURE).map(([id, dept]) => (
+                    <option key={id} value={id}>
+                      {dept.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {form.departmentId !== "all" && (
+                <label className="space-y-1.5 text-xs font-medium">
+                  <span>الإدارة الفرعية (إن وجدت)</span>
+                  <select
+                    value={form.subDepartmentId}
+                    onChange={(e) => setForm({ ...form, subDepartmentId: e.target.value })}
+                    className="h-11 w-full rounded-lg border border-border px-3 bg-background"
+                  >
+                    <option value="all">مباشرة مع الإدارة العامة</option>
+                    {ORG_STRUCTURE[
+                      form.departmentId as keyof typeof ORG_STRUCTURE
+                    ]?.subDepartments.map((sub) => (
+                      <option key={sub.id} value={sub.id}>
+                        {sub.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              )}
             </div>
             <div className="mt-5 flex justify-end gap-2">
               <button
