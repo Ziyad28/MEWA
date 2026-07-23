@@ -29,26 +29,14 @@ export type Permission =
   | "workshops.respond";
 
 const ROLE_PERMISSIONS: Record<Role, ReadonlySet<Permission>> = {
-  admin: new Set(["audit.viewAll", "users.manage", "settings.manage"]),
-  pmo: new Set([
-    "projects.viewAll",
-    "projects.create",
-    "projects.editCore",
-    "projects.assignManager",
-    "projects.archive",
-    "companies.view",
-    "companies.manage",
-    "documents.view",
-    "documents.upload",
-    "documents.approve",
-    "reports.viewPortfolio",
-    "reports.export",
-  ]),
+  admin: new Set(["audit.viewAll", "users.manage", "settings.manage", "companies.manage"]),
+
   manager: new Set([
     "projects.viewAll",
     "projects.create",
     "projects.approve",
     "companies.view",
+    "companies.manage",
     "documents.view",
     "documents.approve",
     "reports.viewPortfolio",

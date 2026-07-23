@@ -45,12 +45,7 @@ const NAV: Record<Role, NavItem[]> = {
     { to: "/audit-log", label: "سجل العمليات", icon: ClipboardList },
     { to: "/settings", label: "إعدادات الحسابات والأمان", icon: Settings },
   ],
-  pmo: [
-    { to: "/pmo", label: "الرئيسية", icon: Home },
-    { to: "/projects", label: "مشاريع الوكالة", icon: FolderKanban },
-    { to: "/documents", label: "الوثائق", icon: FileText },
-    { to: "/reports", label: "التقارير", icon: BarChart3 },
-  ],
+
   manager: [
     { to: "/manager", label: "الرئيسية", icon: Home },
     { to: "/projects", label: "مشاريع الوكالة", icon: FolderKanban },

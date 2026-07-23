@@ -53,7 +53,7 @@ const USERS_KEY = "mewa_users_v1";
 
 export const ROLE_LABELS: Record<Role, string> = {
   admin: "مسؤول النظام",
-  pmo: "موظف الوزارة",
+
   manager: "مدير الإدارة",
   pm: "مدير المشروع",
   team: "عضو فريق المشروع",
