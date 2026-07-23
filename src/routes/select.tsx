@@ -108,6 +108,7 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
         description: "استعراض الشركات المرتبطة بمشاريع الوكالة.",
         path: "/companies",
         icon: Building2,
+      }
     ]
   },
   team: {
