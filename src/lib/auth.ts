@@ -57,8 +57,9 @@ export const ROLE_LABELS: Record<Role, string> = {
   pmo: "موظف الوزارة",
   manager: "مدير الإدارة",
   pm: "مدير المشروع",
+  team: "عضو فريق المشروع",
   capacity: "مسؤول الشركات وبناء القدرات",
-  employee: "مدعو لورشة عمل",
+  employee: "موظف (مدعو)",
 };
 
 export function getManagedUsers(): User[] {
