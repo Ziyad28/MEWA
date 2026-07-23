@@ -371,7 +371,10 @@ function WorkshopDetailsPage() {
                                 {Object.entries(evaluation.ratings).map(([key, rating]) => (
                                   <tr key={key} className="border-t border-border">
                                     <td className="px-4 py-3">
-                                      {current.evaluationQuestions.find(
+                                      {STANDARD_EVALUATION_QUESTIONS.find(
+                                        (question) => question.id === key,
+                                      )?.label ??
+                                      current.evaluationQuestions.find(
                                         (question) => question.id === key,
                                       )?.label ??
                                         RATING_LABELS[key] ??
@@ -393,6 +396,9 @@ function WorkshopDetailsPage() {
                               <AnswerBox
                                 key={key}
                                 label={
+                                  STANDARD_EVALUATION_QUESTIONS.find(
+                                    (question) => question.id === key,
+                                  )?.label ??
                                   current.evaluationQuestions.find(
                                     (question) => question.id === key,
                                   )?.label ??

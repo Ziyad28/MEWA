@@ -11,6 +11,7 @@ import {
   noResponseCount,
   saveWorkshops,
   workshopStatus,
+  STANDARD_EVALUATION_QUESTIONS,
   type TargetType,
   type Workshop,
   type WorkshopAutomation,
@@ -153,7 +154,14 @@ function CapacityBuildingPage() {
     : resolvedParticipants.length;
 
   function openForm(workshop?: Workshop) {
-    const nextDay = new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleDateString("en-CA");
+    const now = new Date();
+    const today = now.toLocaleDateString("en-CA");
+    const nextHour = new Date(now.getTime() + 60 * 60 * 1000);
+    nextHour.setMinutes(0, 0, 0);
+    const startStr = nextHour.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+    const endHour = new Date(nextHour.getTime() + 2 * 60 * 60 * 1000);
+    const endStr = endHour.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+
     setEditing(workshop ?? null);
     setForm(
       workshop
@@ -182,9 +190,9 @@ function CapacityBuildingPage() {
         : {
             ...EMPTY_FORM,
             company: "",
-            date: nextDay,
-            startTime: "09:00",
-            endTime: "11:00",
+            date: today,
+            startTime: startStr,
+            endTime: endStr,
             automations: { ...EMPTY_AUTOMATION },
             evaluationQuestions: [newEvaluationQuestion()],
           },
@@ -196,19 +204,6 @@ function CapacityBuildingPage() {
     event.preventDefault();
     if (!form.title.trim() || !form.company || !form.date || !form.startTime || !form.endTime)
       return;
-    const STANDARD_EVALUATION_QUESTIONS = [
-      { id: "q1", label: "تحسين الكفاءة أو جودة الخدمات", type: "rating" as const, required: true },
-      { id: "q2", label: "رفع نضج التحول الرقمي أو إدارة البيانات", type: "rating" as const, required: true },
-      { id: "q3", label: "تمكين القيادات أو بناء القدرات الداخلية", type: "rating" as const, required: true },
-      { id: "q4", label: "تقليل المخاطر التشغيلية أو التقنية", type: "rating" as const, required: true },
-      { id: "q5", label: "دعم تحقيق مستهدفات استراتيجية الوكالة", type: "rating" as const, required: true },
-      { id: "text1", label: "ما أبرز المجالات يمكن أن نستفيد فيها من الشركة؟", type: "long_text" as const, required: false },
-      { id: "text2", label: "ما المشروع أو المبادرة الأنسب كبداية للتعاون إن وجد؟", type: "long_text" as const, required: false },
-      { id: "text3", label: "ما الأثر المتوقع إذا تم التعاون؟ اذكر الأثر الإداري/التقني/المالي/الخدمي إن أمكن.", type: "long_text" as const, required: false },
-      { id: "text4", label: "ما المخاوف أو التحفظات التي ظهرت أثناء الاجتماع؟", type: "long_text" as const, required: false },
-      { id: "text5", label: "ما الأسئلة التي لم تجب عنها الشركة وتحتاج متابعة؟", type: "long_text" as const, required: false },
-      { id: "text6", label: "هل ترى أن الشركة مناسبة للتعاون؟ ولماذا؟", type: "long_text" as const, required: true },
-    ];
     const evaluationQuestions = STANDARD_EVALUATION_QUESTIONS;
     const targetLabel =
       form.targetType === "all" ? "جميع موظفي الوكالة" : form.targetLabel.trim() || "الفئة المحددة";
@@ -587,6 +582,7 @@ function CapacityBuildingPage() {
                 value={form.date}
                 onChange={(value) => setForm({ ...form, date: value })}
                 required
+                min={new Date().toLocaleDateString("en-CA")}
               />
               <Field
                 label="وقت البداية"
@@ -594,6 +590,11 @@ function CapacityBuildingPage() {
                 value={form.startTime}
                 onChange={(value) => setForm({ ...form, startTime: value })}
                 required
+                min={
+                  form.date === new Date().toLocaleDateString("en-CA")
+                    ? new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+                    : undefined
+                }
               />
               <Field
                 label="وقت النهاية"
@@ -601,6 +602,7 @@ function CapacityBuildingPage() {
                 value={form.endTime}
                 onChange={(value) => setForm({ ...form, endTime: value })}
                 required
+                min={form.startTime || undefined}
               />
               <Field
                 label="الجهة المنظمة"
@@ -770,12 +772,14 @@ function Field({
   onChange,
   type = "text",
   required = false,
+  min,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   type?: string;
   required?: boolean;
+  min?: string;
 }) {
   return (
     <label className="space-y-1.5 text-xs font-medium">
@@ -784,6 +788,7 @@ function Field({
         type={type}
         required={required}
         value={value}
+        min={min}
         onChange={(event) => onChange(event.target.value)}
         className="h-11 w-full rounded-lg border border-border bg-background px-3"
       />
