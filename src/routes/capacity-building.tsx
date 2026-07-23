@@ -705,38 +705,7 @@ function CapacityBuildingPage() {
                 </ul>
               </div>
             </div>
-            <div className="mt-5 rounded-xl border border-border p-4">
-              <h3 className="font-bold">إعدادات الإجراءات التلقائية</h3>
-              <div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-2">
-                {(
-                  [
-                    ["invitations", "إرسال الدعوات"],
-                    ["reminder", "إرسال تذكير قبل الورشة"],
-                    ["responses", "متابعة الردود"],
-                    ["evaluation", "إرسال نموذج التقييم قبل نهاية الورشة"],
-                    ["finalReport", "إنشاء التقرير النهائي بعد انتهاء الورشة"],
-                  ] as Array<[keyof WorkshopAutomation, string]>
-                ).map(([key, label]) => (
-                  <label
-                    key={key}
-                    className="flex items-center justify-between rounded-lg border border-border px-3 py-3 text-sm"
-                  >
-                    <span>{label}</span>
-                    <input
-                      type="checkbox"
-                      checked={form.automations[key]}
-                      onChange={(event) =>
-                        setForm({
-                          ...form,
-                          automations: { ...form.automations, [key]: event.target.checked },
-                        })
-                      }
-                      className="h-5 w-5 accent-primary"
-                    />
-                  </label>
-                ))}
-              </div>
-            </div>
+
             <div className="mt-6 flex justify-end gap-2">
               <button
                 type="button"
