@@ -293,35 +293,20 @@ export function AppShell({
               )}
             </div>
             <button
-              title="التاريخ"
-              onClick={() => setPanel(panel === "calendar" ? null : "calendar")}
+              aria-label="التنبيهات"
+              onClick={() => setPanel(panel === "notifications" ? null : "notifications")}
               className="relative h-9 w-9 rounded-lg border border-border bg-background flex items-center justify-center text-muted-foreground hover:text-primary"
             >
-              <Calendar className="h-4 w-4" />
-            </button>
-            <button
-              title="الرسائل"
-              onClick={() => setPanel(panel === "messages" ? null : "messages")}
-              className="relative h-9 w-9 rounded-lg border border-border bg-background flex items-center justify-center text-muted-foreground hover:text-primary"
-            >
-              <Mail className="h-4 w-4" />
-              {unreadMessages > 0 && (
-                <span className="absolute -top-1 -left-1 h-4 min-w-4 px-1 rounded-full bg-primary text-[10px] text-white flex items-center justify-center">
-                  {unreadMessages}
-                </span>
+              <Bell className="h-4 w-4" />
+              {unreadNotifications > 0 && (
+                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-red-500 border-2 border-background" />
               )}
             </button>
           </div>
           {panel && (
             <div className="absolute z-50 top-14 left-6 w-[360px] max-w-[calc(100vw-2rem)] rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
               <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-                <div className="font-bold">
-                  {panel === "notifications"
-                    ? "الإشعارات"
-                    : panel === "messages"
-                      ? "الرسائل"
-                      : "التاريخ"}
-                </div>
+                <div className="font-bold">الإشعارات</div>
                 <button
                   onClick={() => setPanel(null)}
                   className="h-8 w-8 rounded-lg hover:bg-accent inline-flex items-center justify-center"
@@ -329,79 +314,22 @@ export function AppShell({
                   <X className="h-4 w-4" />
                 </button>
               </div>
-              {panel === "messages" && (
-                <div>
-                  <div className="max-h-[300px] overflow-y-auto divide-y divide-border">
-                    {visibleMessages.map((item) => (
-                      <button
-                        key={item.id}
-                        onClick={() =>
-                          saveMessages(
-                            getMessages().map((m) => (m.id === item.id ? { ...m, read: true } : m)),
-                          )
-                        }
-                        className={`w-full p-4 text-right hover:bg-accent/60 ${item.read ? "" : "bg-primary/[0.04]"}`}
-                      >
-                        <div className="flex justify-between gap-3">
-                          <span className="font-semibold text-sm">{item.sender}</span>
-                          <span className="text-[10px] text-muted-foreground">{item.time}</span>
-                        </div>
-                        <div className="text-xs font-medium mt-1">{item.subject}</div>
-                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                          {item.body}
-                        </p>
-                      </button>
-                    ))}
-                  </div>
-                  <form
-                    onSubmit={(event) => {
-                      event.preventDefault();
-                      if (!reply.trim()) return;
-                      saveMessages([
-                        {
-                          id: Date.now(),
-                          sender: userName,
-                          subject: "رسالة جديدة",
-                          body: reply.trim(),
-                          time: "الآن",
-                          read: true,
-                          outgoing: true,
-                        },
-                        ...getMessages(),
-                      ]);
-                      setReply("");
+              <div className="max-h-[300px] overflow-y-auto divide-y divide-border">
+                {visibleNotifications.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      /* handle read */
                     }}
-                    className="p-3 border-t border-border flex gap-2"
+                    className={`w-full p-4 text-right hover:bg-accent/60 ${item.read ? "" : "bg-primary/[0.04]"}`}
                   >
-                    <input
-                      value={reply}
-                      onChange={(event) => setReply(event.target.value)}
-                      placeholder="اكتب رسالة جديدة..."
-                      className="h-10 flex-1 rounded-lg border border-border px-3 text-sm outline-none focus:border-primary"
-                    />
-                    <button className="h-10 w-10 rounded-lg bg-primary text-white inline-flex items-center justify-center">
-                      <Send className="h-4 w-4" />
-                    </button>
-                  </form>
-                </div>
-              )}
-              {panel === "calendar" && (
-                <div className="p-6 text-center">
-                  <div className="text-4xl font-bold text-primary">
-                    {new Date().toLocaleDateString("ar-SA", { day: "numeric" })}
-                  </div>
-                  <div className="mt-2 font-semibold">
-                    {new Date().toLocaleDateString("ar-SA", {
-                      weekday: "long",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </div>
-                  <div className="mt-4 text-xs text-muted-foreground">
-                    جميع مواعيد الوكالة محدثة حسب التقويم المحلي.
-                  </div>
-                </div>
-              )}
+                    <div className="text-sm font-semibold">{item.title}</div>
+                    <div className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                      {item.body}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </header>
