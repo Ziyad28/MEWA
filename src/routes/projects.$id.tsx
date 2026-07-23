@@ -603,7 +603,7 @@ function TasksTab({ tasks, onToggle, user }: { tasks: NonNullable<import('@/lib/
     <div className="space-y-3">
       {tasks.map(task => {
         const canExecute = can(user.role, "projects.executeTask") || can(user.role, "projects.manageExecution");
-        const isAssignedToMe = task.assignee === user.name;
+        const isAssignedToMe = task.assignee === user.email;
         
         return (
           <div key={task.id} className={`flex items-center justify-between p-4 rounded-xl border ${task.completed ? "border-green-500/20 bg-green-50/50" : "border-border bg-card"} transition-all`}>

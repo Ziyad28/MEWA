@@ -95,7 +95,7 @@ export function canAccessProject(user: User, project: Partial<Project> & { manag
   }
 
   if (user.role === "team") {
-    return project.teamMembers?.includes(user.name) ?? false;
+    return project.teamMembers?.includes(user.email) ?? false;
   }
 
   return project.manager === user.name;
