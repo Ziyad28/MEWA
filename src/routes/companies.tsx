@@ -265,34 +265,38 @@ function CompaniesList() {
               <p className="mt-4 text-xs text-muted-foreground leading-relaxed line-clamp-2">
                 {c.description}
               </p>
-              <div className="mt-4 grid grid-cols-3 gap-2 text-center pt-4 border-t border-border">
-                <div>
-                  <div className="text-[10px] text-muted-foreground">مشاريع نشطة</div>
-                  <div className="text-sm font-bold text-foreground flex items-center justify-center gap-1">
-                    <FolderKanban className="h-3 w-3 text-primary" />
-                    {active}
+              {total > 0 ? (
+                <div className="mt-4 grid grid-cols-3 gap-2 text-center pt-4 border-t border-border">
+                  <div>
+                    <div className="text-[10px] text-muted-foreground">مشاريع نشطة</div>
+                    <div className="text-sm font-bold text-foreground flex items-center justify-center gap-1">
+                      <FolderKanban className="h-3 w-3 text-primary" />
+                      {active}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-muted-foreground">مشاريع مع الوكالة</div>
+                    <div className="text-sm font-bold text-foreground">{total}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-muted-foreground">متوسط الإنجاز</div>
+                    <div
+                      className={`text-sm font-bold flex items-center justify-center gap-1 text-primary`}
+                    >
+                      <TrendingUp className="h-3 w-3" />
+                      {Math.round(
+                        projects.filter((p) => p.companyId === c.id).reduce((acc, p) => acc + p.progress, 0) /
+                          total
+                      )}%
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div className="text-[10px] text-muted-foreground">مشاريع مع الوكالة</div>
-                  <div className="text-sm font-bold text-foreground">{total}</div>
+              ) : (
+                <div className="mt-4 pt-4 border-t border-border flex items-center justify-center text-sm font-medium text-muted-foreground gap-2">
+                  <Badge tone="muted">شراكة استراتيجية</Badge>
+                  <span className="text-[10px] text-muted-foreground">غير مرتبطة بمشاريع تقنية حالياً</span>
                 </div>
-                <div>
-                  <div className="text-[10px] text-muted-foreground">متوسط الإنجاز</div>
-                  <div
-                    className={`text-sm font-bold flex items-center justify-center gap-1 text-primary`}
-                  >
-                    <TrendingUp className="h-3 w-3" />
-                    {total > 0
-                      ? Math.round(
-                          projects.filter((p) => p.companyId === c.id).reduce((acc, p) => acc + p.progress, 0) /
-                            total
-                        )
-                      : 0}
-                    %
-                  </div>
-                </div>
-              </div>
+              )}
 
               <div className="mt-4 flex items-center justify-between text-[11px] text-muted-foreground">
                 {user.role !== "manager" ? (

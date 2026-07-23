@@ -161,29 +161,28 @@ function CompanyDetail() {
       </Card>
 
       {/* Performance KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="p-5">
-          <div className="text-sm text-muted-foreground">مشاريع الوكالة الحالية</div>
-          <div className="mt-2 text-3xl font-bold">
-            {related.filter((p) => p.status !== "مكتملة").length}
-          </div>
-        </Card>
-        <Card className="p-5">
-          <div className="text-sm text-muted-foreground">مشاريع الوكالة المكتملة</div>
-          <div className="mt-2 text-3xl font-bold text-green-600">
-            {related.filter((p) => p.status === "مكتملة").length}
-          </div>
-        </Card>
-        <Card className="p-5">
-          <div className="text-sm text-muted-foreground">متوسط نسبة الإنجاز</div>
-          <div className="mt-2 text-3xl font-bold text-primary">
-            {related.length
-              ? Math.round(related.reduce((a, p) => a + p.progress, 0) / related.length)
-              : 0}
-            %
-          </div>
-        </Card>
-      </div>
+      {related.length > 0 && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="p-5">
+            <div className="text-sm text-muted-foreground">مشاريع الوكالة الحالية</div>
+            <div className="mt-2 text-3xl font-bold">
+              {related.filter((p) => p.status !== "مكتملة").length}
+            </div>
+          </Card>
+          <Card className="p-5">
+            <div className="text-sm text-muted-foreground">مشاريع الوكالة المكتملة</div>
+            <div className="mt-2 text-3xl font-bold text-green-600">
+              {related.filter((p) => p.status === "مكتملة").length}
+            </div>
+          </Card>
+          <Card className="p-5">
+            <div className="text-sm text-muted-foreground">متوسط نسبة الإنجاز</div>
+            <div className="mt-2 text-3xl font-bold text-primary">
+              {Math.round(related.reduce((a, p) => a + p.progress, 0) / related.length)}%
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Related projects */}
       <Card>
