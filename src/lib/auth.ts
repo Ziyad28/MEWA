@@ -66,7 +66,9 @@ export function getManagedUsers(): User[] {
   try {
     const raw = localStorage.getItem(USERS_KEY);
     if (!raw) return Object.values(DEMO_USERS);
-    const stored = (JSON.parse(raw) as User[]).map((user) => {
+    const stored = (JSON.parse(raw) as User[])
+      .filter((user) => user.email.toLowerCase() !== "pmo@mewa.gov.sa")
+      .map((user) => {
       const isManal =
         user.email.toLowerCase() === "guest@mewa.gov.sa" || user.name.trim() === "منال الشهري";
       return isManal
