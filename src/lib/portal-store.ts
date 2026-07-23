@@ -75,6 +75,7 @@ export interface PortalNotification {
   actorRole?: string;
   createdAt?: string;
   recipientEmail?: string;
+  targetRoles?: Role[];
 }
 
 export interface PortalMessage {
@@ -157,6 +158,7 @@ const INITIAL_NOTIFICATIONS: PortalNotification[] = [
     time: "منذ 10 دقائق",
     read: false,
     href: "/projects/1",
+    targetRoles: ["pmo", "pm", "manager", "admin"],
   },
   {
     id: 2,
@@ -165,6 +167,7 @@ const INITIAL_NOTIFICATIONS: PortalNotification[] = [
     time: "منذ ساعة",
     read: false,
     href: "/documents",
+    targetRoles: ["pmo", "pm", "manager", "admin"],
   },
   {
     id: 3,
@@ -173,6 +176,25 @@ const INITIAL_NOTIFICATIONS: PortalNotification[] = [
     time: "أمس",
     read: false,
     href: "/companies/2",
+    targetRoles: ["pmo", "admin"],
+  },
+  {
+    id: 4,
+    title: "ردود دعوات ورشة العمل",
+    body: "قام 15 موظف بتأكيد حضورهم لورشة عمل التقنيات الناشئة.",
+    time: "منذ 5 دقائق",
+    read: false,
+    href: "/capacity-building",
+    targetRoles: ["capacity", "pmo", "admin"],
+  },
+  {
+    id: 5,
+    title: "تقييم جديد",
+    body: "تم استلام تقييم جديد لورشة عمل إدارة البيانات.",
+    time: "منذ ساعتين",
+    read: false,
+    href: "/capacity-building",
+    targetRoles: ["capacity", "pmo", "admin"],
   },
 ];
 

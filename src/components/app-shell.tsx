@@ -97,11 +97,15 @@ export function AppShell({
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const signedInUser = getUser();
-  const visibleNotifications = notifications.filter((item) =>
-    item.recipientEmail
-      ? item.recipientEmail.toLowerCase() === signedInUser?.email.toLowerCase()
-      : signedInUser?.role !== "employee",
-  );
+  const visibleNotifications = notifications.filter((item) => {
+    if (item.recipientEmail) {
+      return item.recipientEmail.toLowerCase() === signedInUser?.email.toLowerCase();
+    }
+    if (item.targetRoles && signedInUser) {
+      return item.targetRoles.includes(signedInUser.role);
+    }
+    return signedInUser?.role !== "employee";
+  });
   const visibleMessages = signedInUser?.role === "employee" ? [] : messages;
   const unreadNotifications = visibleNotifications.filter((item) => !item.read).length;
   const unreadMessages = visibleMessages.filter((item) => !item.read).length;
