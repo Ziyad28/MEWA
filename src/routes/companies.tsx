@@ -36,8 +36,7 @@ function CompaniesList() {
   const user = useRequirePermission("companies.view");
   const { companies, projects } = usePortalData();
   const [q, setQ] = useState("");
-  const [sector, setSector] = useState<string>("all");
-  const [status, setStatus] = useState<string>("all");
+
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<PrototypeCompany | null>(null);
   const [form, setForm] = useState({
@@ -63,11 +62,9 @@ function CompaniesList() {
   const filtered = useMemo(() => {
     return scoped.filter((c) => {
       if (q && !c.name.includes(q)) return false;
-      if (sector !== "all" && c.sector !== sector) return false;
-      if (status !== "all" && c.status !== status) return false;
       return true;
     });
-  }, [q, sector, status, scoped]);
+  }, [q, scoped]);
 
   if (isCompanyDetail) return <Outlet />;
   if (!user) return <PageSkeleton />;
@@ -176,38 +173,14 @@ function CompaniesList() {
       pageSubtitle="الشركات المرتبطة بالمشاريع التقنية التابعة للوكالة"
     >
       <Card className="p-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <div className="relative md:col-span-2">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="ابحث باسم الشركة"
-              className="w-full h-11 pr-10 pl-3 rounded-lg border border-border bg-background text-sm"
-            />
-          </div>
-          <select
-            value={sector}
-            onChange={(e) => setSector(e.target.value)}
-            className="h-11 px-3 rounded-lg border border-border bg-background text-sm"
-          >
-            <option value="all">كل القطاعات</option>
-            {SECTORS.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="h-11 px-3 rounded-lg border border-border bg-background text-sm"
-          >
-            <option value="all">كل الحالات</option>
-            <option value="نشط">نشط</option>
-            <option value="قيد المراجعة">قيد المراجعة</option>
-            <option value="منتهي">منتهي</option>
-          </select>
+        <div className="relative max-w-lg">
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="ابحث باسم الشركة"
+            className="w-full h-11 pr-10 pl-3 rounded-lg border border-border bg-background text-sm"
+          />
         </div>
         <div className="mt-3 text-xs text-muted-foreground">
           عدد الشركات المسجلة:{" "}
