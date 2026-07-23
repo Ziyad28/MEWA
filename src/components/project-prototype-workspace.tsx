@@ -27,15 +27,17 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
 
   const canManage = canManageProject(user, project);
   const canApprove = canApproveProject(user, project);
+  const canUpdateProgress = canManage || can(user.role, "projects.executeTask");
 
   const update = (
     next: PrototypeProject,
     notice?: string,
-    action: "manage" | "approve" = "manage",
+    action: "manage" | "approve" | "progress" = "manage",
   ) => {
     if (project.archived) return;
     if (action === "manage" && !canManage) return;
     if (action === "approve" && !canApprove) return;
+    if (action === "progress" && !canUpdateProgress) return;
     
     saveProjects(getProjects().map((item) => (item.id === next.id ? next : item)));
     
@@ -148,7 +150,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
             </div>
             <ProgressBar value={project.progress} tone="primary" />
             
-            {canManage && (
+            {canUpdateProgress && (
               <div className="space-y-4 mt-6 bg-accent/30 p-4 rounded-xl border border-border">
                 <h3 className="font-semibold text-sm">تحديث الحالة</h3>
                 <label className="block text-xs font-medium text-foreground">
@@ -180,7 +182,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                           ...project,
                           progress: nextProgress,
                           updated: new Date().toLocaleDateString("en-CA"),
-                        }, `تغير إنجاز ${project.name} من ${project.progress}% إلى ${nextProgress}%. السبب: ${executionReason.trim()}`);
+                        }, `تغير إنجاز ${project.name} من ${project.progress}% إلى ${nextProgress}%. السبب: ${executionReason.trim()}`, "progress");
                         setExecutionReason("");
                       }}
                       className="mt-1 h-10 w-full rounded-lg border border-border px-3 font-normal"
@@ -201,7 +203,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                             status: event.target.value as PrototypeProject["status"],
                             updated: new Date().toLocaleDateString("en-CA"),
                           },
-                          `تغيرت حالة ${project.name} إلى ${event.target.value}. السبب: ${executionReason.trim()}`,
+                          `تغيرت حالة ${project.name} إلى ${event.target.value}. السبب: ${executionReason.trim()}`, "progress"
                         );
                         setExecutionReason("");
                       }}
@@ -305,7 +307,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                   <div className="flex flex-col gap-1">
                     <span className={`text-sm font-medium ${task.completed ? "line-through text-muted-foreground" : ""}`}>{task.title}</span>
                     <span className="text-xs text-muted-foreground">
-                      مسندة إلى: {project.teamMembers?.find(m => m.email === task.assignee)?.name || task.assignee} | وزنها: {task.weight}% | الحالة: {task.completed ? "مكتملة" : "قيد التنفيذ"}
+                      مسندة إلى: {task.assignee === "team" ? "فريق المشروع" : project.teamMembers?.find(m => m.email === task.assignee)?.name || task.assignee} | وزنها: {task.weight}% | الحالة: {task.completed ? "مكتملة" : "قيد التنفيذ"}
                     </span>
                   </div>
                   <button 
@@ -358,6 +360,7 @@ export function ProjectPrototypeWorkspace({ projectId, user }: { projectId: numb
                     className="h-11 rounded-lg border border-border px-3 text-sm bg-background flex-1"
                   >
                     <option value="">اختر العضو المنفذ...</option>
+                    <option value="team">فريق المشروع كامل</option>
                     {(project.teamMembers || []).map((m) => (
                       <option key={m.email} value={m.email}>
                         {m.name} ({m.email})

@@ -94,7 +94,7 @@ function ProjectDetail() {
   const activity = recordedActivity.length
     ? recordedActivity
     : ACTIVITY.filter((a) => a.projectId === project.id);
-  const canUpdateProgress = canManageProject(user, project);
+  const canUpdateProgress = canManageProject(user, project) || can(user.role, "projects.executeTask");
 
   function openProgressEditor() {
     if (!canUpdateProgress) return;
@@ -626,9 +626,9 @@ function TasksTab({ tasks, onToggle, user }: { tasks: NonNullable<import('@/lib/
                 <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
                   <span className="inline-flex items-center gap-1">
                     <User className="h-3 w-3" />
-                    {project.teamMembers?.find(m => m.email === task.assignee)?.name || task.assignee}
+                    {task.assignee === "team" ? "فريق المشروع" : project.teamMembers?.find(m => m.email === task.assignee)?.name || task.assignee}
                   </span>
-                  {isAssignedToMe && <Badge tone="success" className="text-[10px] px-1.5 py-0">مهمتك</Badge>}
+                  {(isAssignedToMe || task.assignee === "team") && <Badge tone="success" className="text-[10px] px-1.5 py-0">مهمتك</Badge>}
                 </div>
               </div>
             </div>
