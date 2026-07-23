@@ -265,7 +265,7 @@ function CompaniesList() {
               <p className="mt-4 text-xs text-muted-foreground leading-relaxed line-clamp-2 flex-1">
                 {c.description}
               </p>
-              {total > 0 ? (
+              {total > 0 && (
                 <div className="mt-4 grid grid-cols-3 gap-2 text-center pt-4 border-t border-border">
                   <div>
                     <div className="text-[10px] text-muted-foreground">مشاريع نشطة</div>
