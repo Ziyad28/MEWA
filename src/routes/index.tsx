@@ -161,7 +161,7 @@ function LoginPage() {
                   <div className="font-semibold text-foreground text-xs">أدوار النظام الأساسية:</div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[10px]">
                     <div>مسؤول النظام: <code className="text-primary-deep font-medium">admin@mewa.gov.sa</code></div>
-                    <div>موظف الوزارة: <code className="text-primary-deep font-medium">pmo@mewa.gov.sa</code></div>
+
                     <div>مدير مشروع: <code className="text-primary-deep font-medium">pm@mewa.gov.sa</code></div>
                     <div>عضو فريق: <code className="text-primary-deep font-medium">team@mewa.gov.sa</code></div>
                     <div>مدير بناء القدرات: <code className="text-primary-deep font-medium">capacity@mewa.gov.sa</code></div>

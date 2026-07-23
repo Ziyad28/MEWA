@@ -19,7 +19,6 @@ export const DEMO_PASSWORD = "Mewa@2026";
 
 const DEMO_USERS: Record<string, User> = {
   "admin@mewa.gov.sa": { name: "مسؤول النظام", email: "admin@mewa.gov.sa", role: "admin", roleLabel: "مسؤول النظام" },
-  "pmo@mewa.gov.sa": { name: "فهد المطيري", email: "pmo@mewa.gov.sa", role: "pmo", roleLabel: "موظف الوزارة" },
   
   // 1. الإدارة العامة للتحول الرقمي
   "dt_gm@mewa.gov.sa": { name: "مدير الإدارة", email: "dt_gm@mewa.gov.sa", role: "manager", roleLabel: "مدير الإدارة", departmentId: "dt", isGeneralManager: true },
