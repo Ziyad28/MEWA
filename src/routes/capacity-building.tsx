@@ -197,10 +197,17 @@ function CapacityBuildingPage() {
     if (!form.title.trim() || !form.company || !form.date || !form.startTime || !form.endTime)
       return;
     const STANDARD_EVALUATION_QUESTIONS = [
-      { id: "q1", label: "ملاءمة الشركة لاحتياجات الوكالة", type: "rating" as const, required: true },
-      { id: "q2", label: "الجاهزية والخبرة", type: "rating" as const, required: true },
-      { id: "q3", label: "أثر التعاون المحتمل", type: "rating" as const, required: true },
-      { id: "q4", label: "أسئلة الرأي النوعي (ملاحظات إضافية)", type: "long_text" as const, required: false },
+      { id: "q1", label: "تحسين الكفاءة أو جودة الخدمات", type: "rating" as const, required: true },
+      { id: "q2", label: "رفع نضج التحول الرقمي أو إدارة البيانات", type: "rating" as const, required: true },
+      { id: "q3", label: "تمكين القيادات أو بناء القدرات الداخلية", type: "rating" as const, required: true },
+      { id: "q4", label: "تقليل المخاطر التشغيلية أو التقنية", type: "rating" as const, required: true },
+      { id: "q5", label: "دعم تحقيق مستهدفات استراتيجية الوكالة", type: "rating" as const, required: true },
+      { id: "text1", label: "ما أبرز المجالات يمكن أن نستفيد فيها من الشركة؟", type: "long_text" as const, required: false },
+      { id: "text2", label: "ما المشروع أو المبادرة الأنسب كبداية للتعاون إن وجد؟", type: "long_text" as const, required: false },
+      { id: "text3", label: "ما الأثر المتوقع إذا تم التعاون؟ اذكر الأثر الإداري/التقني/المالي/الخدمي إن أمكن.", type: "long_text" as const, required: false },
+      { id: "text4", label: "ما المخاوف أو التحفظات التي ظهرت أثناء الاجتماع؟", type: "long_text" as const, required: false },
+      { id: "text5", label: "ما الأسئلة التي لم تجب عنها الشركة وتحتاج متابعة؟", type: "long_text" as const, required: false },
+      { id: "text6", label: "هل ترى أن الشركة مناسبة للتعاون؟ ولماذا؟", type: "long_text" as const, required: true },
     ];
     const evaluationQuestions = STANDARD_EVALUATION_QUESTIONS;
     const targetLabel =
@@ -697,10 +704,12 @@ function CapacityBuildingPage() {
               <div className="mt-4 rounded-lg bg-primary/5 border border-primary/10 px-4 py-3 text-sm text-primary font-medium">
                 يحتوي النموذج الثابت على المحاور التالية:
                 <ul className="mt-2 list-disc list-inside space-y-1 text-xs text-foreground/80">
-                  <li>ملاءمة الشركة لاحتياجات الوكالة</li>
-                  <li>الجاهزية والخبرة</li>
-                  <li>أثر التعاون المحتمل</li>
-                  <li>أسئلة الرأي النوعي</li>
+                  <li>تحسين الكفاءة أو جودة الخدمات</li>
+                  <li>رفع نضج التحول الرقمي أو إدارة البيانات</li>
+                  <li>تمكين القيادات أو بناء القدرات الداخلية</li>
+                  <li>تقليل المخاطر التشغيلية أو التقنية</li>
+                  <li>دعم تحقيق مستهدفات استراتيجية الوكالة</li>
+                  <li>الأسئلة النوعية (مجالات الاستفادة، الأثر المتوقع، المخاوف، وغيرها)</li>
                 </ul>
               </div>
             </div>
