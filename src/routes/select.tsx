@@ -70,8 +70,8 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
         icon: FolderKanban,
       },
       {
-        title: "الشركات المتعاونة",
-        description: "استعراض الشركات المرتبطة بمشاريع الوكالة.",
+        title: "الشركات",
+        description: "إدارة دليل الشركات والشراكات الاستراتيجية مع الوكالة.",
         path: "/companies",
         icon: Building2,
       }
@@ -87,8 +87,8 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
         icon: FolderKanban,
       },
       {
-        title: "الشركات المتعاونة",
-        description: "استعراض الشركات المرتبطة بمشاريع الوكالة.",
+        title: "الشركات",
+        description: "إدارة دليل الشركات والشراكات الاستراتيجية مع الوكالة.",
         path: "/companies",
         icon: Building2,
       }
@@ -104,8 +104,8 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
         icon: FolderKanban,
       },
       {
-        title: "الشركات المتعاونة",
-        description: "استعراض الشركات المرتبطة بمشاريع الوكالة.",
+        title: "الشركات",
+        description: "إدارة دليل الشركات والشراكات الاستراتيجية مع الوكالة.",
         path: "/companies",
         icon: Building2,
       }

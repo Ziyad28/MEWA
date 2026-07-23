@@ -147,7 +147,7 @@ export function AppShell({
 
   const navItems: NavItem[] =
     navigationScope === "companies"
-      ? [{ to: "/companies", label: "الشركات المتعاونة", icon: Building2 }]
+      ? [{ to: "/companies", label: "الشركات", icon: Building2 }]
       : NAV[role];
 
   return (
