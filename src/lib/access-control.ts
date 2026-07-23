@@ -80,7 +80,7 @@ export function can(role: Role, permission: Permission): boolean {
 }
 
 export function canAccessProject(user: User, project: Partial<Project> & { manager: string; teamMembers?: Array<{ name: string; email: string }> }): boolean {
-  if (user.role === "admin" || user.role === "pmo") {
+  if (user.role === "admin") {
     return true;
   }
   

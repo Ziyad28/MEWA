@@ -89,7 +89,7 @@ function ProjectsPage() {
     return scoped.filter((p) => {
       if (q && !p.name.includes(q) && !p.manager.includes(q)) return false;
       if (sector !== "all" && p.sector !== sector) return false;
-      const showGenAdminFilter = user?.role === "admin" || user?.role === "pmo";
+      const showGenAdminFilter = user?.role === "admin";
       const showSubDeptFilter = showGenAdminFilter ? generalAdministration !== "all" : (user?.role === "manager" && user?.isGeneralManager);
 
       if (
@@ -328,7 +328,7 @@ function ProjectsPage() {
                 className="w-full h-11 pr-10 pl-3 rounded-lg border border-border bg-background text-sm"
               />
             </div>
-            {(user.role === "admin" || user.role === "pmo") && (
+            {(user.role === "admin") && (
               <select
                 value={sector}
                 onChange={(e) => setSector(e.target.value)}
@@ -342,7 +342,7 @@ function ProjectsPage() {
                 ))}
               </select>
             )}
-            {(user.role === "admin" || user.role === "pmo") && (
+            {(user.role === "admin") && (
               <select
                 value={generalAdministration}
                 onChange={(e) => {
@@ -361,7 +361,7 @@ function ProjectsPage() {
               </select>
             )}
             
-            {(user.role === "admin" || user.role === "pmo") && generalAdministration !== "all" && (
+            {(user.role === "admin") && generalAdministration !== "all" && (
               <select
                 value={subDepartment}
                 onChange={(e) => setSubDepartment(e.target.value)}

@@ -1,4 +1,4 @@
-export type Role = "admin" | "pmo" | "manager" | "pm" | "team" | "capacity" | "employee";
+export type Role = "admin" | "manager" | "pm" | "team" | "capacity" | "employee";
 
 export interface User {
   name: string;
@@ -122,7 +122,6 @@ export function getUser(): User | null {
 
 export function roleHome(role: Role): string {
   if (role === "admin") return "/users";
-  if (role === "pmo") return "/pmo";
   if (role === "manager") return "/manager";
   if (role === "pm") return "/pm";
   if (role === "team") return "/projects";

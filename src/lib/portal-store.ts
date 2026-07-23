@@ -158,7 +158,7 @@ const INITIAL_NOTIFICATIONS: PortalNotification[] = [
     time: "منذ 10 دقائق",
     read: false,
     href: "/projects/1",
-    targetRoles: ["pmo", "pm", "manager", "admin"],
+    targetRoles: ["pm", "manager", "admin"],
   },
   {
     id: 2,
@@ -167,7 +167,7 @@ const INITIAL_NOTIFICATIONS: PortalNotification[] = [
     time: "منذ ساعة",
     read: false,
     href: "/documents",
-    targetRoles: ["pmo", "pm", "manager", "admin"],
+    targetRoles: ["pm", "manager", "admin"],
   },
   {
     id: 3,
@@ -176,7 +176,7 @@ const INITIAL_NOTIFICATIONS: PortalNotification[] = [
     time: "أمس",
     read: false,
     href: "/companies/2",
-    targetRoles: ["pmo", "admin"],
+    targetRoles: ["admin"],
   },
   {
     id: 4,
@@ -185,7 +185,7 @@ const INITIAL_NOTIFICATIONS: PortalNotification[] = [
     time: "منذ 5 دقائق",
     read: false,
     href: "/capacity-building",
-    targetRoles: ["capacity", "pmo", "admin"],
+    targetRoles: ["capacity", "admin"],
   },
   {
     id: 5,
@@ -194,7 +194,7 @@ const INITIAL_NOTIFICATIONS: PortalNotification[] = [
     time: "منذ ساعتين",
     read: false,
     href: "/capacity-building",
-    targetRoles: ["capacity", "pmo", "admin"],
+    targetRoles: ["capacity", "admin"],
   },
 ];
 

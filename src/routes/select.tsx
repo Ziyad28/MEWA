@@ -77,23 +77,7 @@ const ROLE_CONFIG: Record<string, { header: string; cards: { title: string; desc
       }
     ]
   },
-  pmo: {
-    header: "ضبط الجودة والحوكمة",
-    cards: [
-      {
-        title: "مشاريع الوكالة",
-        description: "إدارة ومتابعة المشاريع التقنية التابعة للوكالة.",
-        path: roleHome("pmo"),
-        icon: FolderKanban,
-      },
-      {
-        title: "الشركات",
-        description: "إدارة دليل الشركات والشراكات الاستراتيجية مع الوكالة.",
-        path: "/companies",
-        icon: Building2,
-      }
-    ]
-  },
+
   pm: {
     header: "إدارة خطة التنفيذ",
     cards: [

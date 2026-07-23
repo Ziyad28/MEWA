@@ -15,7 +15,6 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SelectRouteImport } from './routes/select'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ProjectsRouteImport } from './routes/projects'
-import { Route as PmoRouteImport } from './routes/pmo'
 import { Route as PmRouteImport } from './routes/pm'
 import { Route as ManagerRouteImport } from './routes/manager'
 import { Route as DocumentsRouteImport } from './routes/documents'
@@ -55,11 +54,6 @@ const ReportsRoute = ReportsRouteImport.update({
 const ProjectsRoute = ProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PmoRoute = PmoRouteImport.update({
-  id: '/pmo',
-  path: '/pmo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PmRoute = PmRouteImport.update({
@@ -121,7 +115,6 @@ export interface FileRoutesByFullPath {
   '/documents': typeof DocumentsRoute
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
-  '/pmo': typeof PmoRoute
   '/projects': typeof ProjectsRouteWithChildren
   '/reports': typeof ReportsRoute
   '/select': typeof SelectRoute
@@ -140,7 +133,6 @@ export interface FileRoutesByTo {
   '/documents': typeof DocumentsRoute
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
-  '/pmo': typeof PmoRoute
   '/projects': typeof ProjectsRouteWithChildren
   '/reports': typeof ReportsRoute
   '/select': typeof SelectRoute
@@ -160,7 +152,6 @@ export interface FileRoutesById {
   '/documents': typeof DocumentsRoute
   '/manager': typeof ManagerRoute
   '/pm': typeof PmRoute
-  '/pmo': typeof PmoRoute
   '/projects': typeof ProjectsRouteWithChildren
   '/reports': typeof ReportsRoute
   '/select': typeof SelectRoute
@@ -181,7 +172,6 @@ export interface FileRouteTypes {
     | '/documents'
     | '/manager'
     | '/pm'
-    | '/pmo'
     | '/projects'
     | '/reports'
     | '/select'
@@ -200,7 +190,6 @@ export interface FileRouteTypes {
     | '/documents'
     | '/manager'
     | '/pm'
-    | '/pmo'
     | '/projects'
     | '/reports'
     | '/select'
@@ -219,7 +208,6 @@ export interface FileRouteTypes {
     | '/documents'
     | '/manager'
     | '/pm'
-    | '/pmo'
     | '/projects'
     | '/reports'
     | '/select'
@@ -239,7 +227,6 @@ export interface RootRouteChildren {
   DocumentsRoute: typeof DocumentsRoute
   ManagerRoute: typeof ManagerRoute
   PmRoute: typeof PmRoute
-  PmoRoute: typeof PmoRoute
   ProjectsRoute: typeof ProjectsRouteWithChildren
   ReportsRoute: typeof ReportsRoute
   SelectRoute: typeof SelectRoute
@@ -290,13 +277,6 @@ declare module '@tanstack/react-router' {
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof ProjectsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pmo': {
-      id: '/pmo'
-      path: '/pmo'
-      fullPath: '/pmo'
-      preLoaderRoute: typeof PmoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pm': {
@@ -415,7 +395,6 @@ const rootRouteChildren: RootRouteChildren = {
   DocumentsRoute: DocumentsRoute,
   ManagerRoute: ManagerRoute,
   PmRoute: PmRoute,
-  PmoRoute: PmoRoute,
   ProjectsRoute: ProjectsRouteWithChildren,
   ReportsRoute: ReportsRoute,
   SelectRoute: SelectRoute,
