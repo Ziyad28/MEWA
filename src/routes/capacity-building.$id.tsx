@@ -230,7 +230,7 @@ function WorkshopDetailsPage() {
           </div>
         )}
         {noResponse > 0 && (
-          <div className="flex flex-wrap justify-end gap-2 border-t border-border px-5 py-4">
+          <div className="print:hidden flex flex-wrap justify-end gap-2 border-t border-border px-5 py-4">
             <button
               onClick={() => resend("دعوة")}
               className="inline-flex h-10 items-center gap-2 rounded-lg border border-border px-4 text-sm"
@@ -249,7 +249,7 @@ function WorkshopDetailsPage() {
         )}
       </Card>
 
-      <Card>
+      <Card className="print:hidden">
         <CardHeader title="سجل الرسائل" subtitle="الرسائل التي أرسلها النظام تلقائيًا" />
         {current.messages.length === 0 ? (
           <EmptyState
@@ -339,24 +339,26 @@ function WorkshopDetailsPage() {
                             Object.keys(evaluation.answers).length}{" "}
                           إجابة
                         </span>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setExpandedEvaluation(isExpanded ? null : participant.email)
-                          }
-                          className="inline-flex h-10 items-center gap-2 rounded-lg border border-primary/25 px-4 text-sm font-semibold text-primary"
-                        >
-                          {isExpanded ? (
-                            <ChevronUp className="h-4 w-4" />
-                          ) : (
-                            <ChevronDown className="h-4 w-4" />
-                          )}
-                          {isExpanded ? "إخفاء الإجابات" : "عرض جميع الإجابات"}
-                        </button>
+                        <div className="print:hidden mt-4 border-t border-border pt-4 text-left w-full">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setExpandedEvaluation(isExpanded ? null : participant.email)
+                            }
+                            className="inline-flex h-9 items-center gap-2 rounded-lg bg-primary/10 px-4 text-sm font-medium text-primary hover:bg-primary/20"
+                          >
+                            {isExpanded ? (
+                              <ChevronUp className="h-4 w-4" />
+                            ) : (
+                              <ChevronDown className="h-4 w-4" />
+                            )}
+                            {isExpanded ? "إخفاء الإجابات" : "عرض جميع الإجابات"}
+                          </button>
+                        </div>
                       </div>
                     </div>
 
-                    {isExpanded && (
+                    <div className={`${isExpanded ? "block" : "hidden print:block"}`}>
                       <div className="space-y-6 border-t border-border bg-muted/15 p-5">
                         <EvaluationSection title="تقييم المحاور">
                           <div className="overflow-x-auto rounded-lg border border-border bg-background">
@@ -411,7 +413,7 @@ function WorkshopDetailsPage() {
                           </div>
                         </EvaluationSection>
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })}
@@ -426,7 +428,7 @@ function WorkshopDetailsPage() {
       </Card>
 
       {status === "منتهية" && current.automations.finalReport && (
-        <Card className="flex flex-col items-start justify-between gap-4 p-5 md:flex-row md:items-center">
+        <Card className="print:hidden flex flex-col items-start justify-between gap-4 p-5 md:flex-row md:items-center">
           <div>
             <h2 className="font-bold">التقرير النهائي</h2>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -434,7 +436,10 @@ function WorkshopDetailsPage() {
             </p>
           </div>
           <button
-            onClick={downloadReport}
+            onClick={() => {
+              recordAudit("تحميل تقرير ورشة", "ورشة", current.title, current.id);
+              window.print();
+            }}
             className="inline-flex h-11 items-center gap-2 rounded-lg bg-primary px-5 text-sm font-semibold text-white"
           >
             <Download className="h-4 w-4" />

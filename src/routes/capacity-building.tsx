@@ -308,16 +308,6 @@ function CapacityBuildingPage() {
       pageTitle="الشركات وبناء القدرات"
       pageSubtitle="تسجيل الورش المعتمدة ومتابعة الدعوات والتذكيرات والتقييم والتقرير النهائي"
     >
-      <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-        <Bell className="mt-0.5 h-5 w-5 shrink-0" />
-        <div>
-          <div className="font-bold">وضع التنبيهات التجريبي</div>
-          <p className="mt-1 leading-6">
-            إشعارات المنصة تعمل داخل هذا المتصفح. البريد الإلكتروني ورسائل الجوال مسجلة كقنوات جاهزة
-            للربط، وسيتم إرسالها فعليًا بعد توصيل الباك إند بمزود الإرسال.
-          </p>
-        </div>
-      </div>
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold">إدارة ورش العمل</h2>

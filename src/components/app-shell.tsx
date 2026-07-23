@@ -160,7 +160,7 @@ export function AppShell({
         />
       )}
       <aside
-        className={`${collapsed ? "md:w-[72px]" : "md:w-[260px]"} w-[260px] fixed md:sticky top-0 right-0 z-50 shrink-0 bg-sidebar text-sidebar-foreground flex flex-col h-screen transition-all duration-300 ${mobileOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}`}
+        className={`print:hidden ${collapsed ? "md:w-[72px]" : "md:w-[260px]"} w-[260px] fixed md:sticky top-0 right-0 z-50 shrink-0 bg-sidebar text-sidebar-foreground flex flex-col h-screen transition-all duration-300 ${mobileOpen ? "translate-x-0" : "translate-x-full md:translate-x-0"}`}
       >
         <div
           className={`${collapsed ? "px-3 py-4" : "px-4 py-5"} border-b border-white/10 flex items-center justify-center`}
@@ -235,7 +235,7 @@ export function AppShell({
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0 w-full">
         {/* Topbar */}
-        <header className="relative h-16 bg-card border-b border-border flex items-center justify-between px-3 md:px-6">
+        <header className="print:hidden relative h-16 bg-card border-b border-border flex items-center justify-between px-3 md:px-6">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setMobileOpen(true)}
